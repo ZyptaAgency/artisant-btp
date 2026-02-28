@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { getNextDevisNumber } from "@/lib/devis";
 import { z } from "zod";
-import { StatutDevis, UniteMesure } from "@prisma/client";
+import { UniteMesure } from "@prisma/client";
 
 const ligneSchema = z.object({
   description: z.string().min(1),
@@ -29,7 +29,7 @@ function calcTVA(montantHT: number, taux: number) {
   return montantHT * (taux / 100);
 }
 
-export async function GET(req: Request) {
+export async function GET() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
@@ -97,7 +97,7 @@ export async function POST(req: Request) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: error.errors[0]?.message ?? "Données invalides" },
+        { error: error.issues[0]?.message ?? "Données invalides" },
         { status: 400 }
       );
     }

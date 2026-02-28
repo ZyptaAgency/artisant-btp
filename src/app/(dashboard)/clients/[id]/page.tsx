@@ -5,7 +5,7 @@ import { prisma } from "@/lib/db";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { formatCurrency } from "@/lib/utils";
 import { ArrowLeft, Mail, Phone, MapPin, FileText, Receipt } from "lucide-react";
 
 const STATUT_LABELS: Record<string, string> = {

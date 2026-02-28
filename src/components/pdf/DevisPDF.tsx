@@ -1,6 +1,6 @@
 "use client";
 
-import { Document, Page, Text, View, StyleSheet, Font } from "@react-pdf/renderer";
+import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
 const styles = StyleSheet.create({
@@ -106,7 +106,7 @@ export function DevisPDF({ numero, client, artisan, lignes, montantHT, tva, mont
 
         {dateValidite && (
           <View style={{ marginTop: 24 }}>
-            <Text style={styles.subtitle}>Valide jusqu'au {formatDate(dateValidite)}</Text>
+            <Text style={styles.subtitle}>Valide jusqu&apos;au {formatDate(dateValidite)}</Text>
           </View>
         )}
 

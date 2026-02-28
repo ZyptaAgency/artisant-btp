@@ -20,10 +20,6 @@ const updateDevisSchema = z.object({
   lignes: z.array(ligneSchema).min(1).optional(),
 });
 
-function calcMontantHT(ligne: { quantite: number; prixUnitaire: number }) {
-  return ligne.quantite * ligne.prixUnitaire;
-}
-
 function calcTVA(montantHT: number, taux: number) {
   return montantHT * (taux / 100);
 }
@@ -120,7 +116,7 @@ export async function PATCH(
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: error.errors[0]?.message ?? "Données invalides" },
+        { error: error.issues[0]?.message ?? "Données invalides" },
         { status: 400 }
       );
     }

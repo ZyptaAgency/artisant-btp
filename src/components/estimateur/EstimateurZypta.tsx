@@ -295,7 +295,7 @@ export function EstimateurZypta() {
             />
             <Button
               onClick={handleSend}
-              disabled={loading || (step === "gamme") || (step !== "gamme" && !input.trim())}
+              disabled={loading || step === "gamme" || ((step === "projet" || step === "surface") && !input.trim())}
               className="rounded-xl"
             >
               <Send className="h-4 w-4" />

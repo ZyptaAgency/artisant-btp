@@ -35,7 +35,7 @@ export default function NouvelleFacturePage() {
   const devisId = searchParams.get("devisId") ?? undefined;
 
   const [clients, setClients] = useState<{ id: string; nom: string; prenom: string }[]>([]);
-  const [devis, setDevis] = useState<{
+  const [, setDevis] = useState<{
     clientId: string;
     lignes: Array<{ description: string; quantite: number; unite: string; prixUnitaire: number; tauxTVA: number }>;
   } | null>(null);

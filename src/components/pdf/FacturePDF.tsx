@@ -168,7 +168,7 @@ export function FacturePDF({ numero, client, artisan, lignes, montantHT, tva, mo
           <Text style={styles.conditionsText}>
             Paiement à réception de facture.
             {dateEcheance && ` Date d'échéance : ${formatDate(dateEcheance)}.`}
-            {" "}En cas de retard, des pénalités de 3 fois le taux d'intérêt légal seront appliquées.
+            {" "}En cas de retard, des pénalités de 3 fois le taux d&apos;intérêt légal seront appliquées.
             Indemnité forfaitaire pour frais de recouvrement : 40€.
           </Text>
         </View>

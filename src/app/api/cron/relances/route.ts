@@ -14,8 +14,6 @@ export async function GET(req: Request) {
 
   // Devis envoyés il y a 3 jours sans réponse
   const dateJ3 = subDays(now, 3);
-  const dateJ7 = subDays(now, 7);
-  const dateJ15 = subDays(now, 15);
 
   const devisJ3 = await prisma.devis.findMany({
     where: {

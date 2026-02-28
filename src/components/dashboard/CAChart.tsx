@@ -21,7 +21,7 @@ export function CAChart({ data }: { data: DataPoint[] }) {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="mois" />
           <YAxis tickFormatter={(v) => `${v}€`} />
-          <Tooltip formatter={(v: number) => [formatCurrency(v), "CA"]} />
+          <Tooltip formatter={(v: number | undefined) => [formatCurrency(v ?? 0), "CA"]} />
           <Bar dataKey="ca" fill="#2563EB" radius={[4, 4, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>

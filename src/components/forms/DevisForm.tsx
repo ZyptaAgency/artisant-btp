@@ -61,7 +61,8 @@ export function DevisForm({
   const [clients, setClients] = useState<Client[]>([]);
 
   const { register, control, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormData>({
-    resolver: zodResolver(schema),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(schema) as any,
     defaultValues: {
       clientId: clientId ?? "",
       lignes: initialData?.lignes ?? [
