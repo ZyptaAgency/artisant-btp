@@ -137,8 +137,8 @@ export default function NouvelleFacturePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">Nouvelle facture</h1>
-        <p className="text-slate-600">Créez une nouvelle facture</p>
+        <h1 className="text-2xl font-bold text-[var(--foreground)]">Nouvelle facture</h1>
+        <p className="text-[var(--text-muted)]">Créez une nouvelle facture</p>
       </div>
       <Card>
         <CardHeader>
@@ -171,7 +171,7 @@ export default function NouvelleFacturePage() {
             </div>
             <div className="space-y-4">
               <Label>Lignes de prestation</Label>
-              <p className="text-sm text-slate-500">Détaillez chaque prestation avec sa description et son prix unitaire HT</p>
+              <p className="text-sm text-[var(--text-muted)]">Détaillez chaque prestation avec sa description et son prix unitaire HT</p>
               {lignes.map((l, i) => (
                 <div key={i} className="rounded-lg border p-4 space-y-3">
                   <div className="flex gap-2 flex-wrap items-end">
@@ -224,7 +224,7 @@ export default function NouvelleFacturePage() {
                     </div>
                     <div className="w-28 space-y-1">
                       <Label className="text-xs">Total HT</Label>
-                      <span className="flex h-10 items-center font-medium text-[#2563EB]">{formatCurrency(l.quantite * (l.prixUnitaire || 0))}</span>
+                      <span className="flex h-10 items-center font-medium text-nova-mid">{formatCurrency(l.quantite * (l.prixUnitaire || 0))}</span>
                     </div>
                     <Button type="button" variant="ghost" size="icon" onClick={() => setLignes((prev) => prev.filter((_, j) => j !== i))} disabled={lignes.length <= 1}>
                       <Trash2 className="h-4 w-4 text-red-500" />
@@ -237,7 +237,7 @@ export default function NouvelleFacturePage() {
                 Ajouter une ligne
               </Button>
             </div>
-            <div className="rounded-lg bg-slate-50 p-4 space-y-2">
+            <div className="rounded-lg bg-white/5 p-4 space-y-2">
               <div className="flex justify-between text-sm">
                 <span>Total HT</span>
                 <span>{formatCurrency(totalHT)}</span>

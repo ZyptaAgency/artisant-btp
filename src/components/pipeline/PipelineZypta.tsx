@@ -16,7 +16,7 @@ import {
 import { cn } from "@/lib/utils";
 
 const COLUMNS = [
-  { id: "PROSPECT", title: "Premier contact", color: "bg-slate-100" },
+  { id: "PROSPECT", title: "Premier contact", color: "bg-white/5" },
   { id: "CONTACTE", title: "Visite programmée", color: "bg-blue-50" },
   { id: "DEVIS_ENVOYE", title: "Devis envoyé", color: "bg-cyan-50" },
   { id: "NEGOCIATION", title: "Négociation", color: "bg-amber-50" },
@@ -143,7 +143,7 @@ export function PipelineZypta() {
     return (
       <div className="flex gap-4 overflow-x-auto pb-4">
         {COLUMNS.map((col) => (
-          <div key={col.id} className="h-96 w-72 shrink-0 animate-pulse rounded-2xl bg-slate-100" />
+          <div key={col.id} className="h-96 w-72 shrink-0 animate-pulse rounded-2xl bg-white/5" />
         ))}
       </div>
     );
@@ -153,8 +153,8 @@ export function PipelineZypta() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Pipeline</h1>
-          <p className="text-slate-600">Votre business en un coup d&apos;œil</p>
+          <h1 className="text-2xl font-bold text-[var(--foreground)]">Pipeline</h1>
+          <p className="text-[var(--text-muted)]">Votre business en un coup d&apos;œil</p>
         </div>
         <div className="flex gap-2">
           <Button
@@ -187,11 +187,11 @@ export function PipelineZypta() {
                   <div
                     ref={provided.innerRef}
                     {...provided.droppableProps}
-                    className={cn("w-80 shrink-0 rounded-2xl border border-slate-200 p-4", col.color)}
+                    className={cn("w-80 shrink-0 rounded-2xl border border-[var(--border)] p-4", col.color)}
                   >
                     <div className="mb-4 flex items-center justify-between">
-                      <h3 className="font-semibold text-slate-800">{col.title}</h3>
-                      <span className="rounded-full bg-white/80 px-2 py-1 text-sm font-medium text-slate-700">
+                      <h3 className="font-semibold text-[var(--foreground)]">{col.title}</h3>
+                      <span className="rounded-full bg-white/80 px-2 py-1 text-sm font-medium text-[var(--text-muted)]">
                         {formatCurrency(montantsByColumn[col.id] ?? 0)}
                       </span>
                     </div>
@@ -209,7 +209,7 @@ export function PipelineZypta() {
                                 {...provided.dragHandleProps}
                                 onClick={() => router.push(`/clients/${client.id}`)}
                                 className={cn(
-                                  "cursor-grab rounded-xl border bg-white p-3 shadow-sm transition-all duration-300 active:cursor-grabbing hover:shadow-md",
+                                  "cursor-grab rounded-xl border bg-[var(--bg-card)] p-3 shadow-sm transition-all duration-300 active:cursor-grabbing hover:shadow-md",
                                   stagnant && "animate-pulse border-orange-400 ring-2 ring-orange-200"
                                 )}
                               >
@@ -219,27 +219,27 @@ export function PipelineZypta() {
                                     À relancer
                                   </div>
                                 )}
-                                <p className="font-semibold text-slate-900">
+                                <p className="font-semibold text-[var(--foreground)]">
                                   {client.prenom} {client.nom}
                                 </p>
-                                <div className="mt-1 flex items-center gap-2 text-sm text-slate-600">
+                                <div className="mt-1 flex items-center gap-2 text-sm text-[var(--text-muted)]">
                                   <span>{typeProjet.icon}</span>
                                   <span>{typeProjet.label}</span>
                                 </div>
-                                <p className="mt-1 text-sm font-medium text-slate-700">
+                                <p className="mt-1 text-sm font-medium text-[var(--text-muted)]">
                                   {formatCurrency(getMontantEstime(client))}
                                 </p>
-                                <p className="mt-1 text-xs text-slate-500">
+                                <p className="mt-1 text-xs text-[var(--text-muted)]">
                                   {formatDate(getDernierContact(client)?.toISOString() ?? client.updatedAt)}
                                 </p>
-                                <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-200">
+                                <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[var(--border)]">
                                   <div
                                     className={cn(
                                       "h-full rounded-full transition-all duration-500",
                                       proba >= 70 && "bg-emerald-500",
                                       proba >= 30 && proba < 70 && "bg-amber-500",
                                       proba < 30 && proba > 0 && "bg-red-400",
-                                      proba === 0 && "bg-slate-300"
+                                      proba === 0 && "bg-[var(--text-white)]"
                                     )}
                                     style={{ width: `${proba}%` }}
                                   />
@@ -265,7 +265,7 @@ export function PipelineZypta() {
             <DialogHeader>
               <DialogTitle>Créer la facture</DialogTitle>
             </DialogHeader>
-            <p className="text-slate-600">
+            <p className="text-[var(--text-muted)]">
               Le deal avec <strong>{factureModal.nom}</strong> est signé. Souhaitez-vous créer la facture
               correspondante ?
             </p>
@@ -296,8 +296,8 @@ function FunnelView({
   let cumul = 0;
 
   return (
-    <div className="space-y-4 rounded-2xl border border-slate-200 bg-white p-6">
-      <h3 className="font-semibold text-slate-800">Conversion par étape</h3>
+    <div className="space-y-4 rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-6">
+      <h3 className="font-semibold text-[var(--foreground)]">Conversion par étape</h3>
       <div className="space-y-3">
         {COLUMNS.map((col, i) => {
           const count = (clientsByColumn[col.id] ?? []).length;
@@ -310,20 +310,20 @@ function FunnelView({
           return (
             <div key={col.id} className="flex items-center gap-4">
               <div className="w-40 shrink-0">
-                <p className="font-medium text-slate-800">{col.title}</p>
-                <p className="text-sm text-slate-500">
+                <p className="font-medium text-[var(--foreground)]">{col.title}</p>
+                <p className="text-sm text-[var(--text-muted)]">
                   {count} deal{count > 1 ? "s" : ""} • {formatCurrency(montant)}
                 </p>
               </div>
               <div className="flex-1">
-                <div className="h-8 overflow-hidden rounded-full bg-slate-100">
+                <div className="h-8 overflow-hidden rounded-full bg-white/5">
                   <div
-                    className="h-full rounded-full bg-gradient-to-r from-zypta-blue to-zypta-orange transition-all duration-500"
+                    className="h-full rounded-full bg-gradient-to-r from-nova-mid to-zypta-orange transition-all duration-500"
                     style={{ width: `${Math.min(pct, 100)}%` }}
                   />
                 </div>
               </div>
-              <div className="w-16 shrink-0 text-right text-sm font-medium text-slate-600">
+              <div className="w-16 shrink-0 text-right text-sm font-medium text-[var(--text-muted)]">
                 {i > 0 ? `${conversion}%` : "—"}
               </div>
             </div>

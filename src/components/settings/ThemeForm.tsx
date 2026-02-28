@@ -41,8 +41,8 @@ export function ThemeForm({ current }: { current: string }) {
 
   return (
     <div className="transition-opacity duration-300">
-      <h2 className="mb-4 text-lg font-semibold text-slate-900">Apparence</h2>
-      <p className="mb-6 text-sm text-slate-600">
+      <h2 className="mb-4 text-lg font-semibold text-[var(--foreground)]">Apparence</h2>
+      <p className="mb-6 text-sm text-[var(--text-muted)]">
         Choisissez le thème de l&apos;interface.
       </p>
       <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
@@ -55,14 +55,14 @@ export function ThemeForm({ current }: { current: string }) {
               onClick={() => setSelected(t.id)}
               className={`flex items-center gap-3 rounded-xl border-2 p-4 text-left transition-all sm:min-w-[160px] ${
                 selected === t.id
-                  ? "border-zypta-blue bg-zypta-blue/5"
-                  : "border-slate-200 hover:border-slate-300"
+                  ? "border-nova-mid bg-nova-mid/5"
+                  : "border-[var(--border)] hover:border-[var(--border)]"
               }`}
             >
-              <Icon className="h-5 w-5 shrink-0 text-slate-600" />
+              <Icon className="h-5 w-5 shrink-0 text-[var(--text-muted)]" />
               <div>
-                <span className="font-medium text-slate-900">{t.label}</span>
-                <span className="mt-0.5 block text-xs text-slate-500">{t.desc}</span>
+                <span className="font-medium text-[var(--foreground)]">{t.label}</span>
+                <span className="mt-0.5 block text-xs text-[var(--text-muted)]">{t.desc}</span>
               </div>
             </button>
           );

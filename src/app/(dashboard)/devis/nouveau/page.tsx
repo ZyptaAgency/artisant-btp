@@ -18,8 +18,8 @@ export default function NouveauDevisPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">Nouveau devis</h1>
-        <p className="text-slate-600">Créez un nouveau devis</p>
+        <h1 className="text-2xl font-bold text-[var(--foreground)]">Nouveau devis</h1>
+        <p className="text-[var(--text-muted)]">Créez un nouveau devis</p>
       </div>
       <Card>
         <CardHeader>

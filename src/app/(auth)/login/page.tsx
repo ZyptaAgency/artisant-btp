@@ -43,7 +43,7 @@ function LoginForm() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4">
+    <div className="flex min-h-screen items-center justify-center bg-[var(--bg-card)] p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Connexion</CardTitle>
@@ -76,9 +76,9 @@ function LoginForm() {
               {loading ? "Connexion..." : "Se connecter"}
             </Button>
           </form>
-          <p className="mt-4 text-center text-sm text-slate-600">
+          <p className="mt-4 text-center text-sm text-[var(--text-muted)]">
             Pas encore de compte ?{" "}
-            <Link href="/register" className="font-medium text-[#2563EB] hover:underline">
+            <Link href="/register" className="font-medium text-nova-mid hover:underline">
               S&apos;inscrire
             </Link>
           </p>
@@ -90,7 +90,7 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-slate-50">Chargement...</div>}>
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-[var(--bg-card)]">Chargement...</div>}>
       <LoginForm />
     </Suspense>
   );

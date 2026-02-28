@@ -9,8 +9,8 @@ import { Plus, Search, LayoutGrid, List, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const STATUT_STYLES: Record<string, string> = {
-  BROUILLON: "bg-slate-100 text-slate-600",
-  ENVOYE: "bg-zypta-blue/15 text-zypta-blue",
+  BROUILLON: "bg-white/5 text-[var(--text-muted)]",
+  ENVOYE: "bg-nova-mid/15 text-nova-mid",
   ACCEPTE: "bg-emerald-500/15 text-emerald-600 animate-pulse",
   REFUSE: "bg-red-100 text-red-600 line-through",
   EXPIRE: "bg-orange-100 text-orange-600",
@@ -65,8 +65,8 @@ export function DevisZypta() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Devis</h1>
-          <p className="text-slate-600">Créez des devis pro en 2 minutes</p>
+          <h1 className="text-2xl font-bold text-[var(--foreground)]">Devis</h1>
+          <p className="text-[var(--text-muted)]">Créez des devis pro en 2 minutes</p>
         </div>
         <Button asChild>
           <Link href="/devis/nouveau">
@@ -82,7 +82,7 @@ export function DevisZypta() {
           <Button key={t.id} variant="outline" size="sm" asChild>
             <Link
               href={`/devis/nouveau?template=${t.id}`}
-              className="rounded-xl border-slate-200 transition-all hover:border-zypta-blue/50 hover:bg-zypta-blue/5"
+              className="rounded-xl border-[var(--border)] transition-all hover:border-nova-mid/50 hover:bg-nova-mid/5"
             >
               <span className="mr-2">{t.emoji}</span>
               {t.label}
@@ -94,7 +94,7 @@ export function DevisZypta() {
       {/* Barre de recherche + toggle vue */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]" />
           <Input
             placeholder="Rechercher par numéro, client..."
             value={search}
@@ -102,12 +102,12 @@ export function DevisZypta() {
             className="rounded-xl pl-10"
           />
         </div>
-        <div className="flex gap-1 rounded-xl border border-slate-200 p-1">
+        <div className="flex gap-1 rounded-xl border border-[var(--border)] p-1">
           <button
             onClick={() => setVueCards(true)}
             className={cn(
               "rounded-lg p-2 transition-colors",
-              vueCards ? "bg-zypta-blue text-white" : "text-slate-500 hover:bg-slate-100"
+              vueCards ? "bg-nova-mid text-white" : "text-[var(--text-muted)] hover:bg-white/5"
             )}
           >
             <LayoutGrid className="h-4 w-4" />
@@ -116,7 +116,7 @@ export function DevisZypta() {
             onClick={() => setVueCards(false)}
             className={cn(
               "rounded-lg p-2 transition-colors",
-              !vueCards ? "bg-zypta-blue text-white" : "text-slate-500 hover:bg-slate-100"
+              !vueCards ? "bg-nova-mid text-white" : "text-[var(--text-muted)] hover:bg-white/5"
             )}
           >
             <List className="h-4 w-4" />
@@ -127,13 +127,13 @@ export function DevisZypta() {
       {loading ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="h-40 animate-pulse rounded-2xl bg-slate-100" />
+            <div key={i} className="h-40 animate-pulse rounded-2xl bg-white/5" />
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/50 py-16">
-          <FileText className="h-12 w-12 text-slate-300" />
-          <p className="mt-4 text-slate-500">Aucun devis trouvé</p>
+        <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[var(--border)] bg-white/5 py-16">
+          <FileText className="h-12 w-12 text-[var(--text-white)]" />
+          <p className="mt-4 text-[var(--text-muted)]">Aucun devis trouvé</p>
           <Button className="mt-4" asChild>
             <Link href="/devis/nouveau">
               <Plus className="mr-2 h-4 w-4" />
@@ -147,38 +147,38 @@ export function DevisZypta() {
             <Link
               key={d.id}
               href={`/devis/${d.id}`}
-              className="group rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all duration-300 hover:shadow-lg hover:shadow-zypta-blue/5"
+              className="group rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-4 shadow-sm transition-all duration-300 hover:shadow-lg hover:shadow-nova-mid/5"
             >
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="font-semibold text-slate-900">{d.numero}</p>
-                  <p className="text-sm text-slate-600">
+                  <p className="font-semibold text-[var(--foreground)]">{d.numero}</p>
+                  <p className="text-sm text-[var(--text-muted)]">
                     {d.client.prenom} {d.client.nom}
                   </p>
                 </div>
                 <span
                   className={cn(
                     "rounded-full px-2.5 py-1 text-xs font-medium",
-                    STATUT_STYLES[d.statut] ?? "bg-slate-100 text-slate-600"
+                    STATUT_STYLES[d.statut] ?? "bg-white/5 text-[var(--text-muted)]"
                   )}
                 >
                   {STATUT_LABELS[d.statut] ?? d.statut}
                 </span>
               </div>
-              <p className="mt-3 text-lg font-bold text-slate-900">
+              <p className="mt-3 text-lg font-bold text-[var(--foreground)]">
                 {formatCurrency(d.montantTTC)}
               </p>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-[var(--text-muted)]">
                 Validité : {d.dateValidite ? formatDate(d.dateValidite) : "—"}
               </p>
             </Link>
           ))}
         </div>
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+        <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)]">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-slate-100 bg-slate-50/50 text-left text-sm text-slate-600">
+              <tr className="border-b border-[var(--border)] bg-white/5 text-left text-sm text-[var(--text-muted)]">
                 <th className="px-4 py-3 font-medium">Numéro</th>
                 <th className="px-4 py-3 font-medium">Client</th>
                 <th className="px-4 py-3 font-medium">Montant TTC</th>
@@ -191,17 +191,17 @@ export function DevisZypta() {
               {filtered.map((d) => (
                 <tr
                   key={d.id}
-                  className="border-b border-slate-50 transition-colors hover:bg-slate-50/50"
+                  className="border-b border-[var(--border)] transition-colors hover:bg-white/5"
                 >
                   <td className="px-4 py-3">
                     <Link
                       href={`/devis/${d.id}`}
-                      className="font-medium text-zypta-blue hover:underline"
+                      className="font-medium text-nova-mid hover:underline"
                     >
                       {d.numero}
                     </Link>
                   </td>
-                  <td className="px-4 py-3 text-slate-700">
+                  <td className="px-4 py-3 text-[var(--text-muted)]">
                     {d.client.prenom} {d.client.nom}
                   </td>
                   <td className="px-4 py-3 font-medium">{formatCurrency(d.montantTTC)}</td>
@@ -209,13 +209,13 @@ export function DevisZypta() {
                     <span
                       className={cn(
                         "rounded-full px-2.5 py-1 text-xs font-medium",
-                        STATUT_STYLES[d.statut] ?? "bg-slate-100 text-slate-600"
+                        STATUT_STYLES[d.statut] ?? "bg-white/5 text-[var(--text-muted)]"
                       )}
                     >
                       {STATUT_LABELS[d.statut] ?? d.statut}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-slate-600">
+                  <td className="px-4 py-3 text-[var(--text-muted)]">
                     {d.dateValidite ? formatDate(d.dateValidite) : "—"}
                   </td>
                   <td className="px-4 py-3">

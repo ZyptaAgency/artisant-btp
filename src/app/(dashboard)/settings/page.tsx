@@ -17,8 +17,8 @@ export default async function SettingsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">Paramètres</h1>
-        <p className="text-slate-600">Configurez Zypta comme vous le souhaitez</p>
+        <h1 className="text-2xl font-bold text-[var(--foreground)]">Paramètres</h1>
+        <p className="text-[var(--text-muted)]">Configurez Zypta comme vous le souhaitez</p>
       </div>
 
       <ParametresZypta

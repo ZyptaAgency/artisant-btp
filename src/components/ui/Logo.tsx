@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-type LogoVariant = "supernova" | "blanc" | "noir";
+type LogoVariant = "gradient" | "blanc" | "noir";
 
 interface LogoProps {
   src?: string;
@@ -13,40 +13,35 @@ interface LogoProps {
 }
 
 const variantStyles: Record<LogoVariant, React.CSSProperties> = {
-  supernova: { background: "#FFD54F" },
+  gradient: { background: "linear-gradient(135deg, #ff6b35, #c84bff, #00d4ff)" },
   blanc: { background: "#ffffff" },
   noir: { background: "#0a0a0f" },
 };
 
+function resolveVariant(dataTheme: string | null): LogoVariant {
+  if (dataTheme === "blanc") return "noir";
+  if (dataTheme === "noir") return "blanc";
+  return "gradient";
+}
+
 export function Logo({
   src = "/logo.png",
   variant,
-  width = 140,
-  height = 56,
+  width = 160,
+  height = 64,
   className = "",
 }: LogoProps) {
-  const [theme, setTheme] = useState<LogoVariant>("supernova");
+  const [resolved, setResolved] = useState<LogoVariant>(variant ?? "gradient");
 
   useEffect(() => {
-    if (variant) {
-      setTheme(variant);
-      return;
-    }
-    const html = document.documentElement;
-    const dataTheme = html.getAttribute("data-theme");
-    // supernova (default) → or | noir (dark bg) → blanc (white logo) | blanc (light bg) → noir (black logo)
-    if (dataTheme === "blanc") setTheme("noir");
-    else if (dataTheme === "noir") setTheme("blanc");
-    else setTheme("supernova");
+    if (variant) { setResolved(variant); return; }
+    setResolved(resolveVariant(document.documentElement.getAttribute("data-theme")));
   }, [variant]);
 
   useEffect(() => {
     if (variant) return;
     const observer = new MutationObserver(() => {
-      const dataTheme = document.documentElement.getAttribute("data-theme");
-      if (dataTheme === "blanc") setTheme("noir");
-      else if (dataTheme === "noir") setTheme("blanc");
-      else setTheme("supernova");
+      setResolved(resolveVariant(document.documentElement.getAttribute("data-theme")));
     });
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
     return () => observer.disconnect();
@@ -55,7 +50,7 @@ export function Logo({
   const style: React.CSSProperties = {
     width,
     height,
-    ...variantStyles[theme],
+    ...variantStyles[resolved],
     WebkitMaskImage: `url(${src})`,
     maskImage: `url(${src})`,
     WebkitMaskSize: "contain",

@@ -8,8 +8,8 @@ import { Plus, Receipt, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const STATUT_STYLES: Record<string, string> = {
-  BROUILLON: "bg-slate-100 text-slate-600",
-  ENVOYEE: "bg-zypta-blue/15 text-zypta-blue",
+  BROUILLON: "bg-white/5 text-[var(--text-muted)]",
+  ENVOYEE: "bg-nova-mid/15 text-nova-mid",
   PAYEE: "bg-emerald-500/15 text-emerald-600",
   EN_RETARD: "bg-orange-100 text-orange-600",
 };
@@ -44,7 +44,7 @@ function getCountdown(dateEcheance: string | null): { label: string; className: 
   }
   if (diffDays === 0) return { label: "Aujourd'hui", className: "text-orange-600 font-medium" };
   if (diffDays <= 3) return { label: `J-${diffDays}`, className: "text-orange-600 font-medium" };
-  return { label: `J-${diffDays}`, className: "text-slate-600" };
+  return { label: `J-${diffDays}`, className: "text-[var(--text-muted)]" };
 }
 
 export function FacturesZypta() {
@@ -85,8 +85,8 @@ export function FacturesZypta() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Factures</h1>
-          <p className="text-slate-600">Zéro prise de tête, zéro impayé</p>
+          <h1 className="text-2xl font-bold text-[var(--foreground)]">Factures</h1>
+          <p className="text-[var(--text-muted)]">Zéro prise de tête, zéro impayé</p>
         </div>
         <Button asChild>
           <Link href="/factures/nouvelle">
@@ -98,14 +98,14 @@ export function FacturesZypta() {
 
       {/* Bandeau KPIs */}
       <div className="grid gap-4 sm:grid-cols-3">
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-          <p className="text-sm font-medium text-slate-500">À encaisser</p>
-          <p className="mt-1 text-2xl font-bold text-slate-900">
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-4 shadow-sm">
+          <p className="text-sm font-medium text-[var(--text-muted)]">À encaisser</p>
+          <p className="mt-1 text-2xl font-bold text-[var(--foreground)]">
             {formatCurrency(aEncaisser)}
           </p>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-          <p className="text-sm font-medium text-slate-500">Encaissé ce mois</p>
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-4 shadow-sm">
+          <p className="text-sm font-medium text-[var(--text-muted)]">Encaissé ce mois</p>
           <p className="mt-1 text-2xl font-bold text-emerald-600">
             {formatCurrency(encaisseCeMois)}
           </p>
@@ -115,16 +115,16 @@ export function FacturesZypta() {
             "rounded-2xl border p-4 shadow-sm",
             enRetard > 0
               ? "animate-pulse border-orange-200 bg-orange-50"
-              : "border-slate-200 bg-white"
+              : "border-[var(--border)] bg-[var(--bg-card)]"
           )}
         >
-          <p className="text-sm font-medium text-slate-500">
+          <p className="text-sm font-medium text-[var(--text-muted)]">
             En retard {enRetard > 0 && "🔴"}
           </p>
           <p
             className={cn(
               "mt-1 text-2xl font-bold",
-              enRetard > 0 ? "text-orange-600" : "text-slate-900"
+              enRetard > 0 ? "text-orange-600" : "text-[var(--foreground)]"
             )}
           >
             {formatCurrency(enRetard)}
@@ -136,13 +136,13 @@ export function FacturesZypta() {
       {loading ? (
         <div className="space-y-3">
           {[1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="h-24 animate-pulse rounded-2xl bg-slate-100" />
+            <div key={i} className="h-24 animate-pulse rounded-2xl bg-white/5" />
           ))}
         </div>
       ) : factures.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/50 py-16">
-          <Receipt className="h-12 w-12 text-slate-300" />
-          <p className="mt-4 text-slate-500">Aucune facture</p>
+        <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[var(--border)] bg-white/5 py-16">
+          <Receipt className="h-12 w-12 text-[var(--text-white)]" />
+          <p className="mt-4 text-[var(--text-muted)]">Aucune facture</p>
           <Button className="mt-4" asChild>
             <Link href="/factures/nouvelle">
               <Plus className="mr-2 h-4 w-4" />
@@ -158,7 +158,7 @@ export function FacturesZypta() {
               <Link
                 key={f.id}
                 href={`/factures/${f.id}`}
-                className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all duration-300 hover:shadow-md"
+                className="flex items-center justify-between rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-4 shadow-sm transition-all duration-300 hover:shadow-md"
               >
                 <div className="flex items-center gap-4">
                   <div
@@ -166,7 +166,7 @@ export function FacturesZypta() {
                       "flex h-12 w-12 items-center justify-center rounded-xl",
                       f.statut === "PAYEE"
                         ? "bg-emerald-500/15 text-emerald-600"
-                        : "bg-slate-100 text-slate-600"
+                        : "bg-white/5 text-[var(--text-muted)]"
                     )}
                   >
                     {f.statut === "PAYEE" ? (
@@ -176,16 +176,16 @@ export function FacturesZypta() {
                     )}
                   </div>
                   <div>
-                    <p className="font-semibold text-slate-900">{f.numero}</p>
-                    <p className="text-sm text-slate-600">
+                    <p className="font-semibold text-[var(--foreground)]">{f.numero}</p>
+                    <p className="text-sm text-[var(--text-muted)]">
                       {f.client.prenom} {f.client.nom}
                     </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-6">
                   <div className="text-right">
-                    <p className="font-bold text-slate-900">{formatCurrency(f.montantTTC)}</p>
-                    <p className="text-xs text-slate-500">
+                    <p className="font-bold text-[var(--foreground)]">{formatCurrency(f.montantTTC)}</p>
+                    <p className="text-xs text-[var(--text-muted)]">
                       Échéance : {f.dateEcheance ? formatDate(f.dateEcheance) : "—"}
                     </p>
                     {countdown && (
@@ -195,7 +195,7 @@ export function FacturesZypta() {
                   <span
                     className={cn(
                       "rounded-full px-2.5 py-1 text-xs font-medium",
-                      STATUT_STYLES[f.statut] ?? "bg-slate-100 text-slate-600"
+                      STATUT_STYLES[f.statut] ?? "bg-white/5 text-[var(--text-muted)]"
                     )}
                   >
                     {STATUT_LABELS[f.statut] ?? f.statut}

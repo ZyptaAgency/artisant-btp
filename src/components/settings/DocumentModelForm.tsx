@@ -38,8 +38,8 @@ export function DocumentModelForm({ current }: { current: string }) {
 
   return (
     <div className="transition-opacity duration-300">
-      <h2 className="mb-4 text-lg font-semibold text-slate-900">Modèles de documents</h2>
-      <p className="mb-6 text-sm text-slate-600">
+      <h2 className="mb-4 text-lg font-semibold text-[var(--foreground)]">Modèles de documents</h2>
+      <p className="mb-6 text-sm text-[var(--text-muted)]">
         Choisissez le style de vos devis et factures.
       </p>
       <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
@@ -50,12 +50,12 @@ export function DocumentModelForm({ current }: { current: string }) {
             onClick={() => setSelected(s.id)}
             className={`flex flex-col rounded-xl border-2 p-4 text-left transition-all sm:min-w-[140px] ${
               selected === s.id
-                ? "border-zypta-blue bg-zypta-blue/5"
-                : "border-slate-200 hover:border-slate-300"
+                ? "border-nova-mid bg-nova-mid/5"
+                : "border-[var(--border)] hover:border-[var(--border)]"
             }`}
           >
-            <span className="font-medium text-slate-900">{s.label}</span>
-            <span className="mt-1 text-xs text-slate-500">{s.desc}</span>
+            <span className="font-medium text-[var(--foreground)]">{s.label}</span>
+            <span className="mt-1 text-xs text-[var(--text-muted)]">{s.desc}</span>
           </button>
         ))}
       </div>

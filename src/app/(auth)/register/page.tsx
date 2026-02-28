@@ -59,7 +59,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4">
+    <div className="flex min-h-screen items-center justify-center bg-[var(--bg-card)] p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Inscription</CardTitle>
@@ -114,9 +114,9 @@ export default function RegisterPage() {
               {loading ? "Inscription..." : "S'inscrire"}
             </Button>
           </form>
-          <p className="mt-4 text-center text-sm text-slate-600">
+          <p className="mt-4 text-center text-sm text-[var(--text-muted)]">
             Déjà un compte ?{" "}
-            <Link href="/login" className="font-medium text-[#2563EB] hover:underline">
+            <Link href="/login" className="font-medium text-nova-mid hover:underline">
               Se connecter
             </Link>
           </p>

@@ -56,8 +56,8 @@ export default async function DevisDetailPage({
             </Link>
           </Button>
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">{devis.numero}</h1>
-            <p className="text-slate-600">
+            <h1 className="text-2xl font-bold text-[var(--foreground)]">{devis.numero}</h1>
+            <p className="text-[var(--text-muted)]">
               {devis.client.prenom} {devis.client.nom} - {STATUT_LABELS[devis.statut] ?? devis.statut}
             </p>
           </div>
@@ -77,10 +77,10 @@ export default async function DevisDetailPage({
           <CardContent>
             <div className="space-y-4">
               {devis.lignes.map((l) => (
-                <div key={l.id} className="flex justify-between border-b border-slate-100 pb-2">
+                <div key={l.id} className="flex justify-between border-b border-[var(--border)] pb-2">
                   <div>
                     <p className="font-medium">{l.description}</p>
-                    <p className="text-sm text-slate-500">
+                    <p className="text-sm text-[var(--text-muted)]">
                       {l.quantite} {UNITE_LABELS[l.unite] ?? l.unite} × {formatCurrency(l.prixUnitaire)}
                     </p>
                   </div>
@@ -108,13 +108,13 @@ export default async function DevisDetailPage({
             <CardTitle>Informations</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            <p><span className="text-slate-500">Client :</span> {devis.client.prenom} {devis.client.nom}</p>
-            <p><span className="text-slate-500">Email :</span> {devis.client.email}</p>
+            <p><span className="text-[var(--text-muted)]">Client :</span> {devis.client.prenom} {devis.client.nom}</p>
+            <p><span className="text-[var(--text-muted)]">Email :</span> {devis.client.email}</p>
             {devis.dateValidite && (
-              <p><span className="text-slate-500">Valide jusqu&apos;au :</span> {formatDate(devis.dateValidite)}</p>
+              <p><span className="text-[var(--text-muted)]">Valide jusqu&apos;au :</span> {formatDate(devis.dateValidite)}</p>
             )}
             {devis.notes && (
-              <p><span className="text-slate-500">Notes :</span> {devis.notes}</p>
+              <p><span className="text-[var(--text-muted)]">Notes :</span> {devis.notes}</p>
             )}
           </CardContent>
         </Card>

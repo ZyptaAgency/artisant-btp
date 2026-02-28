@@ -58,7 +58,7 @@ function DialogContent({
       />
       <div
         className={cn(
-          "relative z-50 w-full max-w-lg rounded-lg bg-white p-6 shadow-lg",
+          "relative z-50 w-full max-w-lg rounded-lg bg-[var(--bg-card)] p-6 shadow-lg",
           className
         )}
         onClick={(e) => e.stopPropagation()}

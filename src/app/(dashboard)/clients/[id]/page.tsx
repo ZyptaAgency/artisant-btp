@@ -48,10 +48,10 @@ export default async function ClientDetailPage({
           </Link>
         </Button>
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">
+          <h1 className="text-2xl font-bold text-[var(--foreground)]">
             {client.prenom} {client.nom}
           </h1>
-          <p className="text-slate-600">
+          <p className="text-[var(--text-muted)]">
             {STATUT_LABELS[client.statutPipeline] ?? client.statutPipeline}
           </p>
         </div>
@@ -64,28 +64,28 @@ export default async function ClientDetailPage({
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="flex items-center gap-2">
-              <Mail className="h-4 w-4 text-slate-400" />
-              <a href={`mailto:${client.email}`} className="text-[#2563EB] hover:underline">
+              <Mail className="h-4 w-4 text-[var(--text-muted)]" />
+              <a href={`mailto:${client.email}`} className="text-nova-mid hover:underline">
                 {client.email}
               </a>
             </div>
             {client.telephone && (
               <div className="flex items-center gap-2">
-                <Phone className="h-4 w-4 text-slate-400" />
-                <a href={`tel:${client.telephone}`} className="text-slate-700">
+                <Phone className="h-4 w-4 text-[var(--text-muted)]" />
+                <a href={`tel:${client.telephone}`} className="text-[var(--text-muted)]">
                   {client.telephone}
                 </a>
               </div>
             )}
             {client.adresseChantier && (
               <div className="flex items-start gap-2">
-                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" />
-                <span className="text-slate-700">{client.adresseChantier}</span>
+                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[var(--text-muted)]" />
+                <span className="text-[var(--text-muted)]">{client.adresseChantier}</span>
               </div>
             )}
             {client.notes && (
-              <div className="pt-2 border-t border-slate-100">
-                <p className="text-sm text-slate-600">{client.notes}</p>
+              <div className="pt-2 border-t border-[var(--border)]">
+                <p className="text-sm text-[var(--text-muted)]">{client.notes}</p>
               </div>
             )}
           </CardContent>
@@ -104,14 +104,14 @@ export default async function ClientDetailPage({
             </CardHeader>
             <CardContent>
               {client.devis.length === 0 ? (
-                <p className="text-sm text-slate-500">Aucun devis</p>
+                <p className="text-sm text-[var(--text-muted)]">Aucun devis</p>
               ) : (
                 <ul className="space-y-2">
                   {client.devis.slice(0, 5).map((d) => (
                     <li key={d.id}>
                       <Link
                         href={`/devis/${d.id}`}
-                        className="flex justify-between text-sm hover:text-[#2563EB]"
+                        className="flex justify-between text-sm hover:text-nova-mid"
                       >
                         <span>{d.numero}</span>
                         <span>{formatCurrency(d.montantTTC)} - {d.statut}</span>
@@ -135,14 +135,14 @@ export default async function ClientDetailPage({
             </CardHeader>
             <CardContent>
               {client.factures.length === 0 ? (
-                <p className="text-sm text-slate-500">Aucune facture</p>
+                <p className="text-sm text-[var(--text-muted)]">Aucune facture</p>
               ) : (
                 <ul className="space-y-2">
                   {client.factures.slice(0, 5).map((f) => (
                     <li key={f.id}>
                       <Link
                         href={`/factures/${f.id}`}
-                        className="flex justify-between text-sm hover:text-[#2563EB]"
+                        className="flex justify-between text-sm hover:text-nova-mid"
                       >
                         <span>{f.numero}</span>
                         <span>{formatCurrency(f.montantTTC)} - {f.statut}</span>

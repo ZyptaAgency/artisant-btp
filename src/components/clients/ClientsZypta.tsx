@@ -20,7 +20,7 @@ import { ClientFormQuickAdd } from "./ClientFormQuickAdd";
 import { cn } from "@/lib/utils";
 
 const AVATAR_COLORS = [
-  "bg-zypta-blue/20 text-zypta-blue",
+  "bg-nova-mid/20 text-nova-mid",
   "bg-zypta-orange/20 text-zypta-orange",
   "bg-emerald-500/20 text-emerald-600",
   "bg-violet-500/20 text-violet-600",
@@ -150,18 +150,18 @@ export function ClientsZypta() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">Clients</h1>
-        <p className="text-slate-600">Votre portefeuille clients en un coup d&apos;œil</p>
+        <h1 className="text-2xl font-bold text-[var(--foreground)]">Clients</h1>
+        <p className="text-[var(--text-muted)]">Votre portefeuille clients en un coup d&apos;œil</p>
       </div>
 
       {/* Barre de recherche XL */}
       <div className="relative">
-        <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
+        <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[var(--text-muted)]" />
         <Input
           placeholder="Rechercher par nom, adresse, téléphone, tag..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="h-12 rounded-2xl border-slate-200 pl-12 text-base shadow-sm transition-all duration-300 focus:border-zypta-blue focus:ring-2 focus:ring-zypta-blue/20"
+          className="h-12 rounded-2xl border-[var(--border)] pl-12 text-base shadow-sm transition-all duration-300 focus:border-nova-mid focus:ring-2 focus:ring-nova-mid/20"
         />
       </div>
 
@@ -174,8 +174,8 @@ export function ClientsZypta() {
             className={cn(
               "rounded-full px-4 py-2 text-sm font-medium transition-all duration-300",
               filter === chip.id
-                ? "bg-zypta-blue text-white shadow-md"
-                : "bg-white text-slate-600 shadow-sm ring-1 ring-slate-200 hover:ring-zypta-blue/50"
+                ? "bg-nova-mid text-white shadow-md"
+                : "bg-[var(--bg-card)] text-[var(--text-muted)] shadow-sm ring-1 ring-[var(--border)] hover:ring-nova-mid/50"
             )}
           >
             {chip.label}
@@ -187,12 +187,12 @@ export function ClientsZypta() {
       {loading ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="h-48 animate-pulse rounded-2xl bg-slate-100" />
+            <div key={i} className="h-48 animate-pulse rounded-2xl bg-white/5" />
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/50 py-16">
-          <p className="text-slate-500">Aucun client trouvé</p>
+        <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[var(--border)] bg-white/5 py-16">
+          <p className="text-[var(--text-muted)]">Aucun client trouvé</p>
           <Button className="mt-4" onClick={() => setAddModalOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />
             Ajouter un client
@@ -207,7 +207,7 @@ export function ClientsZypta() {
             return (
               <div
                 key={client.id}
-                className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white/80 p-4 shadow-sm backdrop-blur-sm transition-all duration-300 hover:shadow-lg hover:shadow-zypta-blue/5"
+                className="group relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-4 shadow-sm backdrop-blur-sm transition-all duration-300 hover:shadow-lg hover:shadow-nova-mid/5"
                 onClick={() => setPanelClient(client)}
               >
                 <div className="flex items-start justify-between">
@@ -221,10 +221,10 @@ export function ClientsZypta() {
                       {getInitials(client.prenom, client.nom)}
                     </div>
                     <div>
-                      <p className="font-semibold text-slate-900">
+                      <p className="font-semibold text-[var(--foreground)]">
                         {client.prenom} {client.nom}
                       </p>
-                      <p className="text-xs text-slate-500">
+                      <p className="text-xs text-[var(--text-muted)]">
                         {dernier ?? "Jamais contacté"} • {STATUT_LABELS[client.statutPipeline] ?? client.statutPipeline}
                       </p>
                     </div>
@@ -236,7 +236,7 @@ export function ClientsZypta() {
                   </div>
                 </div>
 
-                <p className="mt-3 text-sm font-medium text-slate-700">
+                <p className="mt-3 text-sm font-medium text-[var(--text-muted)]">
                   Total facturé : {formatCurrency(montant)}
                 </p>
 
@@ -246,7 +246,7 @@ export function ClientsZypta() {
                     <a
                       href={`tel:${client.telephone}`}
                       onClick={(e) => e.stopPropagation()}
-                      className="flex h-9 w-9 items-center justify-center rounded-lg bg-zypta-blue/10 text-zypta-blue transition-colors hover:bg-zypta-blue/20"
+                      className="flex h-9 w-9 items-center justify-center rounded-lg bg-nova-mid/10 text-nova-mid transition-colors hover:bg-nova-mid/20"
                       title="Appeler"
                     >
                       <Phone className="h-4 w-4" />
@@ -257,7 +257,7 @@ export function ClientsZypta() {
                       e.stopPropagation();
                       router.push(`/devis/nouveau?clientId=${client.id}`);
                     }}
-                    className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 text-slate-600 transition-colors hover:bg-zypta-blue/10 hover:text-zypta-blue"
+                    className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 text-[var(--text-muted)] transition-colors hover:bg-nova-mid/10 hover:text-nova-mid"
                     title="Envoyer un devis"
                   >
                     <FileText className="h-4 w-4" />
@@ -267,7 +267,7 @@ export function ClientsZypta() {
                       e.stopPropagation();
                       router.push(`/factures/nouvelle?clientId=${client.id}`);
                     }}
-                    className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 text-slate-600 transition-colors hover:bg-zypta-blue/10 hover:text-zypta-blue"
+                    className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 text-[var(--text-muted)] transition-colors hover:bg-nova-mid/10 hover:text-nova-mid"
                     title="Créer une facture"
                   >
                     <Receipt className="h-4 w-4" />
@@ -277,14 +277,14 @@ export function ClientsZypta() {
                       e.stopPropagation();
                       router.push(`/clients/${client.id}`);
                     }}
-                    className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 text-slate-600 transition-colors hover:bg-zypta-blue/10 hover:text-zypta-blue"
+                    className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 text-[var(--text-muted)] transition-colors hover:bg-nova-mid/10 hover:text-nova-mid"
                     title="Voir fiche"
                   >
                     <Calendar className="h-4 w-4" />
                   </button>
                 </div>
 
-                <ChevronRight className="absolute right-3 top-4 h-5 w-5 text-slate-300 group-hover:text-zypta-blue" />
+                <ChevronRight className="absolute right-3 top-4 h-5 w-5 text-[var(--text-white)] group-hover:text-nova-mid" />
               </div>
             );
           })}
@@ -294,7 +294,7 @@ export function ClientsZypta() {
       {/* Bouton flottant */}
       <button
         onClick={() => setAddModalOpen(true)}
-        className="fixed bottom-8 right-8 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-zypta-blue to-zypta-blue/90 text-white shadow-lg shadow-zypta-blue/30 transition-all duration-300 hover:scale-105 hover:shadow-xl"
+        className="fixed bottom-8 right-8 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-nova-mid to-nova-mid/90 text-white shadow-lg shadow-nova-mid/30 transition-all duration-300 hover:scale-105 hover:shadow-xl"
       >
         <Plus className="h-6 w-6" />
       </button>
@@ -345,12 +345,12 @@ function ClientSlidePanel({
   return (
     <>
       <div className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm" onClick={onClose} aria-hidden="true" />
-      <div className="fixed right-0 top-0 z-50 flex h-full w-full max-w-lg flex-col overflow-hidden bg-white shadow-2xl">
-        <div className="flex items-center justify-between border-b border-slate-100 p-4">
-          <h2 className="text-lg font-bold text-slate-900">Fiche client</h2>
+      <div className="fixed right-0 top-0 z-50 flex h-full w-full max-w-lg flex-col overflow-hidden bg-[var(--bg-card)] shadow-2xl">
+        <div className="flex items-center justify-between border-b border-[var(--border)] p-4">
+          <h2 className="text-lg font-bold text-[var(--foreground)]">Fiche client</h2>
           <button
             onClick={onClose}
-            className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
+            className="rounded-lg p-2 text-[var(--text-muted)] transition-colors hover:bg-white/5 hover:text-[var(--text-muted)]"
           >
             <X className="h-5 w-5" />
           </button>
@@ -366,11 +366,11 @@ function ClientSlidePanel({
               {getInitials(client.prenom, client.nom)}
             </div>
             <div>
-              <h3 className="text-xl font-bold text-slate-900">
+              <h3 className="text-xl font-bold text-[var(--foreground)]">
                 {client.prenom} {client.nom}
               </h3>
-              <p className="text-slate-600">{client.email}</p>
-              <p className="text-sm text-slate-500">
+              <p className="text-[var(--text-muted)]">{client.email}</p>
+              <p className="text-sm text-[var(--text-muted)]">
                 {dernier ?? "Jamais contacté"} • {formatCurrency(montant)} facturé
               </p>
               <div className="mt-1">
@@ -385,7 +385,7 @@ function ClientSlidePanel({
             {client.telephone && (
               <a
                 href={`tel:${client.telephone}`}
-                className="inline-flex items-center gap-2 rounded-xl bg-zypta-blue/10 px-4 py-2 text-zypta-blue transition-colors hover:bg-zypta-blue/20"
+                className="inline-flex items-center gap-2 rounded-xl bg-nova-mid/10 px-4 py-2 text-nova-mid transition-colors hover:bg-nova-mid/20"
               >
                 <Phone className="h-4 w-4" />
                 Appeler
@@ -415,18 +415,18 @@ function ClientSlidePanel({
 
           {client.adresseChantier && (
             <div className="mt-6">
-              <h4 className="text-sm font-semibold text-slate-700">Adresse chantier</h4>
-              <p className="text-slate-600">{client.adresseChantier}</p>
+              <h4 className="text-sm font-semibold text-[var(--text-muted)]">Adresse chantier</h4>
+              <p className="text-[var(--text-muted)]">{client.adresseChantier}</p>
             </div>
           )}
 
           {suggestion && (
-            <div className="mt-6 rounded-2xl border border-zypta-blue/20 bg-zypta-blue/5 p-4">
-              <div className="flex items-center gap-2 text-zypta-blue">
+            <div className="mt-6 rounded-2xl border border-nova-mid/20 bg-nova-mid/5 p-4">
+              <div className="flex items-center gap-2 text-nova-mid">
                 <Sparkles className="h-5 w-5" />
                 <span className="font-semibold">Suggestion Zypta</span>
               </div>
-              <p className="mt-2 text-sm text-slate-700">{suggestion}</p>
+              <p className="mt-2 text-sm text-[var(--text-muted)]">{suggestion}</p>
             </div>
           )}
         </div>

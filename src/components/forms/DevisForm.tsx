@@ -204,7 +204,7 @@ export function DevisForm({
         </div>
       </div>
 
-      <div className="rounded-lg bg-slate-50 p-4">
+      <div className="rounded-lg bg-white/5 p-4">
         <div className="flex justify-between text-sm">
           <span>Total HT</span>
           <span>{formatCurrency(totalHT)}</span>

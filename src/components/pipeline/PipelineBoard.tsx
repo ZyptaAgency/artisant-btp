@@ -96,7 +96,7 @@ export function PipelineBoard() {
                   <CardHeader className="py-3">
                     <h3 className="font-semibold">
                       {col.title}{" "}
-                      <span className="text-slate-500">
+                      <span className="text-[var(--text-muted)]">
                         ({clientsByColumn[col.id]?.length ?? 0})
                       </span>
                     </h3>
@@ -114,12 +114,12 @@ export function PipelineBoard() {
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
                             onClick={() => router.push(`/clients/${client.id}`)}
-                            className="cursor-pointer rounded-lg border border-slate-200 bg-white p-3 shadow-sm transition-shadow hover:shadow-md"
+                            className="cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--bg-card)] p-3 shadow-sm transition-shadow hover:shadow-md"
                           >
                             <p className="font-medium">
                               {client.prenom} {client.nom}
                             </p>
-                            <p className="text-xs text-slate-500">{client.email}</p>
+                            <p className="text-xs text-[var(--text-muted)]">{client.email}</p>
                           </div>
                         )}
                       </Draggable>

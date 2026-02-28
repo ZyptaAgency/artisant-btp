@@ -55,8 +55,8 @@ export default async function FactureDetailPage({
             </Link>
           </Button>
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">{facture.numero}</h1>
-            <p className="text-slate-600">
+            <h1 className="text-2xl font-bold text-[var(--foreground)]">{facture.numero}</h1>
+            <p className="text-[var(--text-muted)]">
               {facture.client.prenom} {facture.client.nom} - {STATUT_LABELS[facture.statut] ?? facture.statut}
             </p>
           </div>
@@ -76,10 +76,10 @@ export default async function FactureDetailPage({
           <CardContent>
             <div className="space-y-4">
               {facture.lignes.map((l) => (
-                <div key={l.id} className="flex justify-between border-b border-slate-100 pb-2">
+                <div key={l.id} className="flex justify-between border-b border-[var(--border)] pb-2">
                   <div>
                     <p className="font-medium">{l.description}</p>
-                    <p className="text-sm text-slate-500">
+                    <p className="text-sm text-[var(--text-muted)]">
                       {l.quantite} {UNITE_LABELS[l.unite] ?? l.unite} × {formatCurrency(l.prixUnitaire)}
                     </p>
                   </div>
@@ -87,7 +87,7 @@ export default async function FactureDetailPage({
                 </div>
               ))}
               {facture.acompte > 0 && (
-                <div className="flex justify-between text-sm text-slate-600">
+                <div className="flex justify-between text-sm text-[var(--text-muted)]">
                   <span>Acompte</span>
                   <span>{formatCurrency(facture.acompte)}</span>
                 </div>
@@ -113,15 +113,15 @@ export default async function FactureDetailPage({
             <CardTitle>Informations</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            <p><span className="text-slate-500">Client :</span> {facture.client.prenom} {facture.client.nom}</p>
-            <p><span className="text-slate-500">Email :</span> {facture.client.email}</p>
+            <p><span className="text-[var(--text-muted)]">Client :</span> {facture.client.prenom} {facture.client.nom}</p>
+            <p><span className="text-[var(--text-muted)]">Email :</span> {facture.client.email}</p>
             {facture.dateEcheance && (
-              <p><span className="text-slate-500">Échéance :</span> {formatDate(facture.dateEcheance)}</p>
+              <p><span className="text-[var(--text-muted)]">Échéance :</span> {formatDate(facture.dateEcheance)}</p>
             )}
             {facture.devis && (
               <p>
-                <span className="text-slate-500">Devis :</span>{" "}
-                <Link href={`/devis/${facture.devis.id}`} className="text-[#2563EB] hover:underline">
+                <span className="text-[var(--text-muted)]">Devis :</span>{" "}
+                <Link href={`/devis/${facture.devis.id}`} className="text-nova-mid hover:underline">
                   {facture.devis.numero}
                 </Link>
               </p>

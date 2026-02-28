@@ -2,74 +2,87 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Design System Zypta.be - dark theme, violet/bleu, supernova */
+/* Design System — identique à zypta.be */
 :root,
 [data-theme="supernova"] {
+  --bg: #03010a;
+  --bg-elevated: #0d0521;
+  --bg-card: rgba(255, 255, 255, 0.04);
+  --background: #03010a;
+  --foreground: #f0eeff;
+  --text-white: #f0eeff;
+  --text-muted: rgba(240, 238, 255, 0.55);
+  --surface: #0d0521;
+  --border: rgba(255, 255, 255, 0.1);
+  --accent: #c84bff;
+  --accent-secondary: #ff6b35;
+  --accent-rose: #ff2d8f;
+  --accent-glow: #7b2fff;
+  --accent-ice: #00d4ff;
+  --accent-foreground: #ffffff;
+  --ring: rgba(200, 75, 255, 0.4);
+}
+
+[data-theme="noir"] {
   --bg: #0a0a0f;
   --bg-elevated: #12121a;
   --bg-card: #1a1a24;
   --background: #0a0a0f;
   --foreground: #f8fafc;
+  --text-white: #f8fafc;
   --text-muted: #94a3b8;
   --surface: #12121a;
   --border: #2a2a3a;
-  --zypta-blue: #6366F1;
-  --zypta-orange: #F97316;
-  --zypta-violet: #8B5CF6;
-  --supernova: #FFD54F;
-  --supernova-light: #FFF8E1;
-  --supernova-dark: #FFC107;
-  --supernova-glow: rgba(255, 213, 79, 0.25);
-  --violet-glow: rgba(139, 92, 246, 0.25);
-  --blue-glow: rgba(99, 102, 241, 0.25);
   --accent: #FFD54F;
+  --accent-secondary: #FFC107;
+  --accent-rose: #FFD54F;
+  --accent-glow: rgba(255, 213, 79, 0.25);
+  --accent-ice: #FFF8E1;
   --accent-foreground: #0a0a0f;
-}
-
-[data-theme="noir"] {
-  --background: #0f172a;
-  --foreground: #f8fafc;
-  --surface: #1e293b;
+  --ring: rgba(255, 213, 79, 0.4);
 }
 
 [data-theme="blanc"] {
+  --bg: #f8fafc;
+  --bg-elevated: #ffffff;
+  --bg-card: #ffffff;
   --background: #f8fafc;
   --foreground: #0f172a;
+  --text-white: #0f172a;
+  --text-muted: #64748b;
   --surface: #ffffff;
+  --border: #e2e8f0;
+  --accent: #c84bff;
+  --accent-secondary: #ff6b35;
+  --accent-rose: #ff2d8f;
+  --accent-glow: rgba(200, 75, 255, 0.15);
+  --accent-ice: #00d4ff;
+  --accent-foreground: #ffffff;
+  --ring: rgba(200, 75, 255, 0.3);
 }
 
-[data-theme="blanc"] .header-user {
-  color: #475569;
+* {
+  box-sizing: border-box;
 }
 
-[data-theme="blanc"] .dashboard-card {
-  background-color: #ffffff !important;
-  border-color: #e2e8f0 !important;
+::selection {
+  background: var(--ring);
+  color: #fff;
 }
 
-[data-theme="blanc"] .sidebar-theme {
-  background-color: #ffffff !important;
-  border-color: #e2e8f0 !important;
+::-webkit-scrollbar {
+  width: 6px;
 }
-
-[data-theme="blanc"] .sidebar-theme .text-slate-400 {
-  color: #64748b !important;
+::-webkit-scrollbar-track {
+  background: var(--bg);
 }
-
-[data-theme="blanc"] .sidebar-theme nav a:hover:not([class*="bg-supernova"]) {
-  background-color: #f1f5f9 !important;
-  color: #0f172a !important;
+::-webkit-scrollbar-thumb {
+  background: rgba(200, 75, 255, 0.3);
+  border-radius: 3px;
 }
-
-[data-theme="blanc"] .sidebar-theme .border-slate-700 {
-  border-color: #e2e8f0 !important;
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(200, 75, 255, 0.5);
 }
-
-[data-theme="blanc"] .sidebar-theme .bg-slate-800 {
-  background-color: #f1f5f9 !important;
-}
-
-/* Logo Zypta : variants supernova / blanc / noir gérés par @/components/ui/Logo */
 
 body {
   color: var(--foreground);
@@ -82,34 +95,46 @@ body {
   .text-balance {
     text-wrap: balance;
   }
-  .zypta-shadow {
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.08);
-  }
-  .zypta-shadow-lg {
-    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.08);
-  }
-  .glow-supernova {
-    box-shadow: 0 0 30px var(--supernova-glow), 0 0 60px var(--supernova-glow);
-  }
-  .glow-violet {
-    box-shadow: 0 0 30px var(--violet-glow), 0 0 60px var(--violet-glow);
-  }
-  .glow-blue {
-    box-shadow: 0 0 30px var(--blue-glow), 0 0 60px var(--blue-glow);
-  }
   .glass {
-    background: rgba(26, 26, 36, 0.6);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
   }
-  .glass-light {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+  .glass-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 20px;
+    transition: all 0.3s ease;
+  }
+  .glass-card:hover {
+    border-color: rgba(200, 75, 255, 0.3);
+    box-shadow: 0 0 40px rgba(200, 75, 255, 0.15);
+  }
+  .gradient-text {
+    background: linear-gradient(135deg, #ff6b35, #c84bff, #00d4ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 }
 
-/* Micro-animations */
+[data-theme="blanc"] .glass {
+  background: rgba(255, 255, 255, 0.8);
+  border-color: var(--border);
+}
+[data-theme="blanc"] .glass-card {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: var(--border);
+}
+
+[data-theme="noir"] .glass {
+  background: rgba(26, 26, 36, 0.6);
+  border-color: var(--border);
+}
+
 @keyframes pulse-soft {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.85; }

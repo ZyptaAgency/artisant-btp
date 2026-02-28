@@ -155,10 +155,10 @@ export function EstimateurZypta() {
 
   return (
     <div className="flex h-[calc(100vh-8rem)] flex-col gap-6 lg:flex-row">
-      <div className="flex flex-1 flex-col rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <div className="border-b border-slate-100 p-4">
-          <h1 className="text-xl font-bold text-slate-900">Estimateur IA</h1>
-          <p className="text-sm text-slate-600">
+      <div className="glass-card flex flex-1 flex-col !rounded-2xl overflow-hidden">
+        <div className="border-b border-[var(--border)] p-4">
+          <h1 className="text-xl font-bold gradient-text">Estimateur IA</h1>
+          <p className="text-sm text-[var(--text-muted)]">
             Décrivez votre projet, Zypta vous donne une estimation en 30 secondes
           </p>
         </div>
@@ -174,16 +174,16 @@ export function EstimateurZypta() {
                 )}
               >
                 {msg.role === "zypta" && (
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-zypta-blue/10 p-1.5">
-                    <Logo src="/icon.png" variant="supernova" width={40} height={40} />
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-nova-mid/10 p-1.5">
+                    <Logo src="/icon.png" variant="gradient" width={32} height={32} />
                   </div>
                 )}
                 <div
                   className={cn(
                     "max-w-[85%] rounded-2xl px-4 py-3",
                     msg.role === "user"
-                      ? "bg-zypta-blue text-white"
-                      : "bg-slate-100 text-slate-800"
+                      ? "bg-gradient-to-r from-nova-mid to-nova-outer text-white"
+                      : "bg-white/5 border border-[var(--border)] text-[var(--text-white)]"
                   )}
                 >
                   <p className="whitespace-pre-wrap">{msg.content}</p>
@@ -193,7 +193,7 @@ export function EstimateurZypta() {
                         <button
                           key={g.id}
                           onClick={() => handleGammeSelect(g.id)}
-                          className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium transition-all hover:border-zypta-blue/50 hover:bg-zypta-blue/5"
+                          className="rounded-xl border border-[var(--border)] bg-white/5 px-4 py-2 text-sm font-medium transition-all hover:border-nova-mid/50 hover:bg-nova-mid/10"
                         >
                           {g.emoji} {g.label}
                         </button>
@@ -202,58 +202,55 @@ export function EstimateurZypta() {
                   )}
                 </div>
                 {msg.role === "user" && (
-                  <div className="h-10 w-10 shrink-0 rounded-xl bg-slate-200" />
+                  <div className="h-10 w-10 shrink-0 rounded-xl bg-white/10" />
                 )}
               </div>
             ))}
 
             {loading && (
               <div className="flex gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-zypta-blue/10 p-1.5">
-                  <Logo src="/icon.png" variant="supernova" width={40} height={40} />
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-nova-mid/10 p-1.5">
+                  <Logo src="/icon.png" variant="gradient" width={32} height={32} />
                 </div>
-                <div className="flex items-center gap-2 rounded-2xl bg-slate-100 px-4 py-3">
-                  <div className="h-2 w-2 animate-bounce rounded-full bg-slate-400" style={{ animationDelay: "0ms" }} />
-                  <div className="h-2 w-2 animate-bounce rounded-full bg-slate-400" style={{ animationDelay: "150ms" }} />
-                  <div className="h-2 w-2 animate-bounce rounded-full bg-slate-400" style={{ animationDelay: "300ms" }} />
+                <div className="flex items-center gap-2 rounded-2xl bg-white/5 border border-[var(--border)] px-4 py-3">
+                  <div className="h-2 w-2 animate-bounce rounded-full bg-nova-mid" style={{ animationDelay: "0ms" }} />
+                  <div className="h-2 w-2 animate-bounce rounded-full bg-nova-outer" style={{ animationDelay: "150ms" }} />
+                  <div className="h-2 w-2 animate-bounce rounded-full bg-nova-ice" style={{ animationDelay: "300ms" }} />
                 </div>
               </div>
             )}
 
             {estimation && (
-              <div className="rounded-2xl border-2 border-zypta-ia/20 bg-gradient-to-br from-zypta-ia/5 to-transparent p-6">
-                <div className="mb-4 flex items-center gap-2 text-zypta-ia">
+              <div className="rounded-2xl border-2 border-nova-mid/20 bg-gradient-to-br from-nova-mid/5 to-transparent p-6">
+                <div className="mb-4 flex items-center gap-2 text-nova-mid">
                   <Sparkles className="h-5 w-5" />
                   <span className="font-semibold">Résultat</span>
                 </div>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-bold text-slate-900">
+                  <span className="text-3xl font-bold gradient-text">
                     {formatCurrency(estimation.total)}
                   </span>
-                  <span className="text-slate-500">(fourchette estimée)</span>
+                  <span className="text-[var(--text-muted)]">(fourchette estimée)</span>
                 </div>
                 <div className="mt-4 grid gap-2 gap-x-4 sm:grid-cols-3">
-                  <div className="rounded-xl bg-white/80 p-3">
-                    <p className="text-xs text-slate-500">Main d&apos;œuvre</p>
-                    <p className="font-semibold">{formatCurrency(estimation.mainOeuvre)}</p>
+                  <div className="rounded-xl bg-white/5 border border-[var(--border)] p-3">
+                    <p className="text-xs text-[var(--text-muted)]">Main d&apos;œuvre</p>
+                    <p className="font-semibold text-[var(--text-white)]">{formatCurrency(estimation.mainOeuvre)}</p>
                   </div>
-                  <div className="rounded-xl bg-white/80 p-3">
-                    <p className="text-xs text-slate-500">Matériaux</p>
-                    <p className="font-semibold">{formatCurrency(estimation.fournitures)}</p>
+                  <div className="rounded-xl bg-white/5 border border-[var(--border)] p-3">
+                    <p className="text-xs text-[var(--text-muted)]">Matériaux</p>
+                    <p className="font-semibold text-[var(--text-white)]">{formatCurrency(estimation.fournitures)}</p>
                   </div>
-                  <div className="rounded-xl bg-white/80 p-3">
-                    <p className="text-xs text-slate-500">Marge</p>
-                    <p className="font-semibold">{formatCurrency(estimation.marge)}</p>
+                  <div className="rounded-xl bg-white/5 border border-[var(--border)] p-3">
+                    <p className="text-xs text-[var(--text-muted)]">Marge</p>
+                    <p className="font-semibold text-[var(--text-white)]">{formatCurrency(estimation.marge)}</p>
                   </div>
                 </div>
                 {estimation.details && (
-                  <p className="mt-4 text-sm text-slate-600">{estimation.details}</p>
+                  <p className="mt-4 text-sm text-[var(--text-muted)]">{estimation.details}</p>
                 )}
                 <div className="mt-4 flex flex-wrap gap-2">
-                  <Button
-                    onClick={() => router.push("/devis/nouveau")}
-                    className="bg-zypta-blue"
-                  >
+                  <Button onClick={() => router.push("/devis/nouveau")}>
                     <FileText className="mr-2 h-4 w-4" />
                     Transformer en devis
                   </Button>
@@ -273,8 +270,8 @@ export function EstimateurZypta() {
           </div>
         </div>
 
-        <div className="border-t border-slate-100 p-4">
-          <h2 className="mb-2 text-xs font-medium text-slate-500">Prix actualisés</h2>
+        <div className="border-t border-[var(--border)] p-4">
+          <h2 className="mb-2 text-xs font-medium text-[var(--text-muted)]">Prix actualisés</h2>
           <div className="flex gap-2">
             <Input
               placeholder={
@@ -292,12 +289,11 @@ export function EstimateurZypta() {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSend()}
               disabled={step === "gamme" || loading}
-              className="flex-1 rounded-xl border-slate-200"
+              className="flex-1"
             />
             <Button
               onClick={handleSend}
               disabled={loading || step === "gamme" || ((step === "projet" || step === "surface") && !input.trim())}
-              className="rounded-xl"
             >
               <Send className="h-4 w-4" />
             </Button>
@@ -307,4 +303,3 @@ export function EstimateurZypta() {
     </div>
   );
 }
-

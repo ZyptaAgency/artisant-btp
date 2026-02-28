@@ -54,8 +54,8 @@ export function ParametresZypta({ user }: { user: UserData }) {
                 className={cn(
                   "flex items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-medium transition-all duration-300",
                   active === s.id
-                    ? "bg-zypta-blue/10 text-zypta-blue dark:bg-zypta-blue/20"
-                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100"
+                    ? "bg-[var(--accent)]/15 text-[var(--accent)] shadow-[0_0_20px_var(--ring)]"
+                    : "text-[var(--text-muted)] hover:text-[var(--text-white)] hover:bg-white/5"
                 )}
               >
                 <Icon className="h-5 w-5 shrink-0" />
@@ -67,11 +67,11 @@ export function ParametresZypta({ user }: { user: UserData }) {
       </nav>
 
       <div className="min-w-0 flex-1">
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+        <div className="glass-card p-6">
           {active === "entreprise" && (
             <div className="transition-opacity duration-300">
-              <h2 className="mb-4 text-lg font-semibold text-slate-900">Mon entreprise</h2>
-              <p className="mb-6 text-sm text-slate-600">
+              <h2 className="mb-4 text-lg font-semibold text-[var(--text-white)]">Mon entreprise</h2>
+              <p className="mb-6 text-sm text-[var(--text-muted)]">
                 Informations affichées sur les devis et factures
               </p>
               <ProfileForm
@@ -91,8 +91,8 @@ export function ParametresZypta({ user }: { user: UserData }) {
 
           {active === "profil" && (
             <div className="transition-opacity duration-300">
-              <h2 className="mb-4 text-lg font-semibold text-slate-900">Mon profil</h2>
-              <p className="text-sm text-slate-600">
+              <h2 className="mb-4 text-lg font-semibold text-[var(--text-white)]">Mon profil</h2>
+              <p className="text-sm text-[var(--text-muted)]">
                 Gestion du compte et des préférences personnelles.
               </p>
             </div>
@@ -100,8 +100,8 @@ export function ParametresZypta({ user }: { user: UserData }) {
 
           {active === "mentions" && (
             <div className="transition-opacity duration-300">
-              <h2 className="mb-4 text-lg font-semibold text-slate-900">Mentions légales</h2>
-              <p className="text-sm text-slate-600">
+              <h2 className="mb-4 text-lg font-semibold text-[var(--text-white)]">Mentions légales</h2>
+              <p className="text-sm text-[var(--text-muted)]">
                 Personnalisez les mentions légales par défaut sur vos documents.
               </p>
             </div>
@@ -109,11 +109,11 @@ export function ParametresZypta({ user }: { user: UserData }) {
 
           {active === "prestations" && (
             <div className="transition-opacity duration-300">
-              <h2 className="mb-4 text-lg font-semibold text-slate-900">Bibliothèque de prestations</h2>
-              <p className="mb-4 text-sm text-slate-600">
+              <h2 className="mb-4 text-lg font-semibold text-[var(--text-white)]">Bibliothèque de prestations</h2>
+              <p className="mb-4 text-sm text-[var(--text-muted)]">
                 Gérez vos postes récurrents (nom, unité, prix unitaire HT).
               </p>
-              <p className="rounded-xl bg-slate-50 p-4 text-sm text-slate-500">
+              <p className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4 text-sm text-[var(--text-muted)]">
                 Bientôt disponible — import Excel et génération IA.
               </p>
             </div>
@@ -127,11 +127,10 @@ export function ParametresZypta({ user }: { user: UserData }) {
             <DocumentModelForm current={user.documentStyle} />
           )}
 
-
           {active === "numerotation" && (
             <div className="transition-opacity duration-300">
-              <h2 className="mb-4 text-lg font-semibold text-slate-900">Numérotation</h2>
-              <p className="text-sm text-slate-600">
+              <h2 className="mb-4 text-lg font-semibold text-[var(--text-white)]">Numérotation</h2>
+              <p className="text-sm text-[var(--text-muted)]">
                 Préfixes et séquences pour devis et factures.
               </p>
             </div>
