@@ -61,17 +61,17 @@
   --text-muted: #64748b;
   --surface: #ffffff;
   --border: #e2e8f0;
-  --accent-rgb: 255 213 79;
+  --accent-rgb: 180 130 20;
   --accent: rgb(var(--accent-rgb));
-  --accent-secondary-rgb: 255 193 7;
+  --accent-secondary-rgb: 160 110 10;
   --accent-secondary: rgb(var(--accent-secondary-rgb));
-  --accent-rose-rgb: 255 213 79;
+  --accent-rose-rgb: 180 130 20;
   --accent-rose: rgb(var(--accent-rose-rgb));
-  --accent-glow: rgba(255, 213, 79, 0.2);
-  --accent-ice-rgb: 255 248 225;
+  --accent-glow: rgba(180, 130, 20, 0.2);
+  --accent-ice-rgb: 140 100 10;
   --accent-ice: rgb(var(--accent-ice-rgb));
-  --accent-foreground: #0f172a;
-  --ring: rgba(255, 213, 79, 0.4);
+  --accent-foreground: #ffffff;
+  --ring: rgba(180, 130, 20, 0.35);
 }
 
 * {
@@ -145,8 +145,8 @@ body {
   box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
 [data-theme="blanc"] .glass-card:hover {
-  border-color: rgba(255, 213, 79, 0.4);
-  box-shadow: 0 0 20px rgba(255, 213, 79, 0.15);
+  border-color: rgba(180, 130, 20, 0.35);
+  box-shadow: 0 0 20px rgba(180, 130, 20, 0.12);
 }
 [data-theme="blanc"] .gradient-text {
   background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
