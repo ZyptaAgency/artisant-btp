@@ -164,7 +164,7 @@ export function DashboardZypta({
             {chantiers.map((c) => (
               <div
                 key={c.id}
-                className="min-w-[200px] flex-shrink-0 rounded-xl border border-[var(--border)] p-4 transition-all hover:border-nova-mid/30 hover:shadow-[0_0_20px_rgba(200,75,255,0.15)]"
+                className="min-w-[200px] flex-shrink-0 rounded-xl border border-[var(--border)] p-4 transition-all hover:border-[var(--ring)] hover:shadow-[0_0_20px_var(--ring)]"
               >
                 <p className="font-medium text-[var(--text-white)]">{c.nom}</p>
                 <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/10">

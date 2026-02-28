@@ -161,7 +161,7 @@ export function ClientsZypta() {
           placeholder="Rechercher par nom, adresse, téléphone, tag..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="h-12 rounded-2xl border-[var(--border)] pl-12 text-base shadow-sm transition-all duration-300 focus:border-nova-mid focus:ring-2 focus:ring-nova-mid/20"
+          className="h-12 rounded-2xl border-[var(--border)] pl-12 text-base shadow-sm transition-all duration-300 focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--ring)]"
         />
       </div>
 
@@ -175,7 +175,7 @@ export function ClientsZypta() {
               "rounded-full px-4 py-2 text-sm font-medium transition-all duration-300",
               filter === chip.id
                 ? "bg-nova-mid text-white shadow-md"
-                : "bg-[var(--bg-card)] text-[var(--text-muted)] shadow-sm ring-1 ring-[var(--border)] hover:ring-nova-mid/50"
+                : "bg-[var(--bg-card)] text-[var(--text-muted)] shadow-sm ring-1 ring-[var(--border)] hover:ring-[var(--accent)]/50"
             )}
           >
             {chip.label}

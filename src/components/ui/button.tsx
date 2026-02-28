@@ -7,12 +7,12 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "btn-theme bg-gradient-to-r from-nova-mid to-nova-outer text-white shadow-[0_0_30px_rgba(200,75,255,0.4)] hover:shadow-[0_0_50px_rgba(200,75,255,0.7)] hover:-translate-y-0.5",
+        default: "btn-theme text-[var(--accent-foreground)] shadow-[0_0_30px_var(--ring)] hover:shadow-[0_0_50px_var(--ring)] hover:-translate-y-0.5",
         destructive: "bg-red-600 text-white hover:bg-red-700",
-        outline: "border border-nova-mid/60 text-[var(--text-white)] hover:bg-nova-mid/15 hover:border-nova-mid hover:shadow-[0_0_20px_rgba(200,75,255,0.3)]",
+        outline: "border border-[var(--accent)]/60 text-[var(--foreground)] hover:bg-[var(--accent)]/15 hover:border-[var(--accent)] hover:shadow-[0_0_20px_var(--ring)]",
         secondary: "bg-white/5 text-[var(--text-white)] border border-[var(--border)] hover:bg-white/10",
         ghost: "text-[var(--text-muted)] hover:bg-white/5 hover:text-[var(--text-white)]",
-        link: "text-nova-mid underline-offset-4 hover:underline",
+        link: "text-[var(--accent)] underline-offset-4 hover:underline",
       },
       size: {
         default: "h-10 px-4 py-2",
