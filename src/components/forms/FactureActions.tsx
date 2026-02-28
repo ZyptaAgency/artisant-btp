@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { PDFViewer } from "@react-pdf/renderer";
+import { PDFViewer, PDFDownloadLink } from "@react-pdf/renderer";
 import { FacturePDF } from "@/components/pdf/FacturePDF";
 import { toast } from "sonner";
 
@@ -100,8 +100,28 @@ export function FactureActions({
 
       <Dialog open={pdfOpen} onOpenChange={setPdfOpen}>
         <DialogContent className="max-w-4xl h-[80vh]">
-          <DialogHeader>
+          <DialogHeader className="flex-row items-center justify-between space-y-0">
             <DialogTitle>Prévisualisation - {facture.numero}</DialogTitle>
+            <PDFDownloadLink
+              document={
+                <FacturePDF
+                  numero={facture.numero}
+                  client={client}
+                  artisan={artisan}
+                  lignes={lignes}
+                  montantHT={facture.montantHT}
+                  tva={facture.tva}
+                  montantTTC={facture.montantTTC}
+                  acompte={facture.acompte}
+                  dateEcheance={facture.dateEcheance}
+                  dateFacture={facture.createdAt}
+                />
+              }
+              fileName={`facture-${facture.numero}.pdf`}
+              className="ml-auto inline-flex items-center justify-center rounded-lg bg-zypta-blue px-4 py-2 text-sm font-medium text-white hover:bg-zypta-blue/90"
+            >
+              {({ loading }) => (loading ? "Génération…" : "Télécharger PDF")}
+            </PDFDownloadLink>
           </DialogHeader>
           <div className="h-96 overflow-auto">
             <PDFViewer width="100%" height="100%" showToolbar={false}>

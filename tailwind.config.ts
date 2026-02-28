@@ -17,6 +17,8 @@ const config: Config = {
         "zypta-violet": "#8B5CF6",
         "zypta-ia": "#8B5CF6",
         "supernova": "#FFD54F",
+        "supernova-light": "#FFF8E1",
+        "supernova-dark": "#FFC107",
       },
       fontFamily: {
         sans: ["var(--font-inter)", "system-ui", "sans-serif"],

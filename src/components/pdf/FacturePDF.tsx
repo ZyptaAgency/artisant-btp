@@ -1,7 +1,7 @@
 "use client";
 
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { formatCurrencyForPDF, formatDate } from "@/lib/utils";
 
 const styles = StyleSheet.create({
   page: { padding: 40, fontSize: 10 },
@@ -135,9 +135,9 @@ export function FacturePDF({ numero, client, artisan, lignes, montantHT, tva, mo
               <Text style={styles.colDesc}>{l.description}</Text>
               <Text style={styles.colQte}>{l.quantite}</Text>
               <Text style={styles.colUnite}>{uniteStr(l.unite)}</Text>
-              <Text style={styles.colPrix}>{formatCurrency(l.prixUnitaire)}</Text>
+              <Text style={styles.colPrix}>{formatCurrencyForPDF(l.prixUnitaire)}</Text>
               <Text style={styles.colTva}>{l.tauxTVA}%</Text>
-              <Text style={styles.colTotal}>{formatCurrency(l.montantHT)}</Text>
+              <Text style={styles.colTotal}>{formatCurrencyForPDF(l.montantHT)}</Text>
             </View>
           ))}
         </View>
@@ -146,20 +146,20 @@ export function FacturePDF({ numero, client, artisan, lignes, montantHT, tva, mo
           {acompte > 0 && (
             <View style={styles.totalRow}>
               <Text>Acompte</Text>
-              <Text>{formatCurrency(acompte)}</Text>
+              <Text>{formatCurrencyForPDF(acompte)}</Text>
             </View>
           )}
           <View style={styles.totalRow}>
             <Text>Total HT</Text>
-            <Text>{formatCurrency(montantHT)}</Text>
+            <Text>{formatCurrencyForPDF(montantHT)}</Text>
           </View>
           <View style={styles.totalRow}>
             <Text>TVA</Text>
-            <Text>{formatCurrency(tva)}</Text>
+            <Text>{formatCurrencyForPDF(tva)}</Text>
           </View>
           <View style={styles.totalTTC}>
             <Text>Total TTC</Text>
-            <Text>{formatCurrency(montantTTC)}</Text>
+            <Text>{formatCurrencyForPDF(montantTTC)}</Text>
           </View>
         </View>
 

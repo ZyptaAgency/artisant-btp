@@ -15,16 +15,11 @@ export default async function HomePage() {
     <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-zypta-blue/5 p-4">
       <div className="text-center">
         <div className="flex flex-col items-center gap-4">
-          <div className="flex items-center gap-3">
+          <div className="flex justify-center">
             <img
-              src="/zypta-icon.png"
+              src="/zypta-logo.png"
               alt="Zypta"
-              className="h-14 w-14 object-contain logo-supernova"
-            />
-            <img
-              src="/zypta-typo.png"
-              alt="Zypta"
-              className="h-8 w-auto max-w-[180px] object-contain logo-supernova"
+              className="h-16 w-auto max-w-[200px] object-contain logo-supernova"
             />
           </div>
           <h1 className="text-2xl font-bold text-slate-800">Zypta BTP</h1>

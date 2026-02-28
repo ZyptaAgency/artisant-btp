@@ -71,7 +71,7 @@ export function EstimateurZypta() {
 
   async function handleSend() {
     const val = input.trim();
-    if (!val && step !== "gamme") return;
+    if (!val && step !== "gamme" && step !== "ville") return;
 
     if (step === "projet") {
       const match = TYPES_TRAVAUX.find((t) => t.toLowerCase().includes(val.toLowerCase()));
@@ -174,7 +174,7 @@ export function EstimateurZypta() {
               >
                 {msg.role === "zypta" && (
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-zypta-blue/10 p-1.5">
-                    <img src="/zypta-icon.png" alt="Zypta" className="h-full w-full object-contain logo-supernova" />
+                    <img src="/zypta-logo.png" alt="Zypta" className="h-full w-full object-contain logo-supernova" />
                   </div>
                 )}
                 <div
@@ -209,7 +209,7 @@ export function EstimateurZypta() {
             {loading && (
               <div className="flex gap-3">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-zypta-blue/10 p-1.5">
-                  <img src="/zypta-icon.png" alt="Zypta" className="h-full w-full object-contain logo-supernova" />
+                  <img src="/zypta-logo.png" alt="Zypta" className="h-full w-full object-contain logo-supernova" />
                 </div>
                 <div className="flex items-center gap-2 rounded-2xl bg-slate-100 px-4 py-3">
                   <div className="h-2 w-2 animate-bounce rounded-full bg-slate-400" style={{ animationDelay: "0ms" }} />

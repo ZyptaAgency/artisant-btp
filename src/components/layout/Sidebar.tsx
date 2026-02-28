@@ -35,14 +35,9 @@ export function Sidebar() {
         <div className="flex h-16 items-center justify-center border-b border-slate-200/80 px-4">
           <Link href="/dashboard" className="flex items-center gap-2">
             <img
-              src="/zypta-icon.png"
+              src="/zypta-logo.png"
               alt="Zypta"
-              className="h-8 w-8 shrink-0 object-contain logo-supernova"
-            />
-            <img
-              src="/zypta-typo.png"
-              alt="Zypta"
-              className="h-4 max-w-[100px] shrink-0 object-contain object-left logo-supernova"
+              className="h-8 max-w-[120px] shrink-0 object-contain object-left logo-supernova"
             />
           </Link>
         </div>

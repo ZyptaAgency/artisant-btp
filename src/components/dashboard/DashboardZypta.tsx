@@ -81,9 +81,9 @@ export function DashboardZypta({
   return (
     <div className="space-y-6">
       {/* Header avec salutation + météo placeholder */}
-      <div className="relative overflow-hidden rounded-zypta bg-gradient-to-br from-zypta-blue/10 via-white to-zypta-orange/10 p-6 shadow-zypta">
+      <div className="relative overflow-hidden rounded-zypta bg-gradient-to-br from-zypta-blue/10 via-supernova-light/30 to-zypta-orange/10 p-6 shadow-zypta">
         <div className="absolute right-0 top-0 h-32 w-32 -translate-y-8 translate-x-8 rounded-full bg-zypta-blue/5" />
-        <div className="absolute bottom-0 left-0 h-24 w-24 -translate-x-12 translate-y-12 rounded-full bg-zypta-orange/5" />
+        <div className="absolute bottom-0 left-0 h-24 w-24 -translate-x-12 translate-y-12 rounded-full bg-supernova/20" />
         <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-2xl font-bold text-slate-900">
