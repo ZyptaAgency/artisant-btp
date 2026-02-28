@@ -31,14 +31,7 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside
-      className="fixed left-0 top-0 z-40 hidden h-screen w-64 border-r border-[var(--border)] md:block"
-      style={{
-        background: "rgba(3,1,10,0.85)",
-        backdropFilter: "blur(20px)",
-        WebkitBackdropFilter: "blur(20px)",
-      }}
-    >
+    <aside className="sidebar-zypta fixed left-0 top-0 z-40 hidden h-screen w-64 border-r border-[var(--border)] md:block">
       <div className="flex h-full flex-col">
         <div className="flex h-20 items-center justify-center border-b border-[var(--border)] px-4">
           <Link href="/dashboard" className="block">
@@ -56,8 +49,8 @@ export function Sidebar() {
                 className={cn(
                   "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-300",
                   isActive
-                    ? "bg-[var(--accent)]/15 text-[var(--text-white)] shadow-[0_0_20px_var(--ring)]"
-                    : "text-[var(--text-muted)] hover:text-[var(--text-white)] hover:bg-white/5"
+                    ? "bg-[var(--accent)]/15 text-[var(--accent)] shadow-[0_0_20px_var(--ring)]"
+                    : "text-[var(--text-muted)] hover:text-[var(--foreground)] hover:bg-[var(--accent)]/5"
                 )}
               >
                 <Icon className="h-5 w-5" />
@@ -69,7 +62,7 @@ export function Sidebar() {
         <div className="border-t border-[var(--border)] p-4">
           <Button
             variant="ghost"
-            className="w-full justify-start text-[var(--text-muted)] hover:bg-white/5 hover:text-[var(--text-white)]"
+            className="w-full justify-start text-[var(--text-muted)] hover:text-[var(--foreground)]"
             onClick={() => signOut({ callbackUrl: "/login" })}
           >
             <LogOut className="mr-3 h-5 w-5" />

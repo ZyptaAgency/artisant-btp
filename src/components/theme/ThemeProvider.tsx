@@ -3,28 +3,33 @@
 import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 
+function applyTheme(theme: string) {
+  const html = document.documentElement;
+  if (theme === "systeme") {
+    const dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    html.setAttribute("data-theme", dark ? "noir" : "blanc");
+  } else {
+    html.setAttribute("data-theme", theme);
+  }
+}
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const { status } = useSession();
 
   useEffect(() => {
-    function applyTheme(theme: string) {
-      const html = document.documentElement;
-      html.removeAttribute("data-theme");
-      if (theme === "systeme") {
-        const dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        html.setAttribute("data-theme", dark ? "noir" : "blanc");
-      } else {
-        html.setAttribute("data-theme", theme);
-      }
+    if (status === "loading") return;
+
+    if (status !== "authenticated") {
+      applyTheme("supernova");
+      return;
     }
 
-    async function loadTheme() {
-      if (status !== "authenticated") {
-        applyTheme("supernova");
-        return;
-      }
+    let cancelled = false;
+
+    (async () => {
       try {
         const res = await fetch("/api/user/preferences");
+        if (cancelled) return;
         if (res.ok) {
           const { theme } = await res.json();
           applyTheme(theme ?? "supernova");
@@ -32,13 +37,24 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
           applyTheme("supernova");
         }
       } catch {
-        applyTheme("supernova");
+        if (!cancelled) applyTheme("supernova");
       }
-    }
+    })();
 
-    loadTheme();
+    return () => { cancelled = true; };
+  }, [status]);
 
-    const handler = () => loadTheme();
+  useEffect(() => {
+    const handler = async () => {
+      try {
+        const res = await fetch("/api/user/preferences");
+        if (res.ok) {
+          const { theme } = await res.json();
+          applyTheme(theme ?? "supernova");
+        }
+      } catch { /* keep current */ }
+    };
+
     window.addEventListener("theme-changed", handler);
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
     mq.addEventListener("change", handler);
@@ -46,7 +62,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       window.removeEventListener("theme-changed", handler);
       mq.removeEventListener("change", handler);
     };
-  }, [status]);
+  }, []);
 
   return <>{children}</>;
 }

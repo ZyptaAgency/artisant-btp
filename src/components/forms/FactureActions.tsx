@@ -87,9 +87,14 @@ export function FactureActions({
           Voir PDF
         </Button>
         {facture.statut === "BROUILLON" && (
-          <Button onClick={() => updateStatut("ENVOYEE")} disabled={loading}>
-            Marquer envoyée
-          </Button>
+          <>
+            <Button variant="outline" onClick={() => router.push(`/factures/${facture.id}/modifier`)}>
+              Modifier
+            </Button>
+            <Button onClick={() => updateStatut("ENVOYEE")} disabled={loading}>
+              Marquer envoyée
+            </Button>
+          </>
         )}
         {(facture.statut === "ENVOYEE" || facture.statut === "EN_RETARD") && (
           <Button onClick={() => updateStatut("PAYEE")} disabled={loading}>
@@ -118,7 +123,7 @@ export function FactureActions({
                 />
               }
               fileName={`facture-${facture.numero}.pdf`}
-              className="ml-auto inline-flex items-center justify-center rounded-lg bg-zypta-blue px-4 py-2 text-sm font-medium text-white hover:bg-zypta-blue/90"
+              className="ml-auto inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-nova-mid to-nova-outer px-4 py-2 text-sm font-medium text-white hover:opacity-90 transition-opacity"
             >
               {({ loading }) => (loading ? "Génération…" : "Télécharger PDF")}
             </PDFDownloadLink>

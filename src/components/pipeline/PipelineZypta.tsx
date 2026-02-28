@@ -17,11 +17,11 @@ import { cn } from "@/lib/utils";
 
 const COLUMNS = [
   { id: "PROSPECT", title: "Premier contact", color: "bg-white/5" },
-  { id: "CONTACTE", title: "Visite programmée", color: "bg-blue-50" },
-  { id: "DEVIS_ENVOYE", title: "Devis envoyé", color: "bg-cyan-50" },
-  { id: "NEGOCIATION", title: "Négociation", color: "bg-amber-50" },
-  { id: "SIGNE", title: "Signé ✅", color: "bg-emerald-50" },
-  { id: "PERDU", title: "Perdu ❌", color: "bg-red-50" },
+  { id: "CONTACTE", title: "Visite programmée", color: "bg-white/5" },
+  { id: "DEVIS_ENVOYE", title: "Devis envoyé", color: "bg-white/5" },
+  { id: "NEGOCIATION", title: "Négociation", color: "bg-white/5" },
+  { id: "SIGNE", title: "Signé ✅", color: "bg-white/5" },
+  { id: "PERDU", title: "Perdu ❌", color: "bg-white/5" },
 ];
 
 const PROJET_ICONS: Record<string, { icon: string; label: string }> = {
@@ -191,7 +191,7 @@ export function PipelineZypta() {
                   >
                     <div className="mb-4 flex items-center justify-between">
                       <h3 className="font-semibold text-[var(--foreground)]">{col.title}</h3>
-                      <span className="rounded-full bg-white/80 px-2 py-1 text-sm font-medium text-[var(--text-muted)]">
+                      <span className="rounded-full bg-white/10 px-2 py-1 text-sm font-medium text-[var(--text-muted)]">
                         {formatCurrency(montantsByColumn[col.id] ?? 0)}
                       </span>
                     </div>

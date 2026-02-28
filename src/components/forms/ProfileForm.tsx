@@ -112,7 +112,7 @@ export function ProfileForm({ defaultValues }: { defaultValues: FormData }) {
       </div>
       <div className="space-y-2">
         <Label>Logo entreprise (PDF)</Label>
-        <p className="text-xs text-slate-500">Affiché sur les devis et factures. Max 500 Ko, PNG/JPG/WebP.</p>
+        <p className="text-xs text-[var(--text-muted)]">Affiché sur les devis et factures. Max 500 Ko, PNG/JPG/WebP.</p>
         <div className="flex gap-3 items-center">
           <input
             ref={fileInputRef}

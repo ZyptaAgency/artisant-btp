@@ -82,7 +82,7 @@ export function FacturePDF({ numero, client, artisan, lignes, montantHT, tva, mo
         <View style={styles.header}>
           <View style={{ flexDirection: "row", marginBottom: 8, alignItems: "flex-start", gap: 12 }}>
             {artisan.logo && (
-              <Image src={artisan.logo} style={{ width: 60, height: 40 }} />
+              <Image src={artisan.logo} style={{ width: 80, height: 50, objectFit: "contain" }} />
             )}
             <View style={{ flex: 1 }}>
               <Text style={styles.companyName}>{artisan.entreprise}</Text>

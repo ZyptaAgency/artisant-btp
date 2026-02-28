@@ -122,17 +122,37 @@ body {
 }
 
 [data-theme="blanc"] .glass {
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.85);
   border-color: var(--border);
+  backdrop-filter: blur(12px);
 }
 [data-theme="blanc"] .glass-card {
-  background: rgba(255, 255, 255, 0.9);
+  background: #ffffff;
   border-color: var(--border);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+[data-theme="blanc"] .glass-card:hover {
+  border-color: rgba(200, 75, 255, 0.3);
+  box-shadow: 0 0 30px rgba(200, 75, 255, 0.1);
+}
+[data-theme="blanc"] .gradient-text {
+  background: linear-gradient(135deg, #c84bff, #ff2d8f);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 [data-theme="noir"] .glass {
   background: rgba(26, 26, 36, 0.6);
   border-color: var(--border);
+}
+[data-theme="noir"] .glass-card {
+  background: rgba(26, 26, 36, 0.7);
+  border-color: var(--border);
+}
+[data-theme="noir"] .glass-card:hover {
+  border-color: rgba(255, 213, 79, 0.3);
+  box-shadow: 0 0 30px rgba(255, 213, 79, 0.15);
 }
 
 @keyframes pulse-soft {
@@ -142,4 +162,58 @@ body {
 
 .animate-pulse-soft {
   animation: pulse-soft 2s ease-in-out infinite;
+}
+
+/* Sidebar & Header adapt per theme */
+.sidebar-zypta {
+  background: rgba(3,1,10,0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+[data-theme="blanc"] .sidebar-zypta {
+  background: #ffffff;
+  backdrop-filter: none;
+  border-color: var(--border);
+}
+[data-theme="noir"] .sidebar-zypta {
+  background: rgba(10,10,15,0.9);
+  backdrop-filter: blur(20px);
+}
+
+.header-zypta {
+  background: rgba(3,1,10,0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+[data-theme="blanc"] .header-zypta {
+  background: rgba(255,255,255,0.9);
+  backdrop-filter: blur(12px);
+}
+[data-theme="noir"] .header-zypta {
+  background: rgba(10,10,15,0.85);
+  backdrop-filter: blur(20px);
+}
+
+/* Buttons adapt per theme */
+[data-theme="blanc"] .btn-theme {
+  background: linear-gradient(135deg, #c84bff, #ff2d8f);
+  color: white;
+}
+[data-theme="noir"] .btn-theme {
+  background: #FFD54F;
+  color: #0a0a0f;
+}
+
+.mobile-nav-zypta {
+  background: rgba(3,1,10,0.9);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+[data-theme="blanc"] .mobile-nav-zypta {
+  background: rgba(255,255,255,0.9);
+  backdrop-filter: blur(12px);
+}
+[data-theme="noir"] .mobile-nav-zypta {
+  background: rgba(10,10,15,0.9);
+  backdrop-filter: blur(20px);
 }
