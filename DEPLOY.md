@@ -48,8 +48,8 @@ git push -u origin main
 Options recommandées :
 
 - **[Vercel Postgres](https://vercel.com/storage/postgres)** — intégré, simple
-- **[Neon](https://neon.tech)** — gratuit, compatible PostgreSQL
-- **[Supabase](https://supabase.com)** — gratuit, PostgreSQL
+- **[Neon](https://neon.tech)** — gratuit. Utilise l’URL **pooled** et ajoute `?pgbouncer=true`
+- **[Supabase](https://supabase.com)** — gratuit. Utilise le pooler (port 6543) avec `?pgbouncer=true`
 
 Après création, copie l’URL de connexion dans `DATABASE_URL`.
 
@@ -63,4 +63,4 @@ DATABASE_URL="postgresql://..." npx prisma db push
 DATABASE_URL="postgresql://..." npx prisma db seed
 ```
 
-Ou via le dashboard de ta base (Neon, Supabase…) en exécutant le SQL du schéma Prisma.
+**Si erreur "Application error"** : 1) Vérifier DATABASE_URL dans Vercel 2) Neon : ajouter `?pgbouncer=true` 3) Exécuter `prisma db push` 4) Vérifier NEXTAUTH_SECRET et NEXTAUTH_URL
