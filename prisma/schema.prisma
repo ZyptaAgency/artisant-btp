@@ -1,0 +1,246 @@
+// Schéma Prisma - CRM Artisan BTP
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Modèle Artisan (User)
+model User {
+  id        String   @id @default(cuid())
+  nom       String
+  entreprise String
+  siret     String?
+  email     String   @unique
+  telephone String?
+  adresse   String?
+  logo      String?
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  clients   Client[]
+  devis     Devis[]
+  factures  Facture[]
+  accounts  Account[]
+  sessions  Session[]
+}
+
+// NextAuth models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token     String?
+  expires_at       Int?
+  token_type       String?
+  scope            String?
+  id_token         String?
+  session_state    String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// Statuts pipeline client
+enum StatutPipeline {
+  PROSPECT
+  CONTACTE
+  DEVIS_ENVOYE
+  NEGOCIATION
+  SIGNE
+  EN_COURS
+  TERMINE
+  PERDU
+}
+
+// Statuts devis
+enum StatutDevis {
+  BROUILLON
+  ENVOYE
+  ACCEPTE
+  REFUSE
+  EXPIRE
+}
+
+// Statuts facture
+enum StatutFacture {
+  BROUILLON
+  ENVOYEE
+  PAYEE
+  EN_RETARD
+}
+
+// Unité de mesure
+enum UniteMesure {
+  M2
+  ML
+  FORFAIT
+  HEURE
+  UNITE
+}
+
+// Type d'email
+enum TypeEmail {
+  CONFIRMATION_DEVIS
+  RELANCE_J3
+  RELANCE_J7
+  RELANCE_J15
+  ENVOI_FACTURE
+  DEMANDE_AVIS
+}
+
+// Statut email
+enum StatutEmail {
+  ENVOYE
+  ERREUR
+}
+
+// Statut chantier
+enum StatutChantier {
+  PLANIFIE
+  EN_COURS
+  TERMINE
+  ANNULE
+}
+
+model Client {
+  id            String         @id @default(cuid())
+  nom           String
+  prenom        String
+  email         String
+  telephone     String?
+  adresseChantier String?
+  notes         String?
+  statutPipeline StatutPipeline @default(PROSPECT)
+  userId        String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  devis    Devis[]
+  factures Facture[]
+  emails   Email[]
+  chantiers Chantier[]
+}
+
+model Devis {
+  id          String      @id @default(cuid())
+  numero      String      @unique
+  clientId    String
+  montantHT   Float       @default(0)
+  tva         Float       @default(0)
+  montantTTC  Float       @default(0)
+  statut      StatutDevis @default(BROUILLON)
+  dateValidite DateTime?
+  notes       String?
+  userId      String
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  client  Client       @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  lignes  LigneDevis[]
+  factures Facture[]
+  chantiers Chantier[]
+  user    User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model LigneDevis {
+  id           String       @id @default(cuid())
+  description  String
+  quantite     Float
+  unite        UniteMesure
+  prixUnitaire Float
+  tauxTVA      Float        @default(20)
+  montantHT    Float
+  devisId      String
+  createdAt    DateTime     @default(now())
+
+  devis Devis @relation(fields: [devisId], references: [id], onDelete: Cascade)
+}
+
+model Facture {
+  id           String        @id @default(cuid())
+  numero       String        @unique
+  devisId      String?
+  clientId     String
+  montantHT    Float         @default(0)
+  tva         Float         @default(0)
+  montantTTC  Float         @default(0)
+  statut      StatutFacture @default(BROUILLON)
+  dateEcheance DateTime?
+  acompte      Float         @default(0)
+  userId       String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  devis   Devis?   @relation(fields: [devisId], references: [id], onDelete: SetNull)
+  client  Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  lignes  LigneFacture[]
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model LigneFacture {
+  id           String       @id @default(cuid())
+  description  String
+  quantite     Float
+  unite        UniteMesure
+  prixUnitaire Float
+  tauxTVA      Float        @default(20)
+  montantHT    Float
+  factureId    String
+  createdAt    DateTime     @default(now())
+
+  facture Facture @relation(fields: [factureId], references: [id], onDelete: Cascade)
+}
+
+model Email {
+  id        String     @id @default(cuid())
+  clientId  String
+  type      TypeEmail
+  sujet     String
+  contenu   String     @db.Text
+  dateEnvoi DateTime   @default(now())
+  statut    StatutEmail @default(ENVOYE)
+
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+}
+
+model Chantier {
+  id        String         @id @default(cuid())
+  clientId  String
+  devisId   String?
+  dateDebut DateTime?
+  dateFin   DateTime?
+  statut    StatutChantier  @default(PLANIFIE)
+  notes     String?
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  client Client  @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  devis  Devis?  @relation(fields: [devisId], references: [id], onDelete: SetNull)
+}
