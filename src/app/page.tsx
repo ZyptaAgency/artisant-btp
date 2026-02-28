@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { LandingLogo } from "@/components/ui/LandingLogo";
 
 export default async function HomePage() {
   const session = await getServerSession(authOptions);
@@ -16,12 +17,8 @@ export default async function HomePage() {
       <div className="text-center">
         <div className="flex flex-col items-center gap-4">
           <div className="flex justify-center">
-            <div className="rounded-2xl bg-slate-900 px-6 py-4">
-              <img
-                src="/zypta-logo.png"
-                alt="Zypta"
-                className="h-12 w-auto max-w-[160px] object-contain logo-supernova-dark"
-              />
+            <div className="rounded-2xl bg-slate-900 px-6 py-4 ring-1 ring-supernova/20">
+              <LandingLogo />
             </div>
           </div>
           <h1 className="text-2xl font-bold text-supernova">Zypta BTP</h1>

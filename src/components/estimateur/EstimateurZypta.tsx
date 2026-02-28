@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { formatCurrency } from "@/lib/utils";
 import { Sparkles, Send, FileText, Share2, Sliders } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Logo } from "@/components/ui/Logo";
 
 const TYPES_TRAVAUX = [
   "Rénovation salle de bain",
@@ -174,7 +175,7 @@ export function EstimateurZypta() {
               >
                 {msg.role === "zypta" && (
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-zypta-blue/10 p-1.5">
-                    <img src="/zypta-logo.png" alt="Zypta" className="h-full w-full object-contain logo-supernova-dark" />
+                    <Logo src="/icon.png" variant="supernova" width={40} height={40} />
                   </div>
                 )}
                 <div
@@ -209,7 +210,7 @@ export function EstimateurZypta() {
             {loading && (
               <div className="flex gap-3">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-zypta-blue/10 p-1.5">
-                  <img src="/zypta-logo.png" alt="Zypta" className="h-full w-full object-contain logo-supernova-dark" />
+                  <Logo src="/icon.png" variant="supernova" width={40} height={40} />
                 </div>
                 <div className="flex items-center gap-2 rounded-2xl bg-slate-100 px-4 py-3">
                   <div className="h-2 w-2 animate-bounce rounded-full bg-slate-400" style={{ animationDelay: "0ms" }} />

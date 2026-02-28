@@ -2,19 +2,28 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Design System Zypta.be - dark theme, violet/bleu, supernova */
 :root,
 [data-theme="supernova"] {
-  --background: #0f172a;
+  --bg: #0a0a0f;
+  --bg-elevated: #12121a;
+  --bg-card: #1a1a24;
+  --background: #0a0a0f;
   --foreground: #f8fafc;
-  --surface: #1e293b;
-  --zypta-blue: #3B82F6;
+  --text-muted: #94a3b8;
+  --surface: #12121a;
+  --border: #2a2a3a;
+  --zypta-blue: #6366F1;
   --zypta-orange: #F97316;
   --zypta-violet: #8B5CF6;
   --supernova: #FFD54F;
   --supernova-light: #FFF8E1;
   --supernova-dark: #FFC107;
+  --supernova-glow: rgba(255, 213, 79, 0.25);
+  --violet-glow: rgba(139, 92, 246, 0.25);
+  --blue-glow: rgba(99, 102, 241, 0.25);
   --accent: #FFD54F;
-  --accent-foreground: #0f172a;
+  --accent-foreground: #0a0a0f;
 }
 
 [data-theme="noir"] {
@@ -60,14 +69,7 @@
   background-color: #f1f5f9 !important;
 }
 
-/* Logo Zypta : noir/contours discrets → or supernova visible (zypta.be) */
-.logo-supernova {
-  filter: invert(1) sepia(1) saturate(5) hue-rotate(5deg) brightness(1.2) contrast(1.1);
-}
-
-.logo-supernova-dark {
-  filter: invert(1) sepia(1) saturate(5) hue-rotate(5deg) brightness(1.2) contrast(1.1);
-}
+/* Logo Zypta : variants supernova / blanc / noir gérés par @/components/ui/Logo */
 
 body {
   color: var(--foreground);
@@ -81,10 +83,29 @@ body {
     text-wrap: balance;
   }
   .zypta-shadow {
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.08);
   }
   .zypta-shadow-lg {
-    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.08);
+  }
+  .glow-supernova {
+    box-shadow: 0 0 30px var(--supernova-glow), 0 0 60px var(--supernova-glow);
+  }
+  .glow-violet {
+    box-shadow: 0 0 30px var(--violet-glow), 0 0 60px var(--violet-glow);
+  }
+  .glow-blue {
+    box-shadow: 0 0 30px var(--blue-glow), 0 0 60px var(--blue-glow);
+  }
+  .glass {
+    background: rgba(26, 26, 36, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+  .glass-light {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
   }
 }
 
