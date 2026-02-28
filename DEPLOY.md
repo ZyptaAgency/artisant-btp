@@ -16,8 +16,7 @@ cd /Users/mahammoudboulale/artisant-btp
 git add -A
 git commit -m "Initial commit - Zypta BTP"
 
-# Remplace VOTRE_USER par ton username GitHub
-git remote add origin https://github.com/VOTRE_USER/artisant-btp.git
+git remote add origin https://github.com/ZyptaAgency/artisant-btp.git
 git branch -M main
 git push -u origin main
 ```

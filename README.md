@@ -14,7 +14,7 @@ SaaS pour artisans et entreprises du bâtiment — cockpit de gestion : clients,
 
 1. **Cloner et installer**
    ```bash
-   git clone https://github.com/VOTRE_USER/artisant-btp.git
+   git clone https://github.com/ZyptaAgency/artisant-btp.git
    cd artisant-btp
    npm install
    ```
