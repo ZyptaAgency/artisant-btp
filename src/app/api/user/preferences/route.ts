@@ -4,15 +4,32 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { z } from "zod";
 
+export async function GET() {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { theme: true, documentStyle: true, identifiantType: true },
+  });
+
+  if (!user) {
+    return NextResponse.json({ error: "Utilisateur non trouvé" }, { status: 404 });
+  }
+
+  return NextResponse.json({
+    theme: user.theme ?? "supernova",
+    documentStyle: user.documentStyle ?? "MODERNE",
+    identifiantType: user.identifiantType ?? "SIRET",
+  });
+}
+
 const schema = z.object({
-  nom: z.string().min(1),
-  entreprise: z.string().min(1),
-  siret: z.string().optional(),
+  documentStyle: z.enum(["MODERNE", "CLASSIQUE", "EPURE"]).optional(),
   identifiantType: z.enum(["SIRET", "BCE"]).optional(),
-  email: z.string().email(),
-  telephone: z.string().optional(),
-  adresse: z.string().optional(),
-  logo: z.string().optional(),
+  theme: z.enum(["supernova", "noir", "blanc", "systeme"]).optional(),
 });
 
 export async function PATCH(req: Request) {
@@ -28,14 +45,9 @@ export async function PATCH(req: Request) {
     await prisma.user.update({
       where: { id: session.user.id },
       data: {
-        nom: data.nom,
-        entreprise: data.entreprise,
-        siret: data.siret ?? null,
-        email: data.email,
-        telephone: data.telephone ?? null,
-        adresse: data.adresse ?? null,
-        logo: data.logo ?? null,
-        identifiantType: data.identifiantType ?? null,
+        ...(data.documentStyle && { documentStyle: data.documentStyle }),
+        ...(data.identifiantType && { identifiantType: data.identifiantType }),
+        ...(data.theme && { theme: data.theme }),
       },
     });
 

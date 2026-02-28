@@ -26,9 +26,13 @@ export default async function SettingsPage() {
           nom: user.nom,
           entreprise: user.entreprise,
           siret: user.siret,
+          identifiantType: user.identifiantType ?? "SIRET",
           email: user.email,
           telephone: user.telephone,
           adresse: user.adresse,
+          logo: user.logo,
+          documentStyle: user.documentStyle ?? "MODERNE",
+          theme: user.theme ?? "supernova",
         }}
       />
     </div>

@@ -64,7 +64,7 @@ export default async function FactureDetailPage({
         <FactureActions
           facture={facture}
           client={facture.client}
-          artisan={user ? { nom: user.nom, entreprise: user.entreprise, adresse: user.adresse, email: user.email, telephone: user.telephone, siret: user.siret } : { nom: "", entreprise: "", adresse: null }}
+          artisan={user ? { nom: user.nom, entreprise: user.entreprise, adresse: user.adresse, email: user.email, telephone: user.telephone, siret: user.siret, identifiantType: user.identifiantType, logo: user.logo } : { nom: "", entreprise: "", adresse: null }}
         />
       </div>
 

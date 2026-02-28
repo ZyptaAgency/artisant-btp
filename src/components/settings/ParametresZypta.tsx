@@ -8,30 +8,34 @@ import {
   Library,
   Layout,
   Hash,
-  Plug,
-  CreditCard,
+  Palette,
 } from "lucide-react";
 import { ProfileForm } from "@/components/forms/ProfileForm";
+import { DocumentModelForm } from "@/components/settings/DocumentModelForm";
+import { ThemeForm } from "@/components/settings/ThemeForm";
 import { cn } from "@/lib/utils";
 
 const SECTIONS = [
   { id: "entreprise", label: "Mon entreprise", icon: Building2 },
   { id: "profil", label: "Mon profil", icon: User },
+  { id: "apparence", label: "Apparence", icon: Palette },
   { id: "mentions", label: "Mentions légales", icon: FileText },
   { id: "prestations", label: "Bibliothèque de prestations", icon: Library },
   { id: "modeles", label: "Modèles de documents", icon: Layout },
   { id: "numerotation", label: "Numérotation", icon: Hash },
-  { id: "integrations", label: "Intégrations", icon: Plug },
-  { id: "abonnement", label: "Abonnement", icon: CreditCard },
 ];
 
 type UserData = {
   nom: string;
   entreprise: string;
   siret: string | null;
+  identifiantType: string;
   email: string;
   telephone: string | null;
   adresse: string | null;
+  logo: string | null;
+  documentStyle: string;
+  theme: string;
 };
 
 export function ParametresZypta({ user }: { user: UserData }) {
@@ -50,8 +54,8 @@ export function ParametresZypta({ user }: { user: UserData }) {
                 className={cn(
                   "flex items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-medium transition-all duration-300",
                   active === s.id
-                    ? "bg-zypta-blue/10 text-zypta-blue"
-                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                    ? "bg-zypta-blue/10 text-zypta-blue dark:bg-zypta-blue/20"
+                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100"
                 )}
               >
                 <Icon className="h-5 w-5 shrink-0" />
@@ -63,7 +67,7 @@ export function ParametresZypta({ user }: { user: UserData }) {
       </nav>
 
       <div className="min-w-0 flex-1">
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
           {active === "entreprise" && (
             <div className="transition-opacity duration-300">
               <h2 className="mb-4 text-lg font-semibold text-slate-900">Mon entreprise</h2>
@@ -75,9 +79,11 @@ export function ParametresZypta({ user }: { user: UserData }) {
                   nom: user.nom,
                   entreprise: user.entreprise,
                   siret: user.siret ?? "",
+                  identifiantType: user.identifiantType === "BCE" ? "BCE" : "SIRET",
                   email: user.email,
                   telephone: user.telephone ?? "",
                   adresse: user.adresse ?? "",
+                  logo: user.logo ?? "",
                 }}
               />
             </div>
@@ -113,14 +119,14 @@ export function ParametresZypta({ user }: { user: UserData }) {
             </div>
           )}
 
-          {active === "modeles" && (
-            <div className="transition-opacity duration-300">
-              <h2 className="mb-4 text-lg font-semibold text-slate-900">Modèles de documents</h2>
-              <p className="text-sm text-slate-600">
-                Choisissez le style de vos devis et factures (Moderne, Classique, Épuré).
-              </p>
-            </div>
+          {active === "apparence" && (
+            <ThemeForm current={user.theme} />
           )}
+
+          {active === "modeles" && (
+            <DocumentModelForm current={user.documentStyle} />
+          )}
+
 
           {active === "numerotation" && (
             <div className="transition-opacity duration-300">
@@ -131,41 +137,6 @@ export function ParametresZypta({ user }: { user: UserData }) {
             </div>
           )}
 
-          {active === "integrations" && (
-            <div className="transition-opacity duration-300">
-              <h2 className="mb-4 text-lg font-semibold text-slate-900">Intégrations</h2>
-              <p className="mb-4 text-sm text-slate-600">
-                Connectez vos outils : comptabilité, banque, calendrier.
-              </p>
-              <div className="grid gap-3 sm:grid-cols-2">
-                {["Pennylane", "Tiime", "Google Calendar", "Stripe"].map((name) => (
-                  <div
-                    key={name}
-                    className="flex items-center justify-between rounded-xl border border-slate-200 p-4"
-                  >
-                    <span className="font-medium">{name}</span>
-                    <div className="h-6 w-12 rounded-full bg-slate-200" />
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {active === "abonnement" && (
-            <div className="transition-opacity duration-300">
-              <h2 className="mb-4 text-lg font-semibold text-slate-900">Abonnement</h2>
-              <p className="mb-4 text-sm text-slate-600">
-                Plan actuel et usage du mois.
-              </p>
-              <div className="rounded-xl border border-slate-200 p-4">
-                <p className="font-medium">Plan Pro</p>
-                <p className="text-sm text-slate-500">12/50 devis ce mois</p>
-                <button className="mt-2 text-sm font-medium text-zypta-blue hover:underline">
-                  Voir les plans
-                </button>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>

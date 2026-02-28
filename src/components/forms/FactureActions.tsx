@@ -42,7 +42,7 @@ type Facture = {
 };
 
 type Client = { nom: string; prenom: string; email: string; telephone?: string | null; adresseChantier?: string | null };
-type Artisan = { nom: string; entreprise: string; adresse?: string | null; email?: string | null; telephone?: string | null; siret?: string | null };
+type Artisan = { nom: string; entreprise: string; adresse?: string | null; email?: string | null; telephone?: string | null; siret?: string | null; identifiantType?: string | null; logo?: string | null };
 
 export function FactureActions({
   facture,

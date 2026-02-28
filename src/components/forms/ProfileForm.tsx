@@ -1,5 +1,7 @@
 "use client";
 
+import { useRef } from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -12,18 +14,45 @@ const schema = z.object({
   nom: z.string().min(1),
   entreprise: z.string().min(1),
   siret: z.string().optional(),
+  identifiantType: z.enum(["SIRET", "BCE"]).optional(),
   email: z.string().email(),
   telephone: z.string().optional(),
   adresse: z.string().optional(),
+  logo: z.string().optional(),
 });
 
 type FormData = z.infer<typeof schema>;
 
+const MAX_LOGO_SIZE = 500 * 1024; // 500 KB
+
 export function ProfileForm({ defaultValues }: { defaultValues: FormData }) {
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({
+  const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues,
   });
+  const logoValue = watch("logo");
+  const identifiantType = watch("identifiantType") ?? "SIRET";
+
+  function handleLogoFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast.error("Format accepté : PNG, JPG, WebP");
+      return;
+    }
+    if (file.size > MAX_LOGO_SIZE) {
+      toast.error("Logo max 500 Ko");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      setValue("logo", result);
+    };
+    reader.readAsDataURL(file);
+  }
 
   async function onSubmit(data: FormData) {
     try {
@@ -34,6 +63,7 @@ export function ProfileForm({ defaultValues }: { defaultValues: FormData }) {
       });
       if (!res.ok) throw new Error("Erreur");
       toast.success("Profil mis à jour");
+      router.refresh();
     } catch {
       toast.error("Erreur lors de la mise à jour");
     }
@@ -52,8 +82,20 @@ export function ProfileForm({ defaultValues }: { defaultValues: FormData }) {
         {errors.entreprise && <p className="text-sm text-red-600">{errors.entreprise.message}</p>}
       </div>
       <div className="space-y-2">
-        <Label>SIRET</Label>
-        <Input {...register("siret")} />
+        <Label>Identifiant</Label>
+        <div className="flex gap-3 items-center">
+          <div className="flex gap-2">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input type="radio" value="SIRET" {...register("identifiantType")} className="rounded" />
+              <span className="text-sm">SIRET (France)</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input type="radio" value="BCE" {...register("identifiantType")} className="rounded" />
+              <span className="text-sm">BCE (Belgique)</span>
+            </label>
+          </div>
+          <Input {...register("siret")} placeholder={identifiantType === "BCE" ? "Numéro BCE" : "SIRET"} className="flex-1 max-w-[200px]" />
+        </div>
       </div>
       <div className="space-y-2">
         <Label>Email</Label>
@@ -67,6 +109,30 @@ export function ProfileForm({ defaultValues }: { defaultValues: FormData }) {
       <div className="space-y-2">
         <Label>Adresse</Label>
         <Input {...register("adresse")} />
+      </div>
+      <div className="space-y-2">
+        <Label>Logo entreprise (PDF)</Label>
+        <p className="text-xs text-slate-500">Affiché sur les devis et factures. Max 500 Ko, PNG/JPG/WebP.</p>
+        <div className="flex gap-3 items-center">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+            onChange={handleLogoFile}
+            className="hidden"
+          />
+          <Button type="button" variant="outline" size="sm" onClick={() => fileInputRef.current?.click()}>
+            {logoValue ? "Changer le logo" : "Téléverser un logo"}
+          </Button>
+          {logoValue && (
+            <div className="flex items-center gap-2">
+              <img src={logoValue} alt="Logo" className="h-12 w-auto max-w-[120px] object-contain border rounded" />
+              <button type="button" onClick={() => setValue("logo", "")} className="text-sm text-red-600 hover:underline">
+                Supprimer
+              </button>
+            </div>
+          )}
+        </div>
       </div>
       <Button type="submit" disabled={isSubmitting}>
         {isSubmitting ? "Enregistrement..." : "Enregistrer"}

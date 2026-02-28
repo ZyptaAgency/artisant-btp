@@ -1,6 +1,6 @@
 "use client";
 
-import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
+import { Document, Page, Text, View, Image, StyleSheet } from "@react-pdf/renderer";
 import { formatCurrencyForPDF, formatDate } from "@/lib/utils";
 
 const styles = StyleSheet.create({
@@ -55,7 +55,7 @@ type Ligne = {
 type Props = {
   numero: string;
   client: { nom: string; prenom: string; email: string; telephone?: string | null; adresseChantier?: string | null };
-  artisan: { nom: string; entreprise: string; email?: string | null; telephone?: string | null; adresse?: string | null; siret?: string | null };
+  artisan: { nom: string; entreprise: string; email?: string | null; telephone?: string | null; adresse?: string | null; siret?: string | null; identifiantType?: string | null; logo?: string | null };
   lignes: Ligne[];
   montantHT: number;
   tva: number;
@@ -80,13 +80,24 @@ export function FacturePDF({ numero, client, artisan, lignes, montantHT, tva, mo
     <Document>
       <Page size="A4" style={styles.page}>
         <View style={styles.header}>
-          <Text style={styles.companyName}>{artisan.entreprise}</Text>
-          <View style={styles.companyDetails}>
+          <View style={{ flexDirection: "row", marginBottom: 8, alignItems: "flex-start", gap: 12 }}>
+            {artisan.logo && (
+              <Image src={artisan.logo} style={{ width: 60, height: 40 }} />
+            )}
+            <View style={{ flex: 1 }}>
+              <Text style={styles.companyName}>{artisan.entreprise}</Text>
+              <View style={styles.companyDetails}>
             <Text>{artisan.nom}</Text>
             {artisan.adresse && <Text>{artisan.adresse}</Text>}
             {artisan.telephone && <Text>Tel: {artisan.telephone}</Text>}
             {artisan.email && <Text>Email: {artisan.email}</Text>}
-            {artisan.siret && <Text>SIRET: {artisan.siret}</Text>}
+            {artisan.siret && (
+              <Text>
+                {artisan.identifiantType === "BCE" ? "BCE" : "SIRET"}: {artisan.siret}
+              </Text>
+            )}
+          </View>
+            </View>
           </View>
         </View>
 

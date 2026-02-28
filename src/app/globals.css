@@ -2,27 +2,42 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
+:root,
+[data-theme="supernova"] {
   --background: #f8fafc;
   --foreground: #0f172a;
   --zypta-blue: #3B82F6;
   --zypta-orange: #F97316;
   --zypta-violet: #8B5CF6;
   --supernova: #FFD54F;
-  /* Thème supernova Zypta.be : accents dorés */
   --supernova-light: #FFF8E1;
   --supernova-dark: #FFC107;
 }
 
-/* Logo supernova : thème Zypta.be - blanc → or supernova éclatant */
+[data-theme="noir"] {
+  --background: #0f172a;
+  --foreground: #f8fafc;
+}
+
+[data-theme="blanc"] {
+  --background: #ffffff;
+  --foreground: #0f172a;
+}
+
+/* Logo Zypta : noir/contours discrets → or supernova visible (zypta.be) */
 .logo-supernova {
-  filter: sepia(1) saturate(4) hue-rotate(15deg) brightness(1.15);
+  filter: invert(1) sepia(1) saturate(5) hue-rotate(5deg) brightness(1.2) contrast(1.1);
+}
+
+.logo-supernova-dark {
+  filter: invert(1) sepia(1) saturate(5) hue-rotate(5deg) brightness(1.2) contrast(1.1);
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
   font-family: var(--font-inter), system-ui, sans-serif;
+  transition: background-color 0.2s, color 0.2s;
 }
 
 @layer utilities {

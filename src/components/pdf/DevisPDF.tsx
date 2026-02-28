@@ -1,6 +1,6 @@
 "use client";
 
-import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
+import { Document, Page, Text, View, Image, StyleSheet } from "@react-pdf/renderer";
 import { formatCurrencyForPDF, formatDate } from "@/lib/utils";
 
 const styles = StyleSheet.create({
@@ -36,7 +36,7 @@ type Ligne = {
 type Props = {
   numero: string;
   client: { nom: string; prenom: string; email: string; adresseChantier?: string | null };
-  artisan: { nom: string; entreprise: string; email?: string; adresse?: string | null };
+  artisan: { nom: string; entreprise: string; email?: string; adresse?: string | null; logo?: string | null };
   lignes: Ligne[];
   montantHT: number;
   tva: number;
@@ -50,8 +50,15 @@ export function DevisPDF({ numero, client, artisan, lignes, montantHT, tva, mont
     <Document>
       <Page size="A4" style={styles.page}>
         <View style={styles.header}>
-          <Text style={styles.title}>{artisan.entreprise}</Text>
-          <Text style={styles.subtitle}>{artisan.nom}{artisan.adresse && ` - ${artisan.adresse}`}</Text>
+          <View style={{ flexDirection: "row", marginBottom: 4, alignItems: "flex-start", gap: 12 }}>
+            {artisan.logo && (
+              <Image src={artisan.logo} style={{ width: 60, height: 40 }} />
+            )}
+            <View>
+              <Text style={styles.title}>{artisan.entreprise}</Text>
+              <Text style={styles.subtitle}>{artisan.nom}{artisan.adresse && ` - ${artisan.adresse}`}</Text>
+            </View>
+          </View>
         </View>
 
         <View style={styles.section}>

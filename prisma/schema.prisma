@@ -10,17 +10,20 @@ datasource db {
 
 // Modèle Artisan (User)
 model User {
-  id        String   @id @default(cuid())
-  nom       String
-  entreprise String
-  siret     String?
-  email     String   @unique
-  telephone String?
-  adresse   String?
-  logo      String?
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              String   @id @default(cuid())
+  nom             String
+  entreprise      String
+  siret           String?  // SIRET (FR) ou numéro BCE (BE)
+  identifiantType String?  @default("SIRET") // "SIRET" | "BCE"
+  email           String   @unique
+  telephone       String?
+  adresse         String?
+  logo            String?
+  password        String
+  documentStyle   String?  @default("MODERNE") // "MODERNE" | "CLASSIQUE" | "EPURE"
+  theme           String?  @default("supernova") // "supernova" | "noir" | "blanc" | "systeme"
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   clients   Client[]
   devis     Devis[]

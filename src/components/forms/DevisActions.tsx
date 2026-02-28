@@ -42,7 +42,7 @@ type Devis = {
 };
 
 type Client = { nom: string; prenom: string; email: string; adresseChantier: string | null };
-type Artisan = { nom: string; entreprise: string; adresse: string | null };
+type Artisan = { nom: string; entreprise: string; adresse: string | null; logo?: string | null };
 
 export function DevisActions({
   devis,
