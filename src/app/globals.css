@@ -4,24 +4,60 @@
 
 :root,
 [data-theme="supernova"] {
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  --background: #0f172a;
+  --foreground: #f8fafc;
+  --surface: #1e293b;
   --zypta-blue: #3B82F6;
   --zypta-orange: #F97316;
   --zypta-violet: #8B5CF6;
   --supernova: #FFD54F;
   --supernova-light: #FFF8E1;
   --supernova-dark: #FFC107;
+  --accent: #FFD54F;
+  --accent-foreground: #0f172a;
 }
 
 [data-theme="noir"] {
   --background: #0f172a;
   --foreground: #f8fafc;
+  --surface: #1e293b;
 }
 
 [data-theme="blanc"] {
-  --background: #ffffff;
+  --background: #f8fafc;
   --foreground: #0f172a;
+  --surface: #ffffff;
+}
+
+[data-theme="blanc"] .header-user {
+  color: #475569;
+}
+
+[data-theme="blanc"] .dashboard-card {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+[data-theme="blanc"] .sidebar-theme {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+[data-theme="blanc"] .sidebar-theme .text-slate-400 {
+  color: #64748b !important;
+}
+
+[data-theme="blanc"] .sidebar-theme nav a:hover:not([class*="bg-supernova"]) {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+[data-theme="blanc"] .sidebar-theme .border-slate-700 {
+  border-color: #e2e8f0 !important;
+}
+
+[data-theme="blanc"] .sidebar-theme .bg-slate-800 {
+  background-color: #f1f5f9 !important;
 }
 
 /* Logo Zypta : noir/contours discrets → or supernova visible (zypta.be) */
