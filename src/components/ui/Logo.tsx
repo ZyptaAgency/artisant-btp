@@ -25,7 +25,7 @@ function resolveVariant(dataTheme: string | null): LogoVariant {
 }
 
 export function Logo({
-  src = "/logo-new.png",
+  src = "/logo.png",
   variant,
   width = 160,
   height = 64,
