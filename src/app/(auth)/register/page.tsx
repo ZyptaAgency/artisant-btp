@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Logo } from "@/components/ui/Logo";
+import { StarField } from "@/components/ui/StarField";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -60,11 +61,12 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-[var(--bg)] p-4">
-      <div className="mb-8">
+    <div className="relative flex min-h-screen flex-col items-center justify-center bg-[var(--bg)] p-4 overflow-hidden">
+      <StarField />
+      <div className="relative z-10 mb-8">
         <Logo src="/logo.png" width={280} height={110} />
       </div>
-      <Card className="w-full max-w-md">
+      <Card className="relative z-10 w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Inscription</CardTitle>
           <CardDescription>Créez votre espace artisan</CardDescription>

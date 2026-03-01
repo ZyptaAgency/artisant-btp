@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { LandingLogo } from "@/components/ui/LandingLogo";
+import { StarField } from "@/components/ui/StarField";
 
 export default async function HomePage() {
   const session = await getServerSession(authOptions);
@@ -13,8 +14,9 @@ export default async function HomePage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-4" style={{ background: "var(--bg, #03010a)" }}>
-      <div className="text-center">
+    <div className="relative flex min-h-screen flex-col items-center justify-center p-4 overflow-hidden" style={{ background: "var(--bg, #03010a)" }}>
+      <StarField />
+      <div className="relative z-10 text-center">
         <div className="flex flex-col items-center gap-6">
           <LandingLogo />
           <h1 className="text-3xl font-bold gradient-text">Zypta BTP</h1>
