@@ -42,39 +42,101 @@ const STYLES = [
 type StyleId = (typeof STYLES)[number]["id"];
 
 function DocumentPreview({ style }: { style: (typeof STYLES)[number] }) {
-  const { accentColor, headerBg, lines } = style.preview;
+  const { accentColor } = style.preview;
+  const isModerne = style.id === "MODERNE";
+  const isClassique = style.id === "CLASSIQUE";
+  const isEpure = style.id === "EPURE";
+
   return (
-    <div className="mt-3 w-full rounded-lg border border-[var(--border)] bg-white p-3 text-[10px]">
-      <div className="flex items-start justify-between mb-2">
-        <div>
-          <div className="h-2 w-12 rounded-sm" style={{ background: accentColor }} />
-          <div className="mt-1 h-1 w-20 rounded-sm bg-gray-300" />
-        </div>
-        <div className="text-right">
-          <div className="h-1.5 w-10 rounded-sm bg-gray-200" />
-          <div className="mt-0.5 h-1 w-14 rounded-sm bg-gray-200" />
-        </div>
+    <div className="mt-3 w-full rounded-lg border border-[var(--border)] bg-white overflow-hidden text-[9px] leading-tight">
+      {/* Header area */}
+      <div
+        className={cn(
+          "p-2",
+          isModerne && "rounded-t-lg flex items-start justify-between",
+          isClassique && "border-2 border-gray-400 bg-gray-100 text-center",
+          isEpure && "pb-4 flex items-start justify-between"
+        )}
+        style={isModerne ? { background: accentColor } : undefined}
+      >
+        {isClassique ? (
+          <div className="flex flex-col items-center gap-1">
+            <div className="h-4 w-4 shrink-0 rounded border border-gray-500" />
+            <span className="font-medium text-gray-800">Artisan BTP</span>
+            <span className="text-gray-600">Devis N°001</span>
+          </div>
+        ) : (
+          <>
+            <div className="flex items-center gap-1.5">
+              <div
+                className={cn(
+                  "h-4 w-4 shrink-0 rounded",
+                  isModerne && "bg-white/30",
+                  isEpure && "border border-black"
+                )}
+              />
+              <span
+                className={cn(
+                  "font-medium truncate max-w-[60px]",
+                  isModerne && "text-white",
+                  isEpure && "text-black"
+                )}
+              >
+                Artisan BTP
+              </span>
+            </div>
+            <div className={cn("text-right", isModerne && "text-white/90", isEpure && "text-black")}>
+              Devis N°001
+            </div>
+          </>
+        )}
       </div>
-      <div className="mb-2 rounded-sm p-1.5" style={{ background: headerBg }}>
-        <div className="flex gap-4">
-          <div className="h-1 w-16 rounded-sm bg-gray-300" />
-          <div className="h-1 w-8 rounded-sm bg-gray-300" />
-          <div className="h-1 w-10 rounded-sm bg-gray-300" />
-        </div>
-      </div>
-      {[1, 2, 3].map((i) => (
+
+      {/* Table section */}
+      <div className={cn("p-2", isEpure && "pt-4")}>
+        {/* Table header */}
         <div
-          key={i}
-          className={cn("flex gap-4 py-1", lines && "border-b border-gray-100")}
+          className={cn(
+            "flex gap-2 py-1 px-1 font-medium",
+            isModerne && "rounded-t text-white",
+            isClassique && "border-x border-t border-gray-400 bg-gray-200",
+            isEpure && "text-black"
+          )}
+          style={isModerne ? { background: accentColor } : undefined}
         >
-          <div className="h-1 w-20 rounded-sm bg-gray-200" />
-          <div className="h-1 w-6 rounded-sm bg-gray-200" />
-          <div className="h-1 w-10 rounded-sm bg-gray-200" />
+          <span className="flex-1 min-w-0 truncate">Désignation</span>
+          <span className="w-8 shrink-0">Qté</span>
+          <span className="w-10 shrink-0">Total</span>
         </div>
-      ))}
-      <div className="mt-2 flex justify-end">
-        <div className="rounded-sm px-2 py-1" style={{ background: accentColor + "15" }}>
-          <div className="h-1.5 w-14 rounded-sm" style={{ background: accentColor }} />
+
+        {/* Table rows */}
+        {[1, 2, 3].map((i) => (
+          <div
+            key={i}
+            className={cn(
+              "flex gap-2 py-1 px-1 text-gray-600",
+              isModerne && "border-b border-gray-100",
+              isClassique && "border-x border-b border-gray-400",
+              isEpure && "py-2"
+            )}
+          >
+            <span className="flex-1 min-w-0 truncate">Prestation {i}</span>
+            <span className="w-8 shrink-0">1</span>
+            <span className="w-10 shrink-0">150 €</span>
+          </div>
+        ))}
+
+        {/* Totals section */}
+        <div
+          className={cn(
+            "mt-2 flex justify-end py-1.5 px-2 font-medium",
+            isModerne && "rounded-lg",
+            isClassique && "border-2 border-gray-400 mt-2",
+            isEpure && "border-t border-black mt-4"
+          )}
+          style={isModerne ? { background: accentColor + "20", color: accentColor } : isEpure ? { color: "#000" } : undefined}
+        >
+          <span className={isClassique ? "text-gray-800" : ""}>Total: 450 €</span>
         </div>
       </div>
     </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import {
   Euro,
@@ -9,9 +10,20 @@ import {
   AlertTriangle,
   Send,
   Sun,
+  Cloud,
+  CloudRain,
+  CloudSnow,
+  CloudLightning,
+  CloudFog,
+  Loader2,
 } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import {
+  CalendarSyncButtons,
+  CalendarSyncDialog,
+} from "@/components/dashboard/CalendarSync";
+import { DashboardCharts } from "@/components/dashboard/DashboardCharts";
 
 type Chantier = {
   id: string;
@@ -43,8 +55,26 @@ type FactureEnvoyer = {
   client: string;
 };
 
+type WeatherData = {
+  temperature: number;
+  description: string;
+  ville: string;
+};
+
+const WEATHER_ICONS: Record<string, typeof Sun> = {
+  "Dégagé": Sun,
+  "Peu nuageux": Cloud,
+  "Brouillard": CloudFog,
+  "Bruine": CloudRain,
+  "Pluie": CloudRain,
+  "Neige": CloudSnow,
+  "Averses": CloudRain,
+  "Orage": CloudLightning,
+};
+
 type Props = {
   prenom: string;
+  villeMeteo: string;
   caMois: number;
   evolutionCA: number;
   devisEnAttente: number;
@@ -66,6 +96,7 @@ const salutations = [
 
 export function DashboardZypta({
   prenom,
+  villeMeteo,
   caMois,
   evolutionCA,
   devisEnAttente,
@@ -78,6 +109,17 @@ export function DashboardZypta({
   facturesAEnvoyer,
 }: Props) {
   const salutation = salutations[new Date().getHours() % salutations.length];
+  const [syncProvider, setSyncProvider] = useState<"google" | "ical" | null>(null);
+  const [weather, setWeather] = useState<WeatherData | null>(null);
+  const [weatherLoading, setWeatherLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(`/api/weather?ville=${encodeURIComponent(villeMeteo)}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => { if (data) setWeather(data); })
+      .catch(() => {})
+      .finally(() => setWeatherLoading(false));
+  }, [villeMeteo]);
 
   const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.06 } } };
   const item = { hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } };
@@ -102,9 +144,23 @@ export function DashboardZypta({
             </p>
           </div>
           <div className="flex items-center gap-2 rounded-xl bg-[var(--bg-card)] px-4 py-2 shadow-sm border border-[var(--border)]">
-            <Sun className="h-5 w-5 text-nova-core" />
-            <span className="text-sm font-medium text-[var(--text-white)]">Ensoleillé, 18°C</span>
-            <span className="text-xs text-[var(--text-muted)]">Paris</span>
+            {weatherLoading ? (
+              <>
+                <Loader2 className="h-5 w-5 text-nova-core animate-spin" />
+                <span className="text-sm font-medium text-[var(--text-muted)]">Chargement…</span>
+              </>
+            ) : weather ? (
+              <>
+                {(() => { const Icon = WEATHER_ICONS[weather.description] ?? Sun; return <Icon className="h-5 w-5 text-nova-core" />; })()}
+                <span className="text-sm font-medium text-[var(--text-white)]">{weather.description}, {weather.temperature}°C</span>
+                <span className="text-xs text-[var(--text-muted)]">{weather.ville}</span>
+              </>
+            ) : (
+              <>
+                <Sun className="h-5 w-5 text-nova-core" />
+                <span className="text-sm font-medium text-[var(--text-muted)]">Météo indisponible</span>
+              </>
+            )}
           </div>
         </div>
       </motion.div>
@@ -152,7 +208,7 @@ export function DashboardZypta({
             <TrendingUp className="h-5 w-5 text-nova-mid opacity-90" />
           </div>
           <p className="mt-2 text-2xl font-bold text-[var(--text-white)]">{tauxConversion.toFixed(1)}%</p>
-          <p className="mt-1 text-sm text-[var(--text-muted)]">Devis → Chantier</p>
+          <p className="mt-1 text-sm text-[var(--text-muted)]">Devis → Projet</p>
         </div>
       </motion.div>
 
@@ -262,8 +318,15 @@ export function DashboardZypta({
         </div>
       </motion.div>
 
+      <motion.div variants={item}>
+        <DashboardCharts />
+      </motion.div>
+
       <motion.div variants={item} className="glass-card p-6">
-        <h3 className="font-bold gradient-text">Cette semaine</h3>
+        <div className="flex items-center justify-between">
+          <h3 className="font-bold gradient-text">Cette semaine</h3>
+          <CalendarSyncButtons onSync={setSyncProvider} />
+        </div>
         <div className="mt-4 flex gap-2">
           {["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"].map((j, i) => (
             <div
@@ -280,9 +343,14 @@ export function DashboardZypta({
           ))}
         </div>
         <p className="mt-2 text-xs text-[var(--text-muted)]">
-          🟣 RDV client · 🟠 Chantier · ⚪ Administratif
+          🟣 RDV client · 🟠 Projet · ⚪ Administratif
         </p>
       </motion.div>
+
+      <CalendarSyncDialog
+        provider={syncProvider}
+        onClose={() => setSyncProvider(null)}
+      />
     </motion.div>
   );
 }

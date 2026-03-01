@@ -90,9 +90,15 @@ export default async function DashboardPage() {
 
   const prenom = session?.user?.name?.split(" ")[0] || "Artisan";
 
+  const userSettings = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { villeMeteo: true },
+  });
+
   return (
     <DashboardZypta
       prenom={prenom}
+      villeMeteo={userSettings?.villeMeteo ?? "Paris"}
       caMois={caMois}
       evolutionCA={evolutionCA}
       devisEnAttente={devisEnAttente}

@@ -25,11 +25,13 @@ export default async function SettingsPage() {
         user={{
           nom: user.nom,
           entreprise: user.entreprise,
+          activite: user.activite,
           siret: user.siret,
           identifiantType: user.identifiantType ?? "SIRET",
           email: user.email,
           telephone: user.telephone,
           adresse: user.adresse,
+          villeMeteo: user.villeMeteo,
           logo: user.logo,
           documentStyle: user.documentStyle ?? "MODERNE",
           theme: user.theme ?? "supernova",

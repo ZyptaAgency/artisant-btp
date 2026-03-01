@@ -7,11 +7,13 @@ import { z } from "zod";
 const schema = z.object({
   nom: z.string().min(1),
   entreprise: z.string().min(1),
+  activite: z.string().optional(),
   siret: z.string().optional(),
   identifiantType: z.enum(["SIRET", "BCE"]).optional(),
   email: z.string().email(),
   telephone: z.string().optional(),
   adresse: z.string().optional(),
+  villeMeteo: z.string().optional(),
   logo: z.string().optional(),
 });
 
@@ -30,10 +32,12 @@ export async function PATCH(req: Request) {
       data: {
         nom: data.nom,
         entreprise: data.entreprise,
+        activite: data.activite ?? null,
         siret: data.siret ?? null,
         email: data.email,
         telephone: data.telephone ?? null,
         adresse: data.adresse ?? null,
+        villeMeteo: data.villeMeteo ?? null,
         logo: data.logo ?? null,
         identifiantType: data.identifiantType ?? null,
       },

@@ -149,7 +149,7 @@ export function EstimateurZypta() {
     setGamme(id);
     const g = GAMMES.find((x) => x.id === id);
     addUserMessage(g ? `${g.emoji} ${g.label}` : id);
-    addZyptaMessage("Ville du chantier ? (ou laisse vide pour France)", "question");
+    addZyptaMessage("Ville d'intervention ? (ou laisse vide pour France)", "question");
     setStep("ville");
   }
 

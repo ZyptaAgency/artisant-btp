@@ -35,7 +35,7 @@ export function Sidebar() {
       <div className="flex h-full flex-col">
         <div className="flex h-20 items-center justify-center border-b border-[var(--border)] px-4">
           <Link href="/dashboard" className="block">
-            <Logo src="/logo.png" width={160} height={64} />
+            <Logo src="/logo-new.png" width={160} height={64} />
           </Link>
         </div>
         <nav className="flex-1 space-y-1 p-4">

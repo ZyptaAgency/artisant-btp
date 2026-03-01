@@ -73,7 +73,7 @@ export function DevisPDF({ numero, client, artisan, lignes, montantHT, tva, mont
           </View>
           {client.adresseChantier && (
             <View style={styles.row}>
-              <Text style={styles.label}>Adresse chantier :</Text>
+              <Text style={styles.label}>Adresse d&apos;intervention :</Text>
               <Text>{client.adresseChantier}</Text>
             </View>
           )}

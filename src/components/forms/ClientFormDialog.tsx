@@ -146,7 +146,7 @@ export function ClientFormDialog({
             <Input id="telephone" {...register("telephone")} />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="adresseChantier">Adresse chantier</Label>
+            <Label htmlFor="adresseChantier">Adresse d&apos;intervention</Label>
             <Input id="adresseChantier" {...register("adresseChantier")} />
           </div>
           <div className="space-y-2">

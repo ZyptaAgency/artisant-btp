@@ -13,6 +13,7 @@ import {
 import { ProfileForm } from "@/components/forms/ProfileForm";
 import { DocumentModelForm } from "@/components/settings/DocumentModelForm";
 import { ThemeForm } from "@/components/settings/ThemeForm";
+import { ProfileSection } from "@/components/settings/ProfileSection";
 import { cn } from "@/lib/utils";
 
 const SECTIONS = [
@@ -28,11 +29,13 @@ const SECTIONS = [
 type UserData = {
   nom: string;
   entreprise: string;
+  activite: string | null;
   siret: string | null;
   identifiantType: string;
   email: string;
   telephone: string | null;
   adresse: string | null;
+  villeMeteo: string | null;
   logo: string | null;
   documentStyle: string;
   theme: string;
@@ -78,11 +81,13 @@ export function ParametresZypta({ user }: { user: UserData }) {
                 defaultValues={{
                   nom: user.nom,
                   entreprise: user.entreprise,
+                  activite: user.activite ?? "",
                   siret: user.siret ?? "",
                   identifiantType: user.identifiantType === "BCE" ? "BCE" : "SIRET",
                   email: user.email,
                   telephone: user.telephone ?? "",
                   adresse: user.adresse ?? "",
+                  villeMeteo: user.villeMeteo ?? "Paris",
                   logo: user.logo ?? "",
                 }}
               />
@@ -95,6 +100,7 @@ export function ParametresZypta({ user }: { user: UserData }) {
               <p className="text-sm text-[var(--text-muted)]">
                 Gestion du compte et des préférences personnelles.
               </p>
+              <ProfileSection email={user.email} />
             </div>
           )}
 

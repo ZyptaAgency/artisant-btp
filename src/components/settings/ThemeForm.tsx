@@ -7,9 +7,9 @@ import { Sun, Moon, Monitor, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 const THEMES = [
-  { id: "supernova", label: "Supernova", icon: Sparkles, desc: "Accents dorés (défaut)" },
-  { id: "noir", label: "Noir", icon: Moon, desc: "Mode sombre" },
-  { id: "blanc", label: "Blanc", icon: Sun, desc: "Mode clair" },
+  { id: "supernova", label: "Supernova", icon: Sparkles, desc: "Violet, rose et bleu (défaut)" },
+  { id: "noir", label: "Noir", icon: Moon, desc: "Mode sombre, accents dorés" },
+  { id: "blanc", label: "Blanc", icon: Sun, desc: "Mode clair, accents dorés" },
   { id: "systeme", label: "Système", icon: Monitor, desc: "Suivre jour/nuit" },
 ] as const;
 

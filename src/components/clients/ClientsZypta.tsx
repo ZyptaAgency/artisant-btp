@@ -339,7 +339,7 @@ function ClientSlidePanel({
 
   const suggestion =
     joursDepuisContact > 45
-      ? "Ce client n'a pas été relancé depuis 45 jours. Son dernier chantier était une rénovation cuisine — proposez-lui la salle de bain ? 🚿"
+      ? "Ce client n'a pas été relancé depuis 45 jours. Sa dernière intervention était une rénovation cuisine — proposez-lui la salle de bain ? 🚿"
       : null;
 
   return (
@@ -415,7 +415,7 @@ function ClientSlidePanel({
 
           {client.adresseChantier && (
             <div className="mt-6">
-              <h4 className="text-sm font-semibold text-[var(--text-muted)]">Adresse chantier</h4>
+              <h4 className="text-sm font-semibold text-[var(--text-muted)]">Adresse d&apos;intervention</h4>
               <p className="text-[var(--text-muted)]">{client.adresseChantier}</p>
             </div>
           )}

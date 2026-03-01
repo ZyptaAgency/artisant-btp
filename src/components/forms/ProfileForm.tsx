@@ -10,14 +10,31 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 
+const ACTIVITES_BTP = [
+  "Plomberie",
+  "Électricité",
+  "Maçonnerie",
+  "Peinture",
+  "Carrelage",
+  "Menuiserie",
+  "Couverture / Toiture",
+  "Chauffage / Climatisation",
+  "Terrassement",
+  "Rénovation générale",
+  "Multi-corps d'état",
+  "Autre",
+] as const;
+
 const schema = z.object({
   nom: z.string().min(1),
   entreprise: z.string().min(1),
+  activite: z.string().optional(),
   siret: z.string().optional(),
   identifiantType: z.enum(["SIRET", "BCE"]).optional(),
   email: z.string().email(),
   telephone: z.string().optional(),
   adresse: z.string().optional(),
+  villeMeteo: z.string().optional(),
   logo: z.string().optional(),
 });
 
@@ -82,6 +99,18 @@ export function ProfileForm({ defaultValues }: { defaultValues: FormData }) {
         {errors.entreprise && <p className="text-sm text-red-600">{errors.entreprise.message}</p>}
       </div>
       <div className="space-y-2">
+        <Label>Activité / Métier</Label>
+        <select
+          {...register("activite")}
+          className="flex h-10 w-full rounded-md border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--ring)]"
+        >
+          <option value="">— Sélectionner —</option>
+          {ACTIVITES_BTP.map((a) => (
+            <option key={a} value={a}>{a}</option>
+          ))}
+        </select>
+      </div>
+      <div className="space-y-2">
         <Label>Identifiant</Label>
         <div className="flex gap-3 items-center">
           <div className="flex gap-2">
@@ -109,6 +138,11 @@ export function ProfileForm({ defaultValues }: { defaultValues: FormData }) {
       <div className="space-y-2">
         <Label>Adresse</Label>
         <Input {...register("adresse")} />
+      </div>
+      <div className="space-y-2">
+        <Label>Ville (météo)</Label>
+        <Input {...register("villeMeteo")} placeholder="Paris" />
+        <p className="text-xs text-[var(--text-muted)]">Ville affichée pour la météo sur le tableau de bord.</p>
       </div>
       <div className="space-y-2">
         <Label>Logo entreprise (PDF)</Label>

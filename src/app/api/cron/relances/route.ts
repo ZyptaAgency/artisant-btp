@@ -29,18 +29,21 @@ export async function GET(req: Request) {
 
   if (devisJ3.length > 0) {
     for (const d of devisJ3) {
-      const result = await sendEmail({
-        to: d.client.email,
-        type: "RELANCE_J3",
-        data: { clientNom: d.client.nom, clientPrenom: d.client.prenom, numero: d.numero },
-      });
+      const subject = `Relance devis ${d.numero}`;
+      const html = `<p>Bonjour ${d.client.prenom} ${d.client.nom},</p><p>Nous revenons vers vous concernant le devis <strong>${d.numero}</strong> envoyé récemment.</p><p>N'hésitez pas à nous contacter pour toute question.</p><p>Cordialement,<br/>L'équipe Zypta BTP</p>`;
+      let success = true;
+      try {
+        await sendEmail({ to: d.client.email, subject, html });
+      } catch {
+        success = false;
+      }
       await prisma.email.create({
         data: {
           clientId: d.clientId,
           type: "RELANCE_J3",
-          sujet: `Relance devis ${d.numero}`,
-          contenu: result.success ? "Envoyé" : result.error ?? "Erreur",
-          statut: result.success ? "ENVOYE" : "ERREUR",
+          sujet: subject,
+          contenu: success ? "Envoyé" : "Erreur",
+          statut: success ? "ENVOYE" : "ERREUR",
         },
       });
     }
