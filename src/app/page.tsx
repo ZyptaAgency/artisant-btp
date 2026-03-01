@@ -1,8 +1,6 @@
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import Link from "next/link";
-import { LandingLogo } from "@/components/ui/LandingLogo";
 import { StarField } from "@/components/ui/StarField";
 import { LandingContent } from "@/components/ui/LandingContent";
 
