@@ -33,9 +33,9 @@ export function Sidebar() {
   return (
     <aside className="sidebar-zypta fixed left-0 top-0 z-40 hidden h-screen w-64 border-r border-[var(--border)] md:block">
       <div className="flex h-full flex-col">
-        <div className="flex h-20 items-center justify-center border-b border-[var(--border)] px-4">
+        <div className="flex items-center justify-center border-b border-[var(--border)] px-4 py-5">
           <Link href="/dashboard" className="block">
-            <Logo src="/logo.png" width={200} height={80} />
+            <Logo src="/logo.png" width={150} height={100} />
           </Link>
         </div>
         <nav className="flex-1 space-y-1 p-4">

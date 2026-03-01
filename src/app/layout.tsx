@@ -9,10 +9,7 @@ export const metadata: Metadata = {
   title: "Zypta BTP - Cockpit des artisans du bâtiment",
   description: "SaaS pour artisans et entreprises du bâtiment - Clients, Devis, Factures, Pipeline",
   icons: {
-    icon: [
-      { url: "/favicon.ico", sizes: "any" },
-      { url: "/icon.png", type: "image/png", sizes: "700x700" },
-    ],
+    icon: "/icon.png",
     apple: "/apple-touch-icon.png",
   },
 };

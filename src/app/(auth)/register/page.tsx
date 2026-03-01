@@ -64,7 +64,7 @@ export default function RegisterPage() {
     <div className="relative flex min-h-screen flex-col items-center justify-center bg-[var(--bg)] p-4 overflow-hidden">
       <StarField />
       <div className="relative z-10 mb-8">
-        <Logo src="/logo.png" width={280} height={110} />
+        <Logo src="/logo.png" width={180} height={180} />
       </div>
       <Card className="relative z-10 w-full max-w-md">
         <CardHeader className="text-center">
