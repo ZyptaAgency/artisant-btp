@@ -60,6 +60,8 @@ const translations = {
     "auth.passwordMinSpecial": "Le mot de passe doit contenir au moins 8 caractères et 1 caractère spécial",
     "auth.passwordMismatch": "Les mots de passe ne correspondent pas",
     "auth.passwordMinChars": "Minimum 8 caractères avec au moins 1 caractère spécial",
+    "auth.wrongPassword": "Mot de passe incorrect",
+    "auth.signupSuccess": "Inscription réussie ! Connectez-vous avec votre mot de passe.",
     // Landing
     "landing.tagline": "Le cockpit des artisans",
     "landing.login": "Se connecter",
@@ -552,6 +554,8 @@ const translations = {
     "auth.passwordMinSpecial": "Password must contain at least 8 characters and 1 special character",
     "auth.passwordMismatch": "Passwords do not match",
     "auth.passwordMinChars": "Minimum 8 characters with at least 1 special character",
+    "auth.wrongPassword": "Incorrect password",
+    "auth.signupSuccess": "Sign up successful! Log in with your password.",
     "landing.tagline": "The cockpit for artisans",
     "landing.login": "Log in",
     "landing.register": "Sign up",

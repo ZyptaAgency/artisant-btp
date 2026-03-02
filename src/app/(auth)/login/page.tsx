@@ -2,7 +2,7 @@
 
 import { Suspense, useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { getCsrfToken } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -12,16 +12,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { toast } from "sonner";
 import { Logo } from "@/components/ui/Logo";
 import { StarField } from "@/components/ui/StarField";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Globe } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 function LoginForm() {
-  const { t } = useLanguage();
+  const { t, locale, setLocale } = useLanguage();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [csrfToken, setCsrfToken] = useState<string | null>(null);
   const [callbackUrl, setCallbackUrl] = useState("/dashboard");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -29,22 +31,65 @@ function LoginForm() {
     const emailParam = params.get("email");
     if (emailParam) setEmail(emailParam);
     if (params.get("registered") === "1") {
-      toast.success("Inscription réussie ! Connectez-vous avec votre mot de passe.");
+      toast.success(t("auth.signupSuccess"));
     }
-    const error = params.get("error");
-    if (error === "CredentialsSignin" || error === "Credentials") {
-      toast.error("Identifiants incorrects");
-      const cb = params.get("callbackUrl");
-      const q = new URLSearchParams();
-      if (emailParam) q.set("email", emailParam);
-      if (cb) q.set("callbackUrl", cb);
-      router.replace("/login" + (q.toString() ? `?${q.toString()}` : ""), { scroll: false });
+  }, [searchParams, locale, t]);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!email.trim() || !password) return;
+    setIsSubmitting(true);
+    try {
+      const res = await signIn("credentials", {
+        email: email.trim(),
+        password,
+        callbackUrl,
+        redirect: false,
+      });
+      if (res?.error) {
+        toast.error(t("auth.wrongPassword"));
+        return;
+      }
+      if (res?.ok) {
+        router.push(callbackUrl);
+        router.refresh();
+      }
+    } catch {
+      toast.error(t("errors.connectionError"));
+    } finally {
+      setIsSubmitting(false);
     }
-    getCsrfToken().then((token) => setCsrfToken(token ?? null));
-  }, [searchParams, router]);
+  }
 
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center bg-[var(--bg)] p-4 overflow-hidden">
+      <div className="absolute top-4 right-4 z-20 flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-white/5 p-0.5">
+        <Globe className="ml-2 h-3.5 w-3.5 text-[var(--text-muted)]" />
+        <button
+          type="button"
+          onClick={() => setLocale("fr")}
+          className={cn(
+            "rounded-full px-2.5 py-1 text-xs font-medium transition-all duration-200",
+            locale === "fr"
+              ? "bg-[var(--accent)] text-white shadow-[0_0_10px_var(--ring)]"
+              : "text-[var(--text-muted)] hover:text-[var(--foreground)]"
+          )}
+        >
+          FR
+        </button>
+        <button
+          type="button"
+          onClick={() => setLocale("en")}
+          className={cn(
+            "rounded-full px-2.5 py-1 text-xs font-medium transition-all duration-200",
+            locale === "en"
+              ? "bg-[var(--accent)] text-white shadow-[0_0_10px_var(--ring)]"
+              : "text-[var(--text-muted)] hover:text-[var(--foreground)]"
+          )}
+        >
+          EN
+        </button>
+      </div>
       <StarField />
       <div className="relative z-10 mb-8">
         <Logo src="/logo.png" width={180} height={180} />
@@ -55,13 +100,7 @@ function LoginForm() {
           <CardDescription>{t("auth.loginSubtitle")}</CardDescription>
         </CardHeader>
         <CardContent>
-          <form
-            action="/api/auth/callback/credentials"
-            method="POST"
-            className="space-y-4"
-          >
-            <input type="hidden" name="csrfToken" value={csrfToken ?? ""} />
-            <input type="hidden" name="callbackUrl" value={callbackUrl} />
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">{t("auth.email")}</Label>
               <Input
@@ -81,6 +120,8 @@ function LoginForm() {
                   id="password"
                   name="password"
                   type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   required
                   className="pr-10"
                 />
@@ -98,8 +139,8 @@ function LoginForm() {
                 {t("auth.forgotPassword")}
               </Link>
             </div>
-            <Button type="submit" className="w-full" disabled={!csrfToken}>
-              {!csrfToken ? t("common.loading") : t("auth.login")}
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+              {isSubmitting ? t("auth.loggingIn") : t("auth.login")}
             </Button>
           </form>
           <p className="mt-4 text-center text-sm text-[var(--text-muted)]">

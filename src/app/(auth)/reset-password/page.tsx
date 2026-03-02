@@ -11,13 +11,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { toast } from "sonner";
 import { Logo } from "@/components/ui/Logo";
 import { StarField } from "@/components/ui/StarField";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Globe } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const PASSWORD_REGEX = /^(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/;
 
 function ResetPasswordForm() {
   const searchParams = useSearchParams();
-  const { t } = useLanguage();
+  const { t, locale, setLocale } = useLanguage();
   const token = searchParams.get("token");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -62,9 +63,40 @@ function ResetPasswordForm() {
     }
   }
 
+  const langSelector = (
+    <div className="absolute top-4 right-4 z-20 flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-white/5 p-0.5">
+      <Globe className="ml-2 h-3.5 w-3.5 text-[var(--text-muted)]" />
+      <button
+        type="button"
+        onClick={() => setLocale("fr")}
+        className={cn(
+          "rounded-full px-2.5 py-1 text-xs font-medium transition-all duration-200",
+          locale === "fr"
+            ? "bg-[var(--accent)] text-white shadow-[0_0_10px_var(--ring)]"
+            : "text-[var(--text-muted)] hover:text-[var(--foreground)]"
+        )}
+      >
+        FR
+      </button>
+      <button
+        type="button"
+        onClick={() => setLocale("en")}
+        className={cn(
+          "rounded-full px-2.5 py-1 text-xs font-medium transition-all duration-200",
+          locale === "en"
+            ? "bg-[var(--accent)] text-white shadow-[0_0_10px_var(--ring)]"
+            : "text-[var(--text-muted)] hover:text-[var(--foreground)]"
+        )}
+      >
+        EN
+      </button>
+    </div>
+  );
+
   if (!token) {
     return (
       <div className="relative flex min-h-screen flex-col items-center justify-center bg-[var(--bg)] p-4 overflow-hidden">
+        {langSelector}
         <StarField />
         <div className="relative z-10 mb-8">
           <Logo src="/logo.png" width={180} height={180} />
@@ -85,6 +117,7 @@ function ResetPasswordForm() {
 
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center bg-[var(--bg)] p-4 overflow-hidden">
+      {langSelector}
       <StarField />
       <div className="relative z-10 mb-8">
         <Logo src="/logo.png" width={180} height={180} />
