@@ -66,7 +66,8 @@ export async function POST(req: Request) {
     );
     const montantTTC = montantHT + tva;
 
-    const numero = await getNextDevisNumber();
+    const userName = session.user.name ?? "";
+    const numero = await getNextDevisNumber(userName);
 
     const devis = await prisma.devis.create({
       data: {

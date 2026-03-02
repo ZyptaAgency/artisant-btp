@@ -3,45 +3,137 @@
 import { Document, Page, Text, View, Image, StyleSheet } from "@react-pdf/renderer";
 import { formatCurrencyForPDF, formatDate } from "@/lib/utils";
 
-const styles = StyleSheet.create({
-  page: { padding: 40, fontSize: 10 },
-  header: { marginBottom: 24, paddingBottom: 16, borderBottomWidth: 1, borderBottomColor: "#e5e7eb" },
-  companyName: { fontSize: 20, fontWeight: "bold", color: "#2563EB", marginBottom: 4 },
-  companyDetails: { fontSize: 9, color: "#6b7280", lineHeight: 1.4 },
-  docTitle: { fontSize: 16, fontWeight: "bold", marginBottom: 4 },
-  docSubtitle: { fontSize: 9, color: "#6b7280", marginBottom: 16 },
-  section: { marginBottom: 16 },
-  sectionTitle: { fontSize: 9, fontWeight: "bold", color: "#374151", marginBottom: 6 },
-  row: { flexDirection: "row", marginBottom: 3 },
-  label: { width: 100, color: "#6b7280" },
-  value: { flex: 1 },
-  table: { marginTop: 20 },
-  tableHeader: {
-    flexDirection: "row",
-    marginBottom: 8,
-    paddingBottom: 6,
-    borderBottomWidth: 2,
-    borderBottomColor: "#2563EB",
-    backgroundColor: "#f8fafc",
-    paddingTop: 6,
-    paddingLeft: 8,
-    paddingRight: 8,
-  },
-  tableRow: { flexDirection: "row", marginBottom: 8, paddingVertical: 4, borderBottomWidth: 0.5, borderBottomColor: "#e5e7eb" },
-  colDesc: { flex: 2, paddingRight: 8 },
-  colQte: { width: 45, paddingRight: 4 },
-  colUnite: { width: 40, paddingRight: 4 },
-  colPrix: { width: 65, paddingRight: 4 },
-  colTva: { width: 40, paddingRight: 4 },
-  colTotal: { width: 70 },
-  totals: { marginTop: 24, marginLeft: "auto", width: 220, padding: 12, backgroundColor: "#f8fafc", borderRadius: 4 },
-  totalRow: { flexDirection: "row", justifyContent: "space-between", marginBottom: 6 },
-  totalTTC: { flexDirection: "row", justifyContent: "space-between", marginTop: 8, paddingTop: 8, fontSize: 14, fontWeight: "bold", borderTopWidth: 1, borderTopColor: "#2563EB" },
-  conditions: { marginTop: 24, padding: 12, backgroundColor: "#fffbeb", borderRadius: 4 },
-  conditionsTitle: { fontSize: 9, fontWeight: "bold", marginBottom: 4 },
-  conditionsText: { fontSize: 8, color: "#6b7280", lineHeight: 1.4 },
-  footer: { position: "absolute", bottom: 30, left: 40, right: 40, fontSize: 7, color: "#9ca3af", lineHeight: 1.3 },
-});
+type DocumentStyle = "MODERNE" | "CLASSIQUE" | "EPURE";
+
+const COLORS = {
+  MODERNE: { accent: "#2563EB", headerBg: "#f0f7ff", subtotalBg: "#f8fafc", text: "#111827", muted: "#6b7280", border: "#e5e7eb", condBg: "#fffbeb" },
+  CLASSIQUE: { accent: "#374151", headerBg: "#f3f4f6", subtotalBg: "#f9fafb", text: "#111827", muted: "#4b5563", border: "#9ca3af", condBg: "#f9fafb" },
+  EPURE: { accent: "#000000", headerBg: "#ffffff", subtotalBg: "#ffffff", text: "#000000", muted: "#6b7280", border: "#d1d5db", condBg: "#fafafa" },
+};
+
+function getStyles(style: DocumentStyle) {
+  const c = COLORS[style];
+
+  return StyleSheet.create({
+    page: {
+      padding: 40,
+      fontSize: 10,
+      color: c.text,
+      ...(style === "EPURE" ? { padding: 50 } : {}),
+    },
+    header: {
+      marginBottom: 24,
+      paddingBottom: 16,
+      ...(style === "MODERNE" ? { borderBottomWidth: 1, borderBottomColor: c.border } : {}),
+      ...(style === "CLASSIQUE" ? { borderBottomWidth: 2, borderBottomColor: c.border } : {}),
+      ...(style === "EPURE" ? { marginBottom: 30 } : {}),
+    },
+    companyName: {
+      fontSize: 20,
+      fontWeight: "bold",
+      marginBottom: 4,
+      ...(style === "MODERNE" ? { color: c.accent } : {}),
+      ...(style === "CLASSIQUE" ? { color: c.text } : {}),
+      ...(style === "EPURE" ? { color: c.text, fontSize: 18 } : {}),
+    },
+    companyDetails: { fontSize: 9, color: c.muted, lineHeight: 1.4 },
+    docTitle: {
+      fontSize: 16,
+      fontWeight: "bold",
+      marginBottom: 4,
+      ...(style === "MODERNE" ? { color: c.accent } : {}),
+    },
+    docSubtitle: { fontSize: 9, color: c.muted, marginBottom: 16 },
+    section: { marginBottom: 16 },
+    sectionTitle: {
+      fontSize: 9,
+      fontWeight: "bold",
+      color: c.text,
+      marginBottom: 6,
+      ...(style === "CLASSIQUE" ? { textDecoration: "underline" } : {}),
+    },
+    row: { flexDirection: "row" as const, marginBottom: 3 },
+    label: {
+      width: 100,
+      color: c.muted,
+      ...(style === "CLASSIQUE" ? { fontWeight: "bold" as const } : {}),
+    },
+    value: { flex: 1 },
+    table: { marginTop: 20 },
+    tableHeader: {
+      flexDirection: "row" as const,
+      marginBottom: 8,
+      paddingBottom: 6,
+      paddingTop: 6,
+      paddingLeft: 8,
+      paddingRight: 8,
+      ...(style === "MODERNE" ? { borderBottomWidth: 2, borderBottomColor: c.accent, backgroundColor: c.subtotalBg } : {}),
+      ...(style === "CLASSIQUE" ? { backgroundColor: c.headerBg, borderWidth: 1, borderColor: c.border } : {}),
+      ...(style === "EPURE" ? { borderBottomWidth: 1, borderBottomColor: c.accent } : {}),
+    },
+    tableHeaderText: {
+      fontWeight: "bold" as const,
+      ...(style === "MODERNE" ? { color: c.accent } : {}),
+      ...(style === "EPURE" ? { fontSize: 9 } : {}),
+    },
+    tableRow: {
+      flexDirection: "row" as const,
+      marginBottom: 8,
+      paddingVertical: 4,
+      paddingLeft: 8,
+      paddingRight: 8,
+      ...(style === "MODERNE" ? { borderBottomWidth: 0.5, borderBottomColor: c.border } : {}),
+      ...(style === "CLASSIQUE" ? { borderLeftWidth: 1, borderRightWidth: 1, borderBottomWidth: 1, borderColor: c.border } : {}),
+      ...(style === "EPURE" ? { paddingVertical: 6 } : {}),
+    },
+    colDesc: { flex: 2, paddingRight: 8 },
+    colQte: { width: 45, paddingRight: 4 },
+    colUnite: { width: 40, paddingRight: 4 },
+    colPrix: { width: 65, paddingRight: 4 },
+    colTva: { width: 40, paddingRight: 4 },
+    colTotal: { width: 70 },
+    totals: {
+      marginTop: 24,
+      marginLeft: "auto" as const,
+      width: 220,
+      padding: 12,
+      borderRadius: 4,
+      ...(style === "MODERNE" ? { backgroundColor: c.subtotalBg } : {}),
+      ...(style === "CLASSIQUE" ? { borderWidth: 1, borderColor: c.border } : {}),
+      ...(style === "EPURE" ? { padding: 0, paddingTop: 12 } : {}),
+    },
+    totalRow: { flexDirection: "row" as const, justifyContent: "space-between" as const, marginBottom: 6 },
+    totalTTC: {
+      flexDirection: "row" as const,
+      justifyContent: "space-between" as const,
+      marginTop: 8,
+      paddingTop: 8,
+      fontSize: 14,
+      fontWeight: "bold" as const,
+      ...(style === "MODERNE" ? { borderTopWidth: 1, borderTopColor: c.accent } : {}),
+      ...(style === "CLASSIQUE" ? { borderTopWidth: 2, borderTopColor: c.border } : {}),
+      ...(style === "EPURE" ? { borderTopWidth: 1, borderTopColor: c.accent } : {}),
+    },
+    conditions: {
+      marginTop: 24,
+      padding: 12,
+      backgroundColor: c.condBg,
+      borderRadius: 4,
+      ...(style === "CLASSIQUE" ? { borderWidth: 1, borderColor: c.border } : {}),
+    },
+    conditionsTitle: { fontSize: 9, fontWeight: "bold" as const, marginBottom: 4 },
+    conditionsText: { fontSize: 8, color: c.muted, lineHeight: 1.4 },
+    footer: {
+      position: "absolute" as const,
+      bottom: 30,
+      left: 40,
+      right: 40,
+      fontSize: 7,
+      color: "#9ca3af",
+      lineHeight: 1.3,
+    },
+  });
+}
 
 type Ligne = {
   description: string;
@@ -63,6 +155,7 @@ type Props = {
   acompte: number;
   dateEcheance?: Date | null;
   dateFacture?: Date | null;
+  style?: DocumentStyle;
 };
 
 const UNITE_LABELS: Record<string, string> = {
@@ -73,7 +166,8 @@ const UNITE_LABELS: Record<string, string> = {
   UNITE: "u",
 };
 
-export function FacturePDF({ numero, client, artisan, lignes, montantHT, tva, montantTTC, acompte, dateEcheance, dateFacture }: Props) {
+export function FacturePDF({ numero, client, artisan, lignes, montantHT, tva, montantTTC, acompte, dateEcheance, dateFacture, style = "MODERNE" }: Props) {
+  const styles = getStyles(style);
   const uniteStr = (u: string) => UNITE_LABELS[u] || u;
 
   return (
@@ -87,16 +181,16 @@ export function FacturePDF({ numero, client, artisan, lignes, montantHT, tva, mo
             <View style={{ flex: 1 }}>
               <Text style={styles.companyName}>{artisan.entreprise}</Text>
               <View style={styles.companyDetails}>
-            <Text>{artisan.nom}</Text>
-            {artisan.adresse && <Text>{artisan.adresse}</Text>}
-            {artisan.telephone && <Text>Tel: {artisan.telephone}</Text>}
-            {artisan.email && <Text>Email: {artisan.email}</Text>}
+                <Text>{artisan.nom}</Text>
+                {artisan.adresse && <Text>{artisan.adresse}</Text>}
+                {artisan.telephone && <Text>Tel: {artisan.telephone}</Text>}
+                {artisan.email && <Text>Email: {artisan.email}</Text>}
             {artisan.siret && (
               <Text>
-                {artisan.identifiantType === "BCE" ? "BCE" : "SIRET"}: {artisan.siret}
+                {artisan.identifiantType === "BCE" ? "BCE" : artisan.identifiantType === "IDE" ? "IDE" : "SIRET"}: {artisan.siret}
               </Text>
             )}
-          </View>
+              </View>
             </View>
           </View>
         </View>
@@ -134,12 +228,12 @@ export function FacturePDF({ numero, client, artisan, lignes, montantHT, tva, mo
 
         <View style={styles.table}>
           <View style={styles.tableHeader}>
-            <Text style={styles.colDesc}>Désignation</Text>
-            <Text style={styles.colQte}>Qté</Text>
-            <Text style={styles.colUnite}>Unité</Text>
-            <Text style={styles.colPrix}>Prix unit. HT</Text>
-            <Text style={styles.colTva}>TVA</Text>
-            <Text style={styles.colTotal}>Total HT</Text>
+            <Text style={[styles.colDesc, styles.tableHeaderText]}>Désignation</Text>
+            <Text style={[styles.colQte, styles.tableHeaderText]}>Qté</Text>
+            <Text style={[styles.colUnite, styles.tableHeaderText]}>Unité</Text>
+            <Text style={[styles.colPrix, styles.tableHeaderText]}>Prix unit. HT</Text>
+            <Text style={[styles.colTva, styles.tableHeaderText]}>TVA</Text>
+            <Text style={[styles.colTotal, styles.tableHeaderText]}>Total HT</Text>
           </View>
           {lignes.map((l, i) => (
             <View key={i} style={styles.tableRow}>

@@ -65,7 +65,8 @@ export default async function DevisDetailPage({
         <DevisActions
           devis={devis}
           client={devis.client}
-          artisan={user ? { nom: user.nom, entreprise: user.entreprise, adresse: user.adresse, logo: user.logo } : { nom: "", entreprise: "", adresse: null }}
+          artisan={user ? { nom: user.nom, entreprise: user.entreprise, adresse: user.adresse, siret: user.siret, identifiantType: user.identifiantType, logo: user.logo } : { nom: "", entreprise: "", adresse: null }}
+          documentStyle={(user?.documentStyle as "MODERNE" | "CLASSIQUE" | "EPURE") ?? "MODERNE"}
         />
       </div>
 

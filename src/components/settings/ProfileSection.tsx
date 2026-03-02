@@ -1,13 +1,24 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Mail, Lock, Loader2 } from "lucide-react";
+import { Mail, Lock, Loader2, AlertTriangle } from "lucide-react";
 
 export function ProfileSection({ email }: { email: string }) {
+  const router = useRouter();
   const [newEmail, setNewEmail] = useState("");
   const [emailPassword, setEmailPassword] = useState("");
   const [emailLoading, setEmailLoading] = useState(false);
@@ -16,6 +27,35 @@ export function ProfileSection({ email }: { email: string }) {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordLoading, setPasswordLoading] = useState(false);
+
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState("");
+  const [deleteLoading, setDeleteLoading] = useState(false);
+
+  async function handleDeleteAccount() {
+    setDeleteLoading(true);
+    try {
+      const res = await fetch("/api/user/delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ confirmation: deleteConfirmation }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        toast.error(data.error || "Erreur lors de la suppression");
+        return;
+      }
+
+      toast.success("Compte supprimé avec succès");
+      await signOut({ redirect: false });
+      router.push("/login");
+    } catch {
+      toast.error("Erreur réseau");
+    } finally {
+      setDeleteLoading(false);
+    }
+  }
 
   async function handleEmailChange(e: React.FormEvent) {
     e.preventDefault();
@@ -62,6 +102,12 @@ export function ProfileSection({ email }: { email: string }) {
 
     if (newPassword.length < 8) {
       toast.error("Le mot de passe doit contenir au moins 8 caractères");
+      return;
+    }
+
+    const specialCharRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
+    if (!specialCharRegex.test(newPassword)) {
+      toast.error("Le mot de passe doit contenir un caractère spécial");
       return;
     }
 
@@ -164,7 +210,7 @@ export function ProfileSection({ email }: { email: string }) {
             <Label className="text-[var(--text-muted)]">Nouveau mot de passe</Label>
             <Input
               type="password"
-              placeholder="Minimum 8 caractères"
+              placeholder="Min. 8 caractères, 1 spécial"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               required
@@ -194,6 +240,74 @@ export function ProfileSection({ email }: { email: string }) {
           </Button>
         </form>
       </div>
+
+      {/* Danger Zone */}
+      <div className="rounded-xl border border-red-500/50 bg-red-500/5 p-5">
+        <div className="mb-4 flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-red-500/15">
+            <AlertTriangle className="h-4 w-4 text-red-500" />
+          </div>
+          <div>
+            <h3 className="text-sm font-semibold text-red-500">Supprimer mon compte</h3>
+            <p className="text-xs text-[var(--text-muted)]">
+              Cette action est irréversible. Toutes vos données seront supprimées.
+            </p>
+          </div>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          className="border-red-500/50 text-red-500 hover:bg-red-500/10 hover:text-red-400"
+          onClick={() => setDeleteOpen(true)}
+        >
+          Supprimer mon compte
+        </Button>
+      </div>
+
+      <Dialog open={deleteOpen} onOpenChange={(open) => {
+        setDeleteOpen(open);
+        if (!open) {
+          setDeleteConfirmation("");
+        }
+      }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="text-red-500">Supprimer mon compte</DialogTitle>
+            <DialogDescription>
+              Cette action est irréversible. Toutes vos données (devis, factures, clients) seront définitivement supprimées.
+              Tapez <span className="font-bold text-[var(--foreground)]">SUPPRIMER</span> pour confirmer.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2 py-2">
+            <Label className="text-[var(--text-muted)]">Confirmation</Label>
+            <Input
+              placeholder="Tapez SUPPRIMER"
+              value={deleteConfirmation}
+              onChange={(e) => setDeleteConfirmation(e.target.value)}
+              autoComplete="off"
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteOpen(false)}>
+              Annuler
+            </Button>
+            <Button
+              variant="destructive"
+              disabled={deleteConfirmation !== "SUPPRIMER" || deleteLoading}
+              onClick={handleDeleteAccount}
+            >
+              {deleteLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Suppression…
+                </>
+              ) : (
+                "Confirmer la suppression"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

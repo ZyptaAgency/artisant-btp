@@ -69,6 +69,13 @@ export async function PATCH(
     const body = await req.json();
     const data = updateDevisSchema.parse(body);
 
+    if (data.lignes && existing.statut !== "BROUILLON") {
+      return NextResponse.json(
+        { error: "Seuls les devis brouillon peuvent être modifiés" },
+        { status: 400 }
+      );
+    }
+
     let montantHT = existing.montantHT;
     let tva = existing.tva;
     let montantTTC = existing.montantTTC;

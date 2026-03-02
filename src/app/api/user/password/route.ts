@@ -27,6 +27,14 @@ export async function PATCH(req: Request) {
       );
     }
 
+    const specialCharRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
+    if (!specialCharRegex.test(newPassword)) {
+      return NextResponse.json(
+        { error: "Le mot de passe doit contenir au moins un caractère spécial" },
+        { status: 400 }
+      );
+    }
+
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
       select: { password: true },

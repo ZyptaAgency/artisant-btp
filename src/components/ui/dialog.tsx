@@ -78,8 +78,12 @@ function DialogTitle({ className, ...props }: React.HTMLAttributes<HTMLHeadingEl
   return <h2 className={cn("text-lg font-semibold", className)} {...props} />;
 }
 
+function DialogDescription({ className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) {
+  return <p className={cn("text-sm text-[var(--text-muted)]", className)} {...props} />;
+}
+
 function DialogFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return <div className={cn("flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 mt-4", className)} {...props} />;
 }
 
-export { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogFooter };
+export { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter };

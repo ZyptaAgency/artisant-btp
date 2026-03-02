@@ -42,20 +42,24 @@ type Devis = {
 };
 
 type Client = { nom: string; prenom: string; email: string; adresseChantier: string | null };
-type Artisan = { nom: string; entreprise: string; adresse: string | null; logo?: string | null };
+type Artisan = { nom: string; entreprise: string; adresse: string | null; siret?: string | null; identifiantType?: string | null; logo?: string | null };
+type DocumentStyle = "MODERNE" | "CLASSIQUE" | "EPURE";
 
 export function DevisActions({
   devis,
   client,
   artisan,
+  documentStyle,
 }: {
   devis: Devis;
   client: Client;
   artisan: Artisan;
+  documentStyle?: DocumentStyle;
 }) {
   const router = useRouter();
   const [pdfOpen, setPdfOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [converting, setConverting] = useState(false);
 
   async function updateStatut(statut: string) {
     setLoading(true);
@@ -75,6 +79,26 @@ export function DevisActions({
     }
   }
 
+  async function convertirEnFacture() {
+    setConverting(true);
+    try {
+      const res = await fetch(`/api/devis/${devis.id}/convertir-facture`, {
+        method: "POST",
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error ?? "Erreur lors de la conversion");
+      }
+      const facture = await res.json();
+      toast.success("Facture créée avec succès");
+      router.push(`/factures/${facture.id}`);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erreur lors de la conversion");
+    } finally {
+      setConverting(false);
+    }
+  }
+
   const lignes = devis.lignes.map((l) => ({
     ...l,
     unite: UNITE_LABELS[l.unite] ?? l.unite,
@@ -87,9 +111,14 @@ export function DevisActions({
           Voir PDF
         </Button>
         {devis.statut === "BROUILLON" && (
-          <Button onClick={() => updateStatut("ENVOYE")} disabled={loading}>
-            Marquer envoyé
-          </Button>
+          <>
+            <Button variant="outline" onClick={() => router.push(`/devis/${devis.id}/modifier`)}>
+              Modifier
+            </Button>
+            <Button onClick={() => updateStatut("ENVOYE")} disabled={loading}>
+              Marquer envoyé
+            </Button>
+          </>
         )}
         {devis.statut === "ENVOYE" && (
           <>
@@ -98,6 +127,9 @@ export function DevisActions({
             </Button>
             <Button variant="outline" onClick={() => updateStatut("REFUSE")} disabled={loading}>
               Refuser
+            </Button>
+            <Button onClick={convertirEnFacture} disabled={converting}>
+              {converting ? "Création…" : "Créer la facture"}
             </Button>
           </>
         )}
@@ -124,6 +156,7 @@ export function DevisActions({
                   montantTTC={devis.montantTTC}
                   dateValidite={devis.dateValidite}
                   notes={devis.notes}
+                  style={documentStyle}
                 />
               }
               fileName={`devis-${devis.numero}.pdf`}
@@ -144,6 +177,7 @@ export function DevisActions({
                 montantTTC={devis.montantTTC}
                 dateValidite={devis.dateValidite}
                 notes={devis.notes}
+                style={documentStyle}
               />
             </PDFViewer>
           </div>

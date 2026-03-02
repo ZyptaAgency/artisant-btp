@@ -43,15 +43,18 @@ type Facture = {
 
 type Client = { nom: string; prenom: string; email: string; telephone?: string | null; adresseChantier?: string | null };
 type Artisan = { nom: string; entreprise: string; adresse?: string | null; email?: string | null; telephone?: string | null; siret?: string | null; identifiantType?: string | null; logo?: string | null };
+type DocumentStyle = "MODERNE" | "CLASSIQUE" | "EPURE";
 
 export function FactureActions({
   facture,
   client,
   artisan,
+  documentStyle,
 }: {
   facture: Facture;
   client: Client;
   artisan: Artisan;
+  documentStyle?: DocumentStyle;
 }) {
   const router = useRouter();
   const [pdfOpen, setPdfOpen] = useState(false);
@@ -120,6 +123,7 @@ export function FactureActions({
                   acompte={facture.acompte}
                   dateEcheance={facture.dateEcheance}
                   dateFacture={facture.createdAt}
+                  style={documentStyle}
                 />
               }
               fileName={`facture-${facture.numero}.pdf`}
@@ -141,6 +145,7 @@ export function FactureActions({
                 acompte={facture.acompte}
                 dateEcheance={facture.dateEcheance}
                 dateFacture={facture.createdAt}
+                style={documentStyle}
               />
             </PDFViewer>
           </div>

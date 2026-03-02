@@ -25,17 +25,42 @@ const ACTIVITES_BTP = [
   "Autre",
 ] as const;
 
+const TVA_OPTIONS = [
+  { label: "0% (Exonéré)", value: 0 },
+  { label: "5.5% (France)", value: 5.5 },
+  { label: "10% (France)", value: 10 },
+  { label: "20% (France)", value: 20 },
+  { label: "6% (Belgique)", value: 6 },
+  { label: "12% (Belgique)", value: 12 },
+  { label: "21% (Belgique)", value: 21 },
+  { label: "2.5% (Suisse)", value: 2.5 },
+  { label: "3.7% (Suisse)", value: 3.7 },
+  { label: "7.7% (Suisse)", value: 7.7 },
+] as const;
+
 const schema = z.object({
   nom: z.string().min(1),
   entreprise: z.string().min(1),
   activite: z.string().optional(),
   siret: z.string().optional(),
-  identifiantType: z.enum(["SIRET", "BCE"]).optional(),
+  identifiantType: z.enum(["SIRET", "BCE", "IDE"]).optional(),
   email: z.string().email(),
   telephone: z.string().optional(),
   adresse: z.string().optional(),
+  tauxTVA: z.number().optional(),
   villeMeteo: z.string().optional(),
   logo: z.string().optional(),
+}).superRefine((data, ctx) => {
+  if (!data.siret) return;
+  const digits = data.siret.replace(/\D/g, "");
+  const type = data.identifiantType ?? "SIRET";
+  if (type === "SIRET" && digits.length !== 14) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Le SIRET doit contenir exactement 14 chiffres", path: ["siret"] });
+  } else if (type === "BCE" && digits.length !== 10) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Le BCE doit contenir exactement 10 chiffres", path: ["siret"] });
+  } else if (type === "IDE" && digits.length !== 9) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: "L\u0027IDE doit contenir exactement 9 chiffres (CHE-XXX.XXX.XXX)", path: ["siret"] });
+  }
 });
 
 type FormData = z.infer<typeof schema>;
@@ -102,7 +127,7 @@ export function ProfileForm({ defaultValues }: { defaultValues: FormData }) {
         <Label>Activité / Métier</Label>
         <select
           {...register("activite")}
-          className="flex h-10 w-full rounded-md border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--ring)]"
+          className="flex h-10 w-full rounded-md border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--ring)] [&>option]:bg-[var(--bg-card)] [&>option]:text-[var(--foreground)]"
         >
           <option value="">— Sélectionner —</option>
           {ACTIVITES_BTP.map((a) => (
@@ -112,8 +137,8 @@ export function ProfileForm({ defaultValues }: { defaultValues: FormData }) {
       </div>
       <div className="space-y-2">
         <Label>Identifiant</Label>
-        <div className="flex gap-3 items-center">
-          <div className="flex gap-2">
+        <div className="flex flex-col gap-2">
+          <div className="flex gap-3">
             <label className="flex items-center gap-2 cursor-pointer">
               <input type="radio" value="SIRET" {...register("identifiantType")} className="rounded" />
               <span className="text-sm">SIRET (France)</span>
@@ -122,8 +147,23 @@ export function ProfileForm({ defaultValues }: { defaultValues: FormData }) {
               <input type="radio" value="BCE" {...register("identifiantType")} className="rounded" />
               <span className="text-sm">BCE (Belgique)</span>
             </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input type="radio" value="IDE" {...register("identifiantType")} className="rounded" />
+              <span className="text-sm">IDE (Suisse)</span>
+            </label>
           </div>
-          <Input {...register("siret")} placeholder={identifiantType === "BCE" ? "Numéro BCE" : "SIRET"} className="flex-1 max-w-[200px]" />
+          <Input
+            {...register("siret")}
+            placeholder={
+              identifiantType === "BCE"
+                ? "0XXX.XXX.XXX (10 chiffres)"
+                : identifiantType === "IDE"
+                ? "CHE-XXX.XXX.XXX (9 chiffres)"
+                : "14 chiffres"
+            }
+            className="max-w-[280px]"
+          />
+          {errors.siret && <p className="text-sm text-red-600">{errors.siret.message}</p>}
         </div>
       </div>
       <div className="space-y-2">
@@ -138,6 +178,18 @@ export function ProfileForm({ defaultValues }: { defaultValues: FormData }) {
       <div className="space-y-2">
         <Label>Adresse</Label>
         <Input {...register("adresse")} />
+      </div>
+      <div className="space-y-2">
+        <Label>Taux de TVA par défaut</Label>
+        <select
+          {...register("tauxTVA", { valueAsNumber: true })}
+          className="flex h-10 w-full rounded-md border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--ring)]"
+        >
+          {TVA_OPTIONS.map((opt) => (
+            <option key={opt.value} value={opt.value}>{opt.label}</option>
+          ))}
+        </select>
+        <p className="text-xs text-[var(--text-muted)]">Taux appliqué par défaut sur les nouvelles lignes de devis et factures.</p>
       </div>
       <div className="space-y-2">
         <Label>Ville (météo)</Label>

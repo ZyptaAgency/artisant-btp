@@ -56,7 +56,7 @@ export function CalendarSyncButtons({
       <Button
         variant="outline"
         size="sm"
-        className="gap-1.5 text-xs"
+        className="gap-1.5 text-xs border-[var(--accent)]/50 text-[var(--foreground)] hover:bg-[var(--accent)]/10"
         onClick={() => onSync("google")}
       >
         <GoogleIcon className="h-3.5 w-3.5" />
@@ -65,7 +65,7 @@ export function CalendarSyncButtons({
       <Button
         variant="outline"
         size="sm"
-        className="gap-1.5 text-xs"
+        className="gap-1.5 text-xs border-[var(--accent)]/50 text-[var(--foreground)] hover:bg-[var(--accent)]/10"
         onClick={() => onSync("ical")}
       >
         <AppleIcon className="h-3.5 w-3.5" />
@@ -197,7 +197,7 @@ export function CalendarSyncDialog({
 
               <Button
                 onClick={handleGoogleConnect}
-                className="w-full gap-2"
+                className="w-full gap-2 text-[var(--accent-foreground)]"
                 variant={googleConnected ? "secondary" : "default"}
               >
                 {googleConnected ? (
@@ -259,7 +259,7 @@ export function CalendarSyncDialog({
                 />
                 <Button
                   onClick={handleIcalSave}
-                  className="w-full gap-2"
+                  className="w-full gap-2 text-[var(--accent-foreground)]"
                   disabled={saving || !icalUrl.trim()}
                   variant={icalSaved ? "secondary" : "default"}
                 >

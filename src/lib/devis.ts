@@ -1,8 +1,21 @@
 import { prisma } from "./db";
 
-export async function getNextDevisNumber(): Promise<string> {
-  const year = new Date().getFullYear();
-  const prefix = `DEV-${year}-`;
+function getInitials(name: string): string {
+  if (!name.trim()) return "XX";
+  const parts = name.trim().split(/\s+/);
+  return parts
+    .map((p) => p[0]?.toUpperCase() ?? "")
+    .filter(Boolean)
+    .slice(0, 2)
+    .join("") || "XX";
+}
+
+export async function getNextDevisNumber(userName: string): Promise<string> {
+  const now = new Date();
+  const yy = String(now.getFullYear()).slice(-2);
+  const mm = String(now.getMonth() + 1).padStart(2, "0");
+  const initials = getInitials(userName);
+  const prefix = `D-${initials}-${yy}${mm}-`;
 
   const last = await prisma.devis.findFirst({
     where: { numero: { startsWith: prefix } },

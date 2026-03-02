@@ -23,14 +23,19 @@ export async function POST(
     return NextResponse.json({ error: "Devis non trouvé" }, { status: 404 });
   }
 
-  if (devis.statut !== "ACCEPTE") {
+  if (devis.statut !== "ACCEPTE" && devis.statut !== "ENVOYE") {
     return NextResponse.json(
-      { error: "Seuls les devis acceptés peuvent être convertis en facture" },
+      { error: "Seuls les devis envoyés ou acceptés peuvent être convertis en facture" },
       { status: 400 }
     );
   }
 
-  const numero = await getNextFactureNumber();
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { nom: true },
+  });
+  const userName = user?.nom ?? session.user.name ?? "";
+  const numero = await getNextFactureNumber(userName);
 
   const facture = await prisma.facture.create({
     data: {

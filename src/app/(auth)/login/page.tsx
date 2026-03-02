@@ -78,6 +78,11 @@ function LoginForm() {
                 required
               />
             </div>
+            <div className="text-right">
+              <Link href="/forgot-password" className="text-sm text-nova-mid hover:underline">
+                Mot de passe oublié ?
+              </Link>
+            </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Connexion..." : "Se connecter"}
             </Button>

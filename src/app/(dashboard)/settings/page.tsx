@@ -31,6 +31,7 @@ export default async function SettingsPage() {
           email: user.email,
           telephone: user.telephone,
           adresse: user.adresse,
+          tauxTVA: user.tauxTVA,
           villeMeteo: user.villeMeteo,
           logo: user.logo,
           documentStyle: user.documentStyle ?? "MODERNE",

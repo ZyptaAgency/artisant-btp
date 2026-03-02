@@ -16,19 +16,26 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/ui/Logo";
+import { useLanguage } from "@/contexts/LanguageContext";
+import type { TranslationKey } from "@/lib/i18n";
 
-const navItems = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/clients", label: "Clients", icon: Users },
-  { href: "/pipeline", label: "Pipeline", icon: GitBranch },
-  { href: "/devis", label: "Devis", icon: FileText },
-  { href: "/factures", label: "Factures", icon: Receipt },
-  { href: "/estimateur", label: "Estimateur IA", icon: Sparkles },
-  { href: "/settings", label: "Paramètres", icon: Settings },
+const navItems: {
+  href: string;
+  labelKey: TranslationKey;
+  icon: typeof LayoutDashboard;
+}[] = [
+  { href: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard },
+  { href: "/clients", labelKey: "nav.clients", icon: Users },
+  { href: "/pipeline", labelKey: "nav.pipeline", icon: GitBranch },
+  { href: "/devis", labelKey: "nav.devis", icon: FileText },
+  { href: "/factures", labelKey: "nav.factures", icon: Receipt },
+  { href: "/estimateur", labelKey: "nav.estimateur", icon: Sparkles },
+  { href: "/settings", labelKey: "nav.settings", icon: Settings },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { t } = useLanguage();
 
   return (
     <aside className="sidebar-zypta fixed left-0 top-0 z-40 hidden h-screen w-64 border-r border-[var(--border)] md:block">
@@ -41,7 +48,9 @@ export function Sidebar() {
         <nav className="flex-1 space-y-1 p-4">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
+            const isActive =
+              pathname === item.href ||
+              pathname.startsWith(item.href + "/");
             return (
               <Link
                 key={item.href}
@@ -54,7 +63,7 @@ export function Sidebar() {
                 )}
               >
                 <Icon className="h-5 w-5" />
-                {item.label}
+                {t(item.labelKey)}
               </Link>
             );
           })}
@@ -66,7 +75,7 @@ export function Sidebar() {
             onClick={() => signOut({ callbackUrl: "/login" })}
           >
             <LogOut className="mr-3 h-5 w-5" />
-            Déconnexion
+            {t("nav.logout")}
           </Button>
         </div>
       </div>

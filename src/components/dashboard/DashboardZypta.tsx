@@ -88,10 +88,10 @@ type Props = {
 };
 
 const salutations = [
-  "belle journée pour closer 💰",
+  "belle journée pour closer",
   "prêt à enchaîner les chantiers ?",
-  "la journée s'annonce productive !",
-  "c'est parti pour une bonne journée !",
+  "la journée s\u0027annonce productive !",
+  "c\u0027est parti pour une bonne journée !",
 ];
 
 export function DashboardZypta({

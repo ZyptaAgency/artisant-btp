@@ -3,26 +3,106 @@
 import { Document, Page, Text, View, Image, StyleSheet } from "@react-pdf/renderer";
 import { formatCurrencyForPDF, formatDate } from "@/lib/utils";
 
-const styles = StyleSheet.create({
-  page: { padding: 40, fontSize: 10 },
-  header: { marginBottom: 20 },
-  title: { fontSize: 18, fontWeight: "bold", marginBottom: 4 },
-  subtitle: { fontSize: 10, color: "#666" },
-  section: { marginBottom: 16 },
-  row: { flexDirection: "row", marginBottom: 4 },
-  label: { width: 120, color: "#666" },
-  table: { marginTop: 20 },
-  tableHeader: { flexDirection: "row", marginBottom: 8, borderBottomWidth: 1, paddingBottom: 4 },
-  tableRow: { flexDirection: "row", marginBottom: 6 },
-  colDesc: { flex: 2 },
-  colQte: { width: 50 },
-  colPrix: { width: 70 },
-  colTotal: { width: 70 },
-  totals: { marginTop: 20, marginLeft: "auto", width: 200 },
-  totalRow: { flexDirection: "row", justifyContent: "space-between", marginBottom: 4 },
-  totalTTC: { flexDirection: "row", justifyContent: "space-between", marginTop: 8, fontSize: 12, fontWeight: "bold" },
-  footer: { position: "absolute", bottom: 30, left: 40, right: 40, fontSize: 8, color: "#666" },
-});
+type DocumentStyle = "MODERNE" | "CLASSIQUE" | "EPURE";
+
+const COLORS = {
+  MODERNE: { accent: "#2563EB", headerBg: "#f0f7ff", subtotalBg: "#f8fafc", text: "#111827", muted: "#666", border: "#e5e7eb" },
+  CLASSIQUE: { accent: "#374151", headerBg: "#f3f4f6", subtotalBg: "#f9fafb", text: "#111827", muted: "#4b5563", border: "#9ca3af" },
+  EPURE: { accent: "#000000", headerBg: "#ffffff", subtotalBg: "#ffffff", text: "#000000", muted: "#6b7280", border: "#d1d5db" },
+};
+
+function getStyles(style: DocumentStyle) {
+  const c = COLORS[style];
+
+  return StyleSheet.create({
+    page: {
+      padding: 40,
+      fontSize: 10,
+      color: c.text,
+      ...(style === "EPURE" ? { padding: 50 } : {}),
+    },
+    header: {
+      marginBottom: 20,
+      ...(style === "MODERNE" ? { borderBottomWidth: 2, borderBottomColor: c.accent, paddingBottom: 16 } : {}),
+      ...(style === "CLASSIQUE" ? { borderBottomWidth: 1, borderBottomColor: c.border, paddingBottom: 16 } : {}),
+      ...(style === "EPURE" ? { marginBottom: 30 } : {}),
+    },
+    title: {
+      fontSize: 18,
+      fontWeight: "bold",
+      marginBottom: 4,
+      ...(style === "MODERNE" ? { color: c.accent } : {}),
+    },
+    subtitle: { fontSize: 10, color: c.muted },
+    section: { marginBottom: 16 },
+    row: { flexDirection: "row" as const, marginBottom: 4 },
+    label: {
+      width: 120,
+      color: c.muted,
+      ...(style === "CLASSIQUE" ? { fontWeight: "bold" as const } : {}),
+    },
+    table: {
+      marginTop: 20,
+    },
+    tableHeader: {
+      flexDirection: "row" as const,
+      marginBottom: 8,
+      paddingBottom: 4,
+      paddingTop: 4,
+      paddingLeft: 6,
+      paddingRight: 6,
+      ...(style === "MODERNE" ? { backgroundColor: c.accent, borderRadius: 2 } : {}),
+      ...(style === "CLASSIQUE" ? { backgroundColor: c.headerBg, borderWidth: 1, borderColor: c.border } : {}),
+      ...(style === "EPURE" ? { borderBottomWidth: 1, borderBottomColor: c.accent } : {}),
+    },
+    tableHeaderText: {
+      ...(style === "MODERNE" ? { color: "#ffffff" } : {}),
+      ...(style === "CLASSIQUE" ? { color: c.text, fontWeight: "bold" as const } : {}),
+      ...(style === "EPURE" ? { color: c.text, fontWeight: "bold" as const, fontSize: 9 } : {}),
+    },
+    tableRow: {
+      flexDirection: "row" as const,
+      marginBottom: 6,
+      paddingVertical: 3,
+      paddingLeft: 6,
+      paddingRight: 6,
+      ...(style === "CLASSIQUE" ? { borderLeftWidth: 1, borderRightWidth: 1, borderBottomWidth: 1, borderColor: c.border } : {}),
+      ...(style === "EPURE" ? { paddingVertical: 6 } : {}),
+      ...(style === "MODERNE" ? { borderBottomWidth: 0.5, borderBottomColor: c.border } : {}),
+    },
+    colDesc: { flex: 2 },
+    colQte: { width: 50 },
+    colPrix: { width: 70 },
+    colTotal: { width: 70 },
+    totals: {
+      marginTop: 20,
+      marginLeft: "auto" as const,
+      width: 200,
+      ...(style === "MODERNE" ? { padding: 10, backgroundColor: c.subtotalBg, borderRadius: 4 } : {}),
+      ...(style === "CLASSIQUE" ? { padding: 10, borderWidth: 1, borderColor: c.border } : {}),
+      ...(style === "EPURE" ? { paddingTop: 12 } : {}),
+    },
+    totalRow: { flexDirection: "row" as const, justifyContent: "space-between" as const, marginBottom: 4 },
+    totalTTC: {
+      flexDirection: "row" as const,
+      justifyContent: "space-between" as const,
+      marginTop: 8,
+      fontSize: 12,
+      fontWeight: "bold" as const,
+      ...(style === "MODERNE" ? { borderTopWidth: 2, borderTopColor: c.accent, paddingTop: 6 } : {}),
+      ...(style === "CLASSIQUE" ? { borderTopWidth: 1, borderTopColor: c.border, paddingTop: 6 } : {}),
+      ...(style === "EPURE" ? { borderTopWidth: 1, borderTopColor: c.accent, paddingTop: 8 } : {}),
+    },
+    footer: {
+      position: "absolute" as const,
+      bottom: 30,
+      left: 40,
+      right: 40,
+      fontSize: 8,
+      color: c.muted,
+    },
+  });
+}
 
 type Ligne = {
   description: string;
@@ -36,16 +116,19 @@ type Ligne = {
 type Props = {
   numero: string;
   client: { nom: string; prenom: string; email: string; adresseChantier?: string | null };
-  artisan: { nom: string; entreprise: string; email?: string; adresse?: string | null; logo?: string | null };
+  artisan: { nom: string; entreprise: string; email?: string; adresse?: string | null; siret?: string | null; identifiantType?: string | null; logo?: string | null };
   lignes: Ligne[];
   montantHT: number;
   tva: number;
   montantTTC: number;
   dateValidite?: Date | null;
   notes?: string | null;
+  style?: DocumentStyle;
 };
 
-export function DevisPDF({ numero, client, artisan, lignes, montantHT, tva, montantTTC, dateValidite, notes }: Props) {
+export function DevisPDF({ numero, client, artisan, lignes, montantHT, tva, montantTTC, dateValidite, notes, style = "MODERNE" }: Props) {
+  const styles = getStyles(style);
+
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -57,12 +140,19 @@ export function DevisPDF({ numero, client, artisan, lignes, montantHT, tva, mont
             <View>
               <Text style={styles.title}>{artisan.entreprise}</Text>
               <Text style={styles.subtitle}>{artisan.nom}{artisan.adresse && ` - ${artisan.adresse}`}</Text>
+              {artisan.siret && (
+                <Text style={styles.subtitle}>
+                  {artisan.identifiantType === "BCE" ? "BCE" : artisan.identifiantType === "IDE" ? "IDE" : "SIRET"}: {artisan.siret}
+                </Text>
+              )}
             </View>
           </View>
         </View>
 
         <View style={styles.section}>
-          <Text style={{ fontSize: 14, fontWeight: "bold", marginBottom: 8 }}>Devis {numero}</Text>
+          <Text style={{ fontSize: 14, fontWeight: "bold", marginBottom: 8, ...(style === "MODERNE" ? { color: COLORS.MODERNE.accent } : {}) }}>
+            Devis {numero}
+          </Text>
           <View style={styles.row}>
             <Text style={styles.label}>Client :</Text>
             <Text>{client.prenom} {client.nom}</Text>
@@ -81,10 +171,10 @@ export function DevisPDF({ numero, client, artisan, lignes, montantHT, tva, mont
 
         <View style={styles.table}>
           <View style={styles.tableHeader}>
-            <Text style={styles.colDesc}>Description</Text>
-            <Text style={styles.colQte}>Qté</Text>
-            <Text style={styles.colPrix}>Prix unit.</Text>
-            <Text style={styles.colTotal}>Total HT</Text>
+            <Text style={[styles.colDesc, styles.tableHeaderText]}>Description</Text>
+            <Text style={[styles.colQte, styles.tableHeaderText]}>Qté</Text>
+            <Text style={[styles.colPrix, styles.tableHeaderText]}>Prix unit.</Text>
+            <Text style={[styles.colTotal, styles.tableHeaderText]}>Total HT</Text>
           </View>
           {lignes.map((l, i) => (
             <View key={i} style={styles.tableRow}>

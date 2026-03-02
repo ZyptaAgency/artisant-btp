@@ -9,12 +9,15 @@ import {
   Layout,
   Hash,
   Palette,
+  Globe,
 } from "lucide-react";
 import { ProfileForm } from "@/components/forms/ProfileForm";
 import { DocumentModelForm } from "@/components/settings/DocumentModelForm";
 import { ThemeForm } from "@/components/settings/ThemeForm";
 import { ProfileSection } from "@/components/settings/ProfileSection";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { Locale, localeNames } from "@/lib/i18n";
 
 const SECTIONS = [
   { id: "entreprise", label: "Mon entreprise", icon: Building2 },
@@ -24,6 +27,7 @@ const SECTIONS = [
   { id: "prestations", label: "Bibliothèque de prestations", icon: Library },
   { id: "modeles", label: "Modèles de documents", icon: Layout },
   { id: "numerotation", label: "Numérotation", icon: Hash },
+  { id: "langue", label: "Langue", icon: Globe },
 ];
 
 type UserData = {
@@ -35,11 +39,47 @@ type UserData = {
   email: string;
   telephone: string | null;
   adresse: string | null;
+  tauxTVA: number | null;
   villeMeteo: string | null;
   logo: string | null;
   documentStyle: string;
   theme: string;
 };
+
+function LanguageForm() {
+  const { locale, setLocale, t } = useLanguage();
+
+  return (
+    <div className="transition-opacity duration-300">
+      <h2 className="mb-4 text-lg font-semibold text-[var(--text-white)]">
+        {t("settings.language")}
+      </h2>
+      <p className="mb-6 text-sm text-[var(--text-muted)]">
+        {locale === "fr"
+          ? "Choisissez la langue de l'interface."
+          : "Choose the interface language."}
+      </p>
+      <div className="flex gap-3">
+        {(Object.entries(localeNames) as [Locale, string][]).map(
+          ([code, name]) => (
+            <button
+              key={code}
+              onClick={() => setLocale(code)}
+              className={cn(
+                "rounded-xl border px-5 py-3 text-sm font-medium transition-all duration-300",
+                locale === code
+                  ? "border-[var(--accent)] bg-[var(--accent)]/15 text-[var(--accent)] shadow-[0_0_20px_var(--ring)]"
+                  : "border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--text-white)] hover:bg-white/5"
+              )}
+            >
+              {name}
+            </button>
+          )
+        )}
+      </div>
+    </div>
+  );
+}
 
 export function ParametresZypta({ user }: { user: UserData }) {
   const [active, setActive] = useState("entreprise");
@@ -83,10 +123,11 @@ export function ParametresZypta({ user }: { user: UserData }) {
                   entreprise: user.entreprise,
                   activite: user.activite ?? "",
                   siret: user.siret ?? "",
-                  identifiantType: user.identifiantType === "BCE" ? "BCE" : "SIRET",
+                  identifiantType: user.identifiantType === "BCE" ? "BCE" : user.identifiantType === "IDE" ? "IDE" : "SIRET",
                   email: user.email,
                   telephone: user.telephone ?? "",
                   adresse: user.adresse ?? "",
+                  tauxTVA: user.tauxTVA ?? 20,
                   villeMeteo: user.villeMeteo ?? "Paris",
                   logo: user.logo ?? "",
                 }}
@@ -141,6 +182,8 @@ export function ParametresZypta({ user }: { user: UserData }) {
               </p>
             </div>
           )}
+
+          {active === "langue" && <LanguageForm />}
 
         </div>
       </div>

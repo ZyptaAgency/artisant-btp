@@ -65,6 +65,7 @@ export default async function FactureDetailPage({
           facture={facture}
           client={facture.client}
           artisan={user ? { nom: user.nom, entreprise: user.entreprise, adresse: user.adresse, email: user.email, telephone: user.telephone, siret: user.siret, identifiantType: user.identifiantType, logo: user.logo } : { nom: "", entreprise: "", adresse: null }}
+          documentStyle={(user?.documentStyle as "MODERNE" | "CLASSIQUE" | "EPURE") ?? "MODERNE"}
         />
       </div>
 

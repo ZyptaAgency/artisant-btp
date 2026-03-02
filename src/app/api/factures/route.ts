@@ -67,7 +67,8 @@ export async function POST(req: Request) {
     );
     const montantTTC = montantHT + tva;
 
-    const numero = await getNextFactureNumber();
+    const userName = session.user.name ?? "";
+    const numero = await getNextFactureNumber(userName);
 
     const facture = await prisma.facture.create({
       data: {
