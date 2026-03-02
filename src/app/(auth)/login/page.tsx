@@ -1,9 +1,9 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { signIn } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { getCsrfToken } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,11 +14,50 @@ import { Logo } from "@/components/ui/Logo";
 import { StarField } from "@/components/ui/StarField";
 import { Eye, EyeOff } from "lucide-react";
 
+const AUTH_TIMEOUT_MS = 60000;
+
+async function signInWithTimeout(
+  email: string,
+  password: string,
+  callbackUrl: string
+): Promise<{ ok: boolean; error?: string }> {
+  const csrfToken = await getCsrfToken();
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), AUTH_TIMEOUT_MS);
+  try {
+    const res = await fetch("/api/auth/callback/credentials", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        csrfToken: csrfToken ?? "",
+        email,
+        password,
+        callbackUrl,
+        json: "true",
+      }),
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+    const data = (await res.json()) as { url?: string };
+    const error = data?.url ? new URL(data.url).searchParams.get("error") : null;
+    return { ok: res.ok, error: error ?? undefined };
+  } catch (e) {
+    clearTimeout(timeoutId);
+    throw e;
+  }
+}
+
 function LoginForm() {
   const router = useRouter();
   const { t } = useLanguage();
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") ?? "/dashboard";
+  const [callbackUrl, setCallbackUrl] = useState("/dashboard");
+  const warmupRef = useRef(fetch("/api/warmup").catch(() => {}));
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setCallbackUrl(params.get("callbackUrl") ?? "/dashboard");
+  }, []);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -28,18 +67,15 @@ function LoginForm() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-      });
+      await warmupRef.current;
+      const res = await signInWithTimeout(email, password, callbackUrl);
 
-      if (res?.error) {
+      if (res.error) {
         toast.error(res.error);
         return;
       }
 
-      if (res?.ok) {
+      if (res.ok) {
         router.push(callbackUrl);
         router.refresh();
       } else {
@@ -119,9 +155,5 @@ function LoginForm() {
 }
 
 export default function LoginPage() {
-  return (
-    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-[var(--bg)]"><span className="text-[var(--text-muted)]">Chargement...</span></div>}>
-      <LoginForm />
-    </Suspense>
-  );
+  return <LoginForm />;
 }

@@ -20,8 +20,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" data-theme="supernova">
-      <body className={`${inter.variable} font-sans antialiased`}>
+    <html lang="fr" data-theme="supernova" suppressHydrationWarning>
+      <body className={`${inter.variable} font-sans antialiased`} style={{ background: "#03010a", color: "#f0eeff" }}>
         <Providers>{children}</Providers>
       </body>
     </html>
