@@ -443,7 +443,8 @@ export function DashboardZypta({
           <div className="mt-4 text-center">
             <p className="text-sm font-medium text-[var(--text-white)]">{formatCurrency(caMois)}</p>
             {editingGoal ? (
-              <div className="mt-1 flex items-center justify-center gap-1.5">
+              <div className="mt-2 flex items-center justify-center gap-2">
+                <span className="text-xs text-[var(--text-muted)]">€</span>
                 <input
                   ref={goalInputRef}
                   type="number"
@@ -451,24 +452,24 @@ export function DashboardZypta({
                   min="0"
                   value={goalValue}
                   onChange={(e) => setGoalValue(Number(e.target.value))}
-                  onKeyDown={(e) => { if (e.key === "Enter") saveGoal(); if (e.key === "Escape") setEditingGoal(false); }}
-                  className="w-24 rounded-lg border border-[var(--border)] bg-[var(--bg-input,var(--bg-elevated))] px-2 py-1 text-center text-xs text-[var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[var(--ring)]"
+                  onKeyDown={(e) => { if (e.key === "Enter") saveGoal(); if (e.key === "Escape") { setEditingGoal(false); setGoalValue(currentGoal); } }}
+                  className="w-28 rounded-lg border border-[var(--accent)]/50 bg-[var(--bg-input,var(--bg-elevated))] px-3 py-1.5 text-center text-sm text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--ring)]"
                 />
-                <button onClick={saveGoal} className="rounded-md p-1 text-green-500 hover:bg-green-500/10 transition-colors">
-                  <Check className="h-3.5 w-3.5" />
+                <button onClick={saveGoal} className="flex h-7 w-7 items-center justify-center rounded-lg bg-green-500/15 text-green-500 hover:bg-green-500/25 transition-colors">
+                  <Check className="h-4 w-4" />
                 </button>
-                <button onClick={() => setEditingGoal(false)} className="rounded-md p-1 text-red-500 hover:bg-red-500/10 transition-colors">
-                  <X className="h-3.5 w-3.5" />
+                <button onClick={() => { setEditingGoal(false); setGoalValue(currentGoal); }} className="flex h-7 w-7 items-center justify-center rounded-lg bg-red-500/15 text-red-500 hover:bg-red-500/25 transition-colors">
+                  <X className="h-4 w-4" />
                 </button>
               </div>
             ) : (
-              <button
+              <div
                 onClick={() => { setGoalValue(currentGoal); setEditingGoal(true); }}
-                className="group mt-1 flex items-center justify-center gap-1 text-xs text-[var(--text-muted)] hover:text-[var(--foreground)] transition-colors"
+                className="mt-1 flex cursor-pointer items-center justify-center gap-1.5 rounded-lg px-3 py-1 text-xs text-[var(--text-muted)] hover:bg-white/5 hover:text-[var(--foreground)] transition-all"
               >
                 {t("dashboard.goal")}: {formatCurrency(currentGoal)}
-                <Pencil className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-              </button>
+                <Pencil className="h-3 w-3" />
+              </div>
             )}
           </div>
         </div>

@@ -22,9 +22,12 @@ const LanguageContext = createContext<LanguageContextType>({
   t: (key, params) => translate(key, "fr", params),
 });
 
+type TransitionPhase = "idle" | "slide-out" | "slide-in";
+
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>("fr");
-  const [transitioning, setTransitioning] = useState(false);
+  const [phase, setPhase] = useState<TransitionPhase>("idle");
+  const [direction, setDirection] = useState<"left" | "right">("left");
   const isInitial = useRef(true);
 
   useEffect(() => {
@@ -37,26 +40,44 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   function setLocale(l: Locale) {
     if (l === locale) return;
-    setTransitioning(true);
+    const dir = l === "en" ? "left" : "right";
+    setDirection(dir);
+    setPhase("slide-out");
+
     setTimeout(() => {
       setLocaleState(l);
       localStorage.setItem("zypta-locale", l);
-      setTimeout(() => setTransitioning(false), 50);
-    }, 150);
+      setPhase("slide-in");
+
+      setTimeout(() => setPhase("idle"), 250);
+    }, 200);
   }
 
   function tFn(key: TranslationKey, params?: Record<string, string | number>) {
     return translate(key, locale, params);
   }
 
+  const slideStyle: React.CSSProperties =
+    phase === "slide-out"
+      ? {
+          transition: "transform 200ms ease-in, opacity 200ms ease-in",
+          transform: `translateX(${direction === "left" ? "-30px" : "30px"})`,
+          opacity: 0,
+        }
+      : phase === "slide-in"
+        ? {
+            transition: "transform 250ms ease-out, opacity 250ms ease-out",
+            transform: "translateX(0)",
+            opacity: 1,
+          }
+        : {
+            transform: "translateX(0)",
+            opacity: 1,
+          };
+
   return (
     <LanguageContext.Provider value={{ locale, setLocale, t: tFn }}>
-      <div
-        style={{
-          transition: "opacity 150ms ease-in-out",
-          opacity: transitioning ? 0 : 1,
-        }}
-      >
+      <div style={slideStyle}>
         {children}
       </div>
     </LanguageContext.Provider>
