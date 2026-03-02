@@ -3,7 +3,7 @@
 import { Suspense, useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getCsrfToken } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +16,7 @@ import { Eye, EyeOff } from "lucide-react";
 
 function LoginForm() {
   const { t } = useLanguage();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const [csrfToken, setCsrfToken] = useState<string | null>(null);
   const [callbackUrl, setCallbackUrl] = useState("/dashboard");
@@ -30,8 +31,17 @@ function LoginForm() {
     if (params.get("registered") === "1") {
       toast.success("Inscription réussie ! Connectez-vous avec votre mot de passe.");
     }
+    const error = params.get("error");
+    if (error === "CredentialsSignin" || error === "Credentials") {
+      toast.error("Identifiants incorrects");
+      const cb = params.get("callbackUrl");
+      const q = new URLSearchParams();
+      if (emailParam) q.set("email", emailParam);
+      if (cb) q.set("callbackUrl", cb);
+      router.replace("/login" + (q.toString() ? `?${q.toString()}` : ""), { scroll: false });
+    }
     getCsrfToken().then((token) => setCsrfToken(token ?? null));
-  }, [searchParams]);
+  }, [searchParams, router]);
 
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center bg-[var(--bg)] p-4 overflow-hidden">
