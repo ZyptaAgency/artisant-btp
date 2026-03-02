@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import {
@@ -25,7 +25,11 @@ import {
   Trophy,
   Target,
   CalendarClock,
+  Pencil,
+  Check,
+  X,
 } from "lucide-react";
+import { toast } from "sonner";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
@@ -100,6 +104,18 @@ const WEATHER_ICONS: Record<string, typeof Sun> = {
   "Neige": CloudSnow,
   "Averses": CloudRain,
   "Orage": CloudLightning,
+};
+
+const WEATHER_TRANSLATIONS: Record<string, string> = {
+  "Dégagé": "Clear",
+  "Peu nuageux": "Partly cloudy",
+  "Brouillard": "Fog",
+  "Bruine": "Drizzle",
+  "Pluie": "Rain",
+  "Neige": "Snow",
+  "Averses": "Showers",
+  "Orage": "Thunderstorm",
+  "Inconnu": "Unknown",
 };
 
 type Props = {
@@ -242,11 +258,41 @@ export function DashboardZypta({
   upcomingDeadlines,
   objectifCA,
 }: Props) {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const salutation = t(SALUTATION_KEYS[new Date().getHours() % SALUTATION_KEYS.length]);
   const [syncProvider, setSyncProvider] = useState<"google" | "ical" | null>(null);
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [weatherLoading, setWeatherLoading] = useState(true);
+
+  const [editingGoal, setEditingGoal] = useState(false);
+  const [goalValue, setGoalValue] = useState(objectifCA);
+  const [currentGoal, setCurrentGoal] = useState(objectifCA);
+  const goalInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (editingGoal && goalInputRef.current) goalInputRef.current.focus();
+  }, [editingGoal]);
+
+  async function saveGoal() {
+    const val = Math.max(0, goalValue);
+    try {
+      const res = await fetch("/api/user/preferences", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ objectifMensuel: val }),
+      });
+      if (res.ok) {
+        setCurrentGoal(val);
+        toast.success(t("dashboard.goalUpdated"));
+      }
+    } catch { /* silent */ }
+    setEditingGoal(false);
+  }
+
+  function translateWeather(description: string): string {
+    if (locale === "en") return WEATHER_TRANSLATIONS[description] ?? description;
+    return description;
+  }
 
   useEffect(() => {
     fetch(`/api/weather?ville=${encodeURIComponent(villeMeteo)}`)
@@ -259,7 +305,7 @@ export function DashboardZypta({
   const relativeTime = useRelativeTime(t as never);
   const weekDates = useMemo(() => getWeekDates(), []);
   const todayDate = new Date();
-  const goalPercentage = objectifCA > 0 ? (caMois / objectifCA) * 100 : 0;
+  const goalPercentage = currentGoal > 0 ? (caMois / currentGoal) * 100 : 0;
 
   const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.06 } } };
   const item = { hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } };
@@ -300,7 +346,7 @@ export function DashboardZypta({
             ) : weather ? (
               <>
                 {(() => { const Icon = WEATHER_ICONS[weather.description] ?? Sun; return <Icon className="h-5 w-5 text-nova-core" />; })()}
-                <span className="text-sm font-medium text-[var(--text-white)]">{weather.description}, {weather.temperature}°C</span>
+                <span className="text-sm font-medium text-[var(--text-white)]">{translateWeather(weather.description)}, {weather.temperature}°C</span>
                 <span className="text-xs text-[var(--text-muted)]">{weather.ville}</span>
               </>
             ) : (
@@ -396,9 +442,34 @@ export function DashboardZypta({
           </div>
           <div className="mt-4 text-center">
             <p className="text-sm font-medium text-[var(--text-white)]">{formatCurrency(caMois)}</p>
-            <p className="text-xs text-[var(--text-muted)]">
-              {t("dashboard.goal")}: {formatCurrency(objectifCA)}
-            </p>
+            {editingGoal ? (
+              <div className="mt-1 flex items-center justify-center gap-1.5">
+                <input
+                  ref={goalInputRef}
+                  type="number"
+                  step="100"
+                  min="0"
+                  value={goalValue}
+                  onChange={(e) => setGoalValue(Number(e.target.value))}
+                  onKeyDown={(e) => { if (e.key === "Enter") saveGoal(); if (e.key === "Escape") setEditingGoal(false); }}
+                  className="w-24 rounded-lg border border-[var(--border)] bg-[var(--bg-input,var(--bg-elevated))] px-2 py-1 text-center text-xs text-[var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[var(--ring)]"
+                />
+                <button onClick={saveGoal} className="rounded-md p-1 text-green-500 hover:bg-green-500/10 transition-colors">
+                  <Check className="h-3.5 w-3.5" />
+                </button>
+                <button onClick={() => setEditingGoal(false)} className="rounded-md p-1 text-red-500 hover:bg-red-500/10 transition-colors">
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => { setGoalValue(currentGoal); setEditingGoal(true); }}
+                className="group mt-1 flex items-center justify-center gap-1 text-xs text-[var(--text-muted)] hover:text-[var(--foreground)] transition-colors"
+              >
+                {t("dashboard.goal")}: {formatCurrency(currentGoal)}
+                <Pencil className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+              </button>
+            )}
           </div>
         </div>
 

@@ -5,6 +5,7 @@ import {
   useContext,
   useState,
   useEffect,
+  useRef,
   ReactNode,
 } from "react";
 import { Locale, t as translate, TranslationKey } from "@/lib/i18n";
@@ -23,17 +24,25 @@ const LanguageContext = createContext<LanguageContextType>({
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>("fr");
+  const [transitioning, setTransitioning] = useState(false);
+  const isInitial = useRef(true);
 
   useEffect(() => {
     const saved = localStorage.getItem("zypta-locale") as Locale;
     if (saved && (saved === "fr" || saved === "en")) {
       setLocaleState(saved);
     }
+    isInitial.current = false;
   }, []);
 
   function setLocale(l: Locale) {
-    setLocaleState(l);
-    localStorage.setItem("zypta-locale", l);
+    if (l === locale) return;
+    setTransitioning(true);
+    setTimeout(() => {
+      setLocaleState(l);
+      localStorage.setItem("zypta-locale", l);
+      setTimeout(() => setTransitioning(false), 50);
+    }, 150);
   }
 
   function tFn(key: TranslationKey, params?: Record<string, string | number>) {
@@ -42,7 +51,14 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   return (
     <LanguageContext.Provider value={{ locale, setLocale, t: tFn }}>
-      {children}
+      <div
+        style={{
+          transition: "opacity 150ms ease-in-out",
+          opacity: transitioning ? 0 : 1,
+        }}
+      >
+        {children}
+      </div>
     </LanguageContext.Provider>
   );
 }

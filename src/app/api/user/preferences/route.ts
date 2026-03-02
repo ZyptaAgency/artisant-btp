@@ -30,6 +30,7 @@ const schema = z.object({
   documentStyle: z.enum(["MODERNE", "CLASSIQUE", "EPURE"]).optional(),
   identifiantType: z.enum(["SIRET", "BCE"]).optional(),
   theme: z.enum(["supernova", "noir", "blanc", "systeme"]).optional(),
+  objectifMensuel: z.number().min(0).optional(),
 });
 
 export async function PATCH(req: Request) {
@@ -48,6 +49,7 @@ export async function PATCH(req: Request) {
         ...(data.documentStyle && { documentStyle: data.documentStyle }),
         ...(data.identifiantType && { identifiantType: data.identifiantType }),
         ...(data.theme && { theme: data.theme }),
+        ...(data.objectifMensuel !== undefined && { objectifMensuel: data.objectifMensuel }),
       },
     });
 
