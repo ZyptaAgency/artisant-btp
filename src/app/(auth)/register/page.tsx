@@ -13,6 +13,8 @@ import { Logo } from "@/components/ui/Logo";
 import { StarField } from "@/components/ui/StarField";
 import { Eye, EyeOff } from "lucide-react";
 
+const PASSWORD_SPECIAL = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/;
+
 function RegisterForm() {
   const { t } = useLanguage();
   const searchParams = useSearchParams();
@@ -34,6 +36,19 @@ function RegisterForm() {
     }
   }, [searchParams]);
 
+  function handleSubmit(e: React.FormEvent) {
+    if (form.password.length < 8) {
+      e.preventDefault();
+      toast.error("Minimum 8 caractères");
+      return;
+    }
+    if (!PASSWORD_SPECIAL.test(form.password)) {
+      e.preventDefault();
+      toast.error("Doit contenir un caractère spécial (!@#$%^&*...)");
+      return;
+    }
+  }
+
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center bg-[var(--bg)] p-4 overflow-hidden">
       <StarField />
@@ -46,7 +61,7 @@ function RegisterForm() {
           <CardDescription>{t("auth.registerSubtitle")}</CardDescription>
         </CardHeader>
         <CardContent>
-          <form action="/api/auth/register" method="POST" className="space-y-4">
+          <form action="/api/auth/register" method="POST" onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="nom">{t("auth.fullName")}</Label>
               <Input
