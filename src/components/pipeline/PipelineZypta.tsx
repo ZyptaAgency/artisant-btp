@@ -490,7 +490,7 @@ function FilterSelect({
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute top-full left-0 z-50 mt-1 min-w-[160px] rounded-xl border border-[var(--border)] bg-[var(--bg-elevated,var(--bg-card))] p-1 shadow-xl">
+          <div className="absolute top-full left-0 z-50 mt-1 min-w-[160px] rounded-xl border border-[var(--border)] p-1 shadow-xl" style={{ background: "var(--bg-elevated, var(--surface))" }}>
             {options.map((opt) => (
               <button
                 key={opt.value}

@@ -58,9 +58,10 @@ function DialogContent({
       />
       <div
         className={cn(
-          "relative z-50 w-full max-w-lg rounded-lg bg-[var(--bg-card)] p-6 shadow-lg",
+          "relative z-50 w-full max-w-lg rounded-2xl border border-[var(--border)] p-6 shadow-2xl",
           className
         )}
+        style={{ background: "var(--bg-elevated, var(--surface))" }}
         onClick={(e) => e.stopPropagation()}
         {...props}
       >

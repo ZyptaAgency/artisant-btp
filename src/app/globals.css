@@ -6,9 +6,11 @@
    RGB channel triplets for Tailwind opacity modifier support */
 :root,
 [data-theme="supernova"] {
+  color-scheme: dark;
   --bg: #03010a;
   --bg-elevated: #0d0521;
   --bg-card: rgba(255, 255, 255, 0.04);
+  --bg-input: #0d0521;
   --background: #03010a;
   --foreground: #f0eeff;
   --text-white: #f0eeff;
@@ -29,9 +31,11 @@
 }
 
 [data-theme="noir"] {
+  color-scheme: dark;
   --bg: #0a0a0f;
   --bg-elevated: #12121a;
   --bg-card: #1a1a24;
+  --bg-input: #1a1a24;
   --background: #0a0a0f;
   --foreground: #f8fafc;
   --text-white: #f8fafc;
@@ -52,9 +56,11 @@
 }
 
 [data-theme="blanc"] {
+  color-scheme: light;
   --bg: #f8fafc;
   --bg-elevated: #ffffff;
   --bg-card: #ffffff;
+  --bg-input: #ffffff;
   --background: #f8fafc;
   --foreground: #0f172a;
   --text-white: #0f172a;

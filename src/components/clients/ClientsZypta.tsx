@@ -230,9 +230,9 @@ export function ClientsZypta() {
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
-                    {score === "hot" && <span className="text-lg">🔥🔥🔥</span>}
-                    {score === "warm" && <span className="text-lg">🔥</span>}
-                    {score === "cold" && <span className="text-lg">❄️</span>}
+                    {score === "hot" && <span className="h-2.5 w-2.5 rounded-full bg-red-500 shadow-[0_0_6px_rgba(239,68,68,0.5)]" title="Chaud" />}
+                    {score === "warm" && <span className="h-2.5 w-2.5 rounded-full bg-amber-400" title="Tiède" />}
+                    {score === "cold" && <span className="h-2.5 w-2.5 rounded-full bg-blue-400" title="Froid" />}
                   </div>
                 </div>
 
@@ -294,9 +294,10 @@ export function ClientsZypta() {
       {/* Bouton flottant */}
       <button
         onClick={() => setAddModalOpen(true)}
-        className="fixed bottom-8 right-8 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-nova-mid to-nova-mid/90 text-white shadow-lg shadow-nova-mid/30 transition-all duration-300 hover:scale-105 hover:shadow-xl"
+        className="fixed bottom-8 right-8 flex items-center gap-2 rounded-2xl bg-gradient-to-r from-[var(--accent)] to-[var(--accent-secondary)] px-5 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[var(--ring)] transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-[var(--ring)]"
       >
-        <Plus className="h-6 w-6" />
+        <Plus className="h-5 w-5" />
+        Ajouter un client
       </button>
 
       {/* Slide panel fiche client */}
@@ -339,7 +340,7 @@ function ClientSlidePanel({
 
   const suggestion =
     joursDepuisContact > 45
-      ? "Ce client n'a pas été relancé depuis 45 jours. Sa dernière intervention était une rénovation cuisine — proposez-lui la salle de bain ? 🚿"
+      ? "Ce client n'a pas été relancé depuis 45 jours. Sa dernière intervention était une rénovation cuisine — proposez-lui la salle de bain ?"
       : null;
 
   return (
@@ -373,10 +374,10 @@ function ClientSlidePanel({
               <p className="text-sm text-[var(--text-muted)]">
                 {dernier ?? "Jamais contacté"} • {formatCurrency(montant)} facturé
               </p>
-              <div className="mt-1">
-                {score === "hot" && <span>🔥🔥🔥 Chaud</span>}
-                {score === "warm" && <span>🔥 Tiède</span>}
-                {score === "cold" && <span>❄️ Froid</span>}
+              <div className="mt-1 flex items-center gap-2 text-sm">
+                {score === "hot" && <><span className="h-2.5 w-2.5 rounded-full bg-red-500" /> <span className="text-red-400">Chaud</span></>}
+                {score === "warm" && <><span className="h-2.5 w-2.5 rounded-full bg-amber-400" /> <span className="text-amber-400">Tiède</span></>}
+                {score === "cold" && <><span className="h-2.5 w-2.5 rounded-full bg-blue-400" /> <span className="text-blue-400">Froid</span></>}
               </div>
             </div>
           </div>

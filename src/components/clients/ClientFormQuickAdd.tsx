@@ -80,7 +80,7 @@ export function ClientFormQuickAdd({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="rounded-2xl border-slate-200">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Ajouter un client</DialogTitle>
         </DialogHeader>
