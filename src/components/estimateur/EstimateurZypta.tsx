@@ -89,9 +89,32 @@ export function EstimateurZypta() {
     if (!val && step !== "gamme" && step !== "ville") return;
 
     if (step === "projet") {
-      setTypeTravaux(val);
       addUserMessage(val);
       setInput("");
+
+      const keywords = [
+        "rénovation", "renovation", "salle de bain", "cuisine", "carrelage",
+        "plomberie", "électricité", "electricite", "peinture", "menuiserie",
+        "gros œuvre", "gros oeuvre", "isolation", "toiture", "couverture",
+        "chauffage", "climatisation", "terrassement", "façade", "facade",
+        "parquet", "sol", "mur", "plafond", "charpente", "maçonnerie",
+        "maconnerie", "cloison", "fenêtre", "fenetre", "porte", "escalier",
+        "extension", "aménagement", "amenagement", "démolition", "demolition",
+        "étanchéité", "etancheite", "ravalement", "enduit", "béton", "beton",
+        "m²", "m2", "pose", "installation", "remplacement", "création",
+        "creation", "construction", "réparation", "reparation", "renovation",
+        "bathroom", "kitchen", "tiling", "plumbing", "painting", "roofing",
+        "flooring", "insulation", "heating", "electrical",
+      ];
+      const lower = val.toLowerCase();
+      const isProject = keywords.some((k) => lower.includes(k)) || val.length >= 10;
+
+      if (!isProject) {
+        addZyptaMessage(t("estimator.notAProject"), "suggestions");
+        return;
+      }
+
+      setTypeTravaux(val);
       addZyptaMessage(t("estimator.askSurface"), "question");
       setStep("surface");
       return;
