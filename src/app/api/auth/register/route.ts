@@ -35,9 +35,12 @@ export async function POST(req: Request) {
       where: { email },
     });
 
+    const baseUrl = process.env.NEXTAUTH_URL || new URL(req.url).origin;
+
     if (existing) {
       return NextResponse.redirect(
-        new URL(`/register?error=email_exists&email=${encodeURIComponent(email)}`, req.url)
+        `${baseUrl}/register?error=email_exists&email=${encodeURIComponent(email)}`,
+        303
       );
     }
 
@@ -53,18 +56,23 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.redirect(
-      new URL(`/login?registered=1&email=${encodeURIComponent(email)}`, req.url)
+      `${baseUrl}/login?registered=1&email=${encodeURIComponent(email)}`,
+      303
     );
   } catch (error) {
+    const baseUrl = process.env.NEXTAUTH_URL || new URL(req.url).origin;
+
     if (error instanceof z.ZodError) {
       const msg = error.issues[0]?.message ?? "Données invalides";
       return NextResponse.redirect(
-        new URL(`/register?error=${encodeURIComponent(msg)}`, req.url)
+        `${baseUrl}/register?error=${encodeURIComponent(msg)}`,
+        303
       );
     }
     console.error("Register error:", error);
     return NextResponse.redirect(
-      new URL("/register?error=Erreur+lors+de+l'inscription", req.url)
+      `${baseUrl}/register?error=Erreur+lors+de+l'inscription`,
+      303
     );
   }
 }
