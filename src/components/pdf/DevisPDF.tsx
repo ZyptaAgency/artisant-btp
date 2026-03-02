@@ -135,7 +135,10 @@ export function DevisPDF({ numero, client, artisan, lignes, montantHT, tva, mont
         <View style={styles.header}>
           <View style={{ flexDirection: "row", marginBottom: 4, alignItems: "flex-start", gap: 12 }}>
             {artisan.logo && (
-              <Image src={artisan.logo} style={{ width: 80, height: 50, objectFit: "contain" }} />
+              <>
+                {/* eslint-disable-next-line jsx-a11y/alt-text */}
+                <Image src={artisan.logo} style={{ width: 80, height: 50, objectFit: "contain" }} />
+              </>
             )}
             <View>
               <Text style={styles.title}>{artisan.entreprise}</Text>

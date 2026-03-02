@@ -30,7 +30,7 @@ function LoginForm() {
     if (params.get("registered") === "1") {
       toast.success("Inscription réussie ! Connectez-vous avec votre mot de passe.");
     }
-    getCsrfToken().then(setCsrfToken);
+    getCsrfToken().then((token) => setCsrfToken(token ?? null));
   }, [searchParams]);
 
   return (
