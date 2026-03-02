@@ -39,10 +39,15 @@ function LoginForm() {
         return;
       }
 
-      router.push(callbackUrl);
-      router.refresh();
-    } catch {
-      toast.error(t("errors.connectionError"));
+      if (res?.ok) {
+        router.push(callbackUrl);
+        router.refresh();
+      } else {
+        toast.error(t("errors.connectionError"));
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : t("errors.connectionError");
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
