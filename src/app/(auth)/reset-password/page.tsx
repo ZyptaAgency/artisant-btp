@@ -11,6 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { toast } from "sonner";
 import { Logo } from "@/components/ui/Logo";
 import { StarField } from "@/components/ui/StarField";
+import { Eye, EyeOff } from "lucide-react";
 
 const PASSWORD_REGEX = /^(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/;
 
@@ -20,6 +21,8 @@ function ResetPasswordForm() {
   const token = searchParams.get("token");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
@@ -105,26 +108,46 @@ function ResetPasswordForm() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="password">{t("auth.newPassword")}</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--foreground)] transition-colors"
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
                 <p className="text-xs text-[var(--text-muted)]">
                   {t("auth.passwordMinChars")}
                 </p>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="confirm">{t("auth.confirmPassword")}</Label>
-                <Input
-                  id="confirm"
-                  type="password"
-                  value={confirm}
-                  onChange={(e) => setConfirm(e.target.value)}
-                  required
-                />
+                <div className="relative">
+                  <Input
+                    id="confirm"
+                    type={showConfirm ? "text" : "password"}
+                    value={confirm}
+                    onChange={(e) => setConfirm(e.target.value)}
+                    required
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirm(!showConfirm)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--foreground)] transition-colors"
+                  >
+                    {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? t("common.loading") : t("auth.resetPassword")}

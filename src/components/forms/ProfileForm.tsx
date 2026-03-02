@@ -50,6 +50,7 @@ const schema = z.object({
   adresse: z.string().optional(),
   tauxTVA: z.number().optional(),
   villeMeteo: z.string().optional(),
+  objectifMensuel: z.number().optional(),
   logo: z.string().optional(),
 }).superRefine((data, ctx) => {
   if (!data.siret) return;
@@ -222,6 +223,17 @@ export function ProfileForm({ defaultValues }: { defaultValues: FormData }) {
           ))}
         </select>
         <p className="text-xs text-[var(--text-muted)]">{t("profile.tvaDefault")}</p>
+      </div>
+      <div className="space-y-2">
+        <Label>{t("profile.revenueGoal")}</Label>
+        <Input
+          type="number"
+          step="100"
+          min="0"
+          {...register("objectifMensuel", { valueAsNumber: true })}
+          placeholder="10000"
+        />
+        <p className="text-xs text-[var(--text-muted)]">{t("profile.revenueGoalDesc")}</p>
       </div>
       <div className="space-y-2">
         <Label>{t("profile.weatherCity")}</Label>

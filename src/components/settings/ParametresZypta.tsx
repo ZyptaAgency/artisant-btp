@@ -42,6 +42,7 @@ type UserData = {
   adresse: string | null;
   tauxTVA: number | null;
   villeMeteo: string | null;
+  objectifMensuel: number | null;
   logo: string | null;
   documentStyle: string;
   theme: string;
@@ -132,6 +133,7 @@ export function ParametresZypta({ user }: { user: UserData }) {
                   adresse: user.adresse ?? "",
                   tauxTVA: user.tauxTVA ?? 20,
                   villeMeteo: user.villeMeteo ?? "Paris",
+                  objectifMensuel: user.objectifMensuel ?? 10000,
                   logo: user.logo ?? "",
                 }}
               />

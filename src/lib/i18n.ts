@@ -393,6 +393,8 @@ const translations = {
     "profile.changeLogo": "Changer le logo",
     "profile.tvaDefault": "Taux appliqué par défaut sur les nouvelles lignes de devis et factures.",
     "profile.weatherCityDesc": "Ville affichée pour la météo sur le tableau de bord.",
+    "profile.revenueGoal": "Objectif CA mensuel (€)",
+    "profile.revenueGoalDesc": "Objectif de chiffre d'affaires mensuel affiché sur le tableau de bord.",
     "profile.logoDesc": "Affiché sur les devis et factures. Max 500 Ko, PNG/JPG/WebP.",
     // Profile section
     "profileSection.editEmail": "Modifier l'email",
@@ -860,6 +862,8 @@ const translations = {
     "profile.changeLogo": "Change logo",
     "profile.tvaDefault": "Default rate applied to new quote and invoice lines.",
     "profile.weatherCityDesc": "City displayed for weather on the dashboard.",
+    "profile.revenueGoal": "Monthly revenue goal (€)",
+    "profile.revenueGoalDesc": "Monthly revenue goal displayed on the dashboard.",
     "profile.logoDesc": "Displayed on quotes and invoices. Max 500 KB, PNG/JPG/WebP.",
     "profileSection.editEmail": "Edit email",
     "profileSection.currentEmail": "Current email",

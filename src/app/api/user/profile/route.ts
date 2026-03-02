@@ -15,6 +15,7 @@ const schema = z.object({
   adresse: z.string().optional(),
   tauxTVA: z.number().optional(),
   villeMeteo: z.string().optional(),
+  objectifMensuel: z.number().optional(),
   logo: z.string().optional(),
 });
 
@@ -40,6 +41,7 @@ export async function PATCH(req: Request) {
         adresse: data.adresse ?? null,
         tauxTVA: data.tauxTVA ?? null,
         villeMeteo: data.villeMeteo ?? null,
+        objectifMensuel: data.objectifMensuel ?? null,
         logo: data.logo ?? null,
         identifiantType: data.identifiantType ?? null,
       },

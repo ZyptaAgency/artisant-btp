@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { toast } from "sonner";
 import { Logo } from "@/components/ui/Logo";
 import { StarField } from "@/components/ui/StarField";
+import { Eye, EyeOff } from "lucide-react";
 
 function LoginForm() {
   const router = useRouter();
@@ -20,6 +21,7 @@ function LoginForm() {
   const callbackUrl = searchParams.get("callbackUrl") ?? "/dashboard";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -72,13 +74,23 @@ function LoginForm() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">{t("auth.password")}</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--foreground)] transition-colors"
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
             </div>
             <div className="text-right">
               <Link href="/forgot-password" className="text-sm text-nova-mid hover:underline">

@@ -33,6 +33,7 @@ export default async function SettingsPage() {
           adresse: user.adresse,
           tauxTVA: user.tauxTVA,
           villeMeteo: user.villeMeteo,
+          objectifMensuel: user.objectifMensuel,
           logo: user.logo,
           documentStyle: user.documentStyle ?? "MODERNE",
           theme: user.theme ?? "supernova",

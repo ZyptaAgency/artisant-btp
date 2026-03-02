@@ -209,7 +209,7 @@ export default async function DashboardPage() {
 
   const userSettings = await prisma.user.findUnique({
     where: { id: userId },
-    select: { villeMeteo: true },
+    select: { villeMeteo: true, objectifMensuel: true },
   });
 
   return (
@@ -251,7 +251,7 @@ export default async function DashboardPage() {
       recentActivity={recentActivity}
       topClients={topClients}
       upcomingDeadlines={upcomingDeadlines}
-      objectifCA={10000}
+      objectifCA={userSettings?.objectifMensuel ?? 10000}
     />
   );
 }

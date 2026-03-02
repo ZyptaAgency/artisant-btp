@@ -16,7 +16,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Mail, Lock, Loader2, AlertTriangle } from "lucide-react";
+import { Mail, Lock, Loader2, AlertTriangle, Eye, EyeOff } from "lucide-react";
 
 export function ProfileSection({ email }: { email: string }) {
   const router = useRouter();
@@ -29,6 +29,11 @@ export function ProfileSection({ email }: { email: string }) {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordLoading, setPasswordLoading] = useState(false);
+
+  const [showEmailPw, setShowEmailPw] = useState(false);
+  const [showCurrentPw, setShowCurrentPw] = useState(false);
+  const [showNewPw, setShowNewPw] = useState(false);
+  const [showConfirmPw, setShowConfirmPw] = useState(false);
 
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
@@ -167,13 +172,19 @@ export function ProfileSection({ email }: { email: string }) {
           </div>
           <div className="space-y-2">
             <Label className="text-[var(--text-muted)]">{t("profileSection.currentPassword")}</Label>
-            <Input
-              type="password"
-              placeholder={t("profileSection.confirmIdentity")}
-              value={emailPassword}
-              onChange={(e) => setEmailPassword(e.target.value)}
-              required
-            />
+            <div className="relative">
+              <Input
+                type={showEmailPw ? "text" : "password"}
+                placeholder={t("profileSection.confirmIdentity")}
+                value={emailPassword}
+                onChange={(e) => setEmailPassword(e.target.value)}
+                required
+                className="pr-10"
+              />
+              <button type="button" onClick={() => setShowEmailPw(!showEmailPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--foreground)] transition-colors">
+                {showEmailPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
           </div>
           <Button type="submit" variant="outline" size="sm" disabled={emailLoading}>
             {emailLoading ? (
@@ -200,35 +211,53 @@ export function ProfileSection({ email }: { email: string }) {
         <form onSubmit={handlePasswordChange} className="space-y-4">
           <div className="space-y-2">
             <Label className="text-[var(--text-muted)]">{t("profileSection.currentPassword")}</Label>
-            <Input
-              type="password"
-              placeholder="••••••••"
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-              required
-            />
+            <div className="relative">
+              <Input
+                type={showCurrentPw ? "text" : "password"}
+                placeholder="••••••••"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                required
+                className="pr-10"
+              />
+              <button type="button" onClick={() => setShowCurrentPw(!showCurrentPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--foreground)] transition-colors">
+                {showCurrentPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
           </div>
           <div className="space-y-2">
             <Label className="text-[var(--text-muted)]">{t("profileSection.newPassword")}</Label>
-            <Input
-              type="password"
-              placeholder={t("auth.passwordPlaceholder")}
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              required
-              minLength={8}
-            />
+            <div className="relative">
+              <Input
+                type={showNewPw ? "text" : "password"}
+                placeholder={t("auth.passwordPlaceholder")}
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                required
+                minLength={8}
+                className="pr-10"
+              />
+              <button type="button" onClick={() => setShowNewPw(!showNewPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--foreground)] transition-colors">
+                {showNewPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
           </div>
           <div className="space-y-2">
             <Label className="text-[var(--text-muted)]">{t("profileSection.confirmNewPassword")}</Label>
-            <Input
-              type="password"
-              placeholder="••••••••"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-              minLength={8}
-            />
+            <div className="relative">
+              <Input
+                type={showConfirmPw ? "text" : "password"}
+                placeholder="••••••••"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                minLength={8}
+                className="pr-10"
+              />
+              <button type="button" onClick={() => setShowConfirmPw(!showConfirmPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--foreground)] transition-colors">
+                {showConfirmPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
           </div>
           <Button type="submit" variant="outline" size="sm" disabled={passwordLoading}>
             {passwordLoading ? (

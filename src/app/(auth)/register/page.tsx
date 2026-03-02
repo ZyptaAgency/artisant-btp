@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { toast } from "sonner";
 import { Logo } from "@/components/ui/Logo";
 import { StarField } from "@/components/ui/StarField";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -22,6 +23,7 @@ export default function RegisterPage() {
     email: "",
     password: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -108,15 +110,25 @@ export default function RegisterPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">{t("auth.password")}</Label>
-              <Input
-                id="password"
-                type="password"
-                value={form.password}
-                onChange={(e) => setForm((p) => ({ ...p, password: e.target.value }))}
-                placeholder={t("auth.passwordPlaceholder")}
-                required
-                minLength={8}
-              />
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  value={form.password}
+                  onChange={(e) => setForm((p) => ({ ...p, password: e.target.value }))}
+                  placeholder={t("auth.passwordPlaceholder")}
+                  required
+                  minLength={8}
+                  className="pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--foreground)] transition-colors"
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? t("auth.creatingAccount") : t("auth.register")}
