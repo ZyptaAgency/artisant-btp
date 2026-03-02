@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -78,6 +78,16 @@ export function ProfileForm({ defaultValues }: { defaultValues: FormData }) {
   });
   const logoValue = watch("logo");
   const identifiantType = watch("identifiantType") ?? "SIRET";
+  const activiteValue = watch("activite") ?? "";
+
+  const isCustomActivite = activiteValue === "__custom__" || (activiteValue !== "" && !ACTIVITES_BTP.includes(activiteValue as typeof ACTIVITES_BTP[number]));
+  const [customActivite, setCustomActivite] = useState(isCustomActivite ? activiteValue : "");
+
+  useEffect(() => {
+    if (isCustomActivite && activiteValue !== "__custom__") {
+      setCustomActivite(activiteValue);
+    }
+  }, [activiteValue, isCustomActivite]);
 
   function handleLogoFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -128,14 +138,34 @@ export function ProfileForm({ defaultValues }: { defaultValues: FormData }) {
       <div className="space-y-2">
         <Label>{t("profile.activite")}</Label>
         <select
-          {...register("activite")}
+          value={isCustomActivite ? "__custom__" : activiteValue}
+          onChange={(e) => {
+            const val = e.target.value;
+            if (val === "__custom__") {
+              setValue("activite", customActivite || "__custom__");
+            } else {
+              setValue("activite", val);
+              setCustomActivite("");
+            }
+          }}
           className="flex h-10 w-full rounded-md border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--ring)] [&>option]:bg-[var(--bg-card)] [&>option]:text-[var(--foreground)]"
         >
           <option value="">{t("profile.selectActivity")}</option>
-          {ACTIVITES_BTP.map((a) => (
+          {ACTIVITES_BTP.filter((a) => a !== "Autre").map((a) => (
             <option key={a} value={a}>{a}</option>
           ))}
+          <option value="__custom__">{t("profile.otherActivity")}</option>
         </select>
+        {isCustomActivite && (
+          <Input
+            placeholder={t("profile.specifyActivity")}
+            value={customActivite}
+            onChange={(e) => {
+              setCustomActivite(e.target.value);
+              setValue("activite", e.target.value);
+            }}
+          />
+        )}
       </div>
       <div className="space-y-2">
         <Label>Identifiant</Label>

@@ -18,6 +18,7 @@ import { ProfileSection } from "@/components/settings/ProfileSection";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Locale, localeNames } from "@/lib/i18n";
+import { toast } from "sonner";
 
 const SECTIONS = [
   { id: "entreprise", labelKey: "settings.sectionCompany", icon: Building2 },
@@ -62,7 +63,10 @@ function LanguageForm() {
           ([code, name]) => (
             <button
               key={code}
-              onClick={() => setLocale(code)}
+              onClick={() => {
+                setLocale(code);
+                toast.success(code === "fr" ? "Langue changée en français" : "Language changed to English");
+              }}
               className={cn(
                 "rounded-xl border px-5 py-3 text-sm font-medium transition-all duration-300",
                 locale === code

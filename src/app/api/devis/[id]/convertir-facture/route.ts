@@ -23,9 +23,9 @@ export async function POST(
     return NextResponse.json({ error: "Devis non trouvé" }, { status: 404 });
   }
 
-  if (devis.statut !== "ACCEPTE" && devis.statut !== "ENVOYE") {
+  if (!["BROUILLON", "ENVOYE", "ACCEPTE"].includes(devis.statut)) {
     return NextResponse.json(
-      { error: "Seuls les devis envoyés ou acceptés peuvent être convertis en facture" },
+      { error: "Ce devis ne peut pas être converti en facture" },
       { status: 400 }
     );
   }

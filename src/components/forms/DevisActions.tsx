@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -108,7 +107,7 @@ export function DevisActions({
 
   return (
     <>
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         <Button variant="outline" onClick={() => setPdfOpen(true)}>
           {t("devis.seePdf")}
         </Button>
@@ -130,14 +129,11 @@ export function DevisActions({
             <Button variant="outline" onClick={() => updateStatut("REFUSE")} disabled={loading}>
               {t("devis.reject")}
             </Button>
-            <Button onClick={convertirEnFacture} disabled={converting}>
-              {converting ? t("devis.creating") : t("devis.createInvoice")}
-            </Button>
           </>
         )}
-        {devis.statut === "ACCEPTE" && (
-          <Button asChild>
-            <Link href={`/factures/nouvelle?devisId=${devis.id}`}>{t("devis.convertToInvoice")}</Link>
+        {["BROUILLON", "ENVOYE", "ACCEPTE"].includes(devis.statut) && (
+          <Button onClick={convertirEnFacture} disabled={converting}>
+            {converting ? t("devis.creating") : t("devis.createInvoice")}
           </Button>
         )}
       </div>

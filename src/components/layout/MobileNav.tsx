@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { LayoutDashboard, Users, GitBranch, FileText, Receipt } from "lucide-react";
+import { LayoutDashboard, Users, GitBranch, FileText, Receipt, CheckSquare } from "lucide-react";
 
 const items = [
   { href: "/dashboard", icon: LayoutDashboard },
@@ -11,6 +11,7 @@ const items = [
   { href: "/pipeline", icon: GitBranch },
   { href: "/devis", icon: FileText },
   { href: "/factures", icon: Receipt },
+  { href: "/todos", icon: CheckSquare },
 ];
 
 export function MobileNav() {

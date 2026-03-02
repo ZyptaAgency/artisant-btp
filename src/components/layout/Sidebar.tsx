@@ -12,6 +12,7 @@ import {
   GitBranch,
   Settings,
   Sparkles,
+  CheckSquare,
   LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -29,6 +30,7 @@ const navItems: {
   { href: "/pipeline", labelKey: "nav.pipeline", icon: GitBranch },
   { href: "/devis", labelKey: "nav.devis", icon: FileText },
   { href: "/factures", labelKey: "nav.factures", icon: Receipt },
+  { href: "/todos", labelKey: "nav.todos", icon: CheckSquare },
   { href: "/estimateur", labelKey: "nav.estimateur", icon: Sparkles },
   { href: "/settings", labelKey: "nav.settings", icon: Settings },
 ];
