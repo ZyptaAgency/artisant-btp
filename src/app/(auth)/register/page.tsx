@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,9 +13,9 @@ import { Logo } from "@/components/ui/Logo";
 import { StarField } from "@/components/ui/StarField";
 import { Eye, EyeOff } from "lucide-react";
 
-export default function RegisterPage() {
-  const router = useRouter();
+function RegisterForm() {
   const { t } = useLanguage();
+  const searchParams = useSearchParams();
   const [form, setForm] = useState({
     nom: "",
     entreprise: "",
@@ -24,49 +23,16 @@ export default function RegisterPage() {
     password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetch("/api/warmup").catch(() => {});
-  }, []);
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const res = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        toast.error(data.error ?? t("errors.generic"));
-        return;
-      }
-
-      const signInRes = await signIn("credentials", {
-        email: form.email,
-        password: form.password,
-        redirect: false,
-      });
-
-      if (signInRes?.error) {
-        toast.error(t("auth.creatingAccount"));
-        router.push("/login");
-        return;
-      }
-
-      router.push("/dashboard");
-      router.refresh();
-    } catch {
-      toast.error(t("errors.saveError"));
-    } finally {
-      setLoading(false);
+    const error = searchParams.get("error");
+    const email = searchParams.get("email");
+    if (email) setForm((p) => ({ ...p, email }));
+    if (error) {
+      const msg = error === "email_exists" ? "Un compte existe déjà avec cet email" : decodeURIComponent(error);
+      toast.error(msg);
     }
-  }
+  }, [searchParams]);
 
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center bg-[var(--bg)] p-4 overflow-hidden">
@@ -80,11 +46,12 @@ export default function RegisterPage() {
           <CardDescription>{t("auth.registerSubtitle")}</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form action="/api/auth/register" method="POST" className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="nom">{t("auth.fullName")}</Label>
               <Input
                 id="nom"
+                name="nom"
                 value={form.nom}
                 onChange={(e) => setForm((p) => ({ ...p, nom: e.target.value }))}
                 placeholder="Jean Dupont"
@@ -95,6 +62,7 @@ export default function RegisterPage() {
               <Label htmlFor="entreprise">{t("auth.companyName")}</Label>
               <Input
                 id="entreprise"
+                name="entreprise"
                 value={form.entreprise}
                 onChange={(e) => setForm((p) => ({ ...p, entreprise: e.target.value }))}
                 placeholder="Dupont BTP"
@@ -105,6 +73,7 @@ export default function RegisterPage() {
               <Label htmlFor="email">{t("auth.email")}</Label>
               <Input
                 id="email"
+                name="email"
                 type="email"
                 value={form.email}
                 onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))}
@@ -117,6 +86,7 @@ export default function RegisterPage() {
               <div className="relative">
                 <Input
                   id="password"
+                  name="password"
                   type={showPassword ? "text" : "password"}
                   value={form.password}
                   onChange={(e) => setForm((p) => ({ ...p, password: e.target.value }))}
@@ -134,8 +104,8 @@ export default function RegisterPage() {
                 </button>
               </div>
             </div>
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? t("auth.creatingAccount") : t("auth.register")}
+            <Button type="submit" className="w-full">
+              {t("auth.register")}
             </Button>
           </form>
           <p className="mt-4 text-center text-sm text-[var(--text-muted)]">
@@ -147,5 +117,13 @@ export default function RegisterPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-[var(--bg)]"><span className="text-[var(--text-muted)]">Chargement...</span></div>}>
+      <RegisterForm />
+    </Suspense>
   );
 }

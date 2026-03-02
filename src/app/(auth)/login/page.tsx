@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getCsrfToken } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,80 +14,24 @@ import { Logo } from "@/components/ui/Logo";
 import { StarField } from "@/components/ui/StarField";
 import { Eye, EyeOff } from "lucide-react";
 
-const AUTH_TIMEOUT_MS = 60000;
-
-async function signInWithTimeout(
-  email: string,
-  password: string,
-  callbackUrl: string
-): Promise<{ ok: boolean; error?: string }> {
-  const csrfToken = await getCsrfToken();
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), AUTH_TIMEOUT_MS);
-  try {
-    const res = await fetch("/api/auth/callback/credentials", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({
-        csrfToken: csrfToken ?? "",
-        email,
-        password,
-        callbackUrl,
-        json: "true",
-      }),
-      signal: controller.signal,
-    });
-    clearTimeout(timeoutId);
-    const data = (await res.json()) as { url?: string };
-    const error = data?.url ? new URL(data.url).searchParams.get("error") : null;
-    return { ok: res.ok, error: error ?? undefined };
-  } catch (e) {
-    clearTimeout(timeoutId);
-    throw e;
-  }
-}
-
 function LoginForm() {
-  const router = useRouter();
   const { t } = useLanguage();
+  const searchParams = useSearchParams();
+  const [csrfToken, setCsrfToken] = useState<string | null>(null);
   const [callbackUrl, setCallbackUrl] = useState("/dashboard");
-  const warmupRef = useRef(fetch("/api/warmup").catch(() => {}));
+  const [email, setEmail] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     setCallbackUrl(params.get("callbackUrl") ?? "/dashboard");
-  }, []);
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      await warmupRef.current;
-      const res = await signInWithTimeout(email, password, callbackUrl);
-
-      if (res.error) {
-        toast.error(res.error);
-        return;
-      }
-
-      if (res.ok) {
-        router.push(callbackUrl);
-        router.refresh();
-      } else {
-        toast.error(t("errors.connectionError"));
-      }
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : t("errors.connectionError");
-      toast.error(msg);
-    } finally {
-      setLoading(false);
+    const emailParam = params.get("email");
+    if (emailParam) setEmail(emailParam);
+    if (params.get("registered") === "1") {
+      toast.success("Inscription réussie ! Connectez-vous avec votre mot de passe.");
     }
-  }
+    getCsrfToken().then(setCsrfToken);
+  }, [searchParams]);
 
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center bg-[var(--bg)] p-4 overflow-hidden">
@@ -101,11 +45,18 @@ function LoginForm() {
           <CardDescription>{t("auth.loginSubtitle")}</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form
+            action="/api/auth/callback/credentials"
+            method="POST"
+            className="space-y-4"
+          >
+            <input type="hidden" name="csrfToken" value={csrfToken ?? ""} />
+            <input type="hidden" name="callbackUrl" value={callbackUrl} />
             <div className="space-y-2">
               <Label htmlFor="email">{t("auth.email")}</Label>
               <Input
                 id="email"
+                name="email"
                 type="email"
                 placeholder="vous@exemple.fr"
                 value={email}
@@ -118,9 +69,8 @@ function LoginForm() {
               <div className="relative">
                 <Input
                   id="password"
+                  name="password"
                   type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
                   required
                   className="pr-10"
                 />
@@ -138,8 +88,8 @@ function LoginForm() {
                 {t("auth.forgotPassword")}
               </Link>
             </div>
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? t("auth.loggingIn") : t("auth.login")}
+            <Button type="submit" className="w-full" disabled={!csrfToken}>
+              {!csrfToken ? t("common.loading") : t("auth.login")}
             </Button>
           </form>
           <p className="mt-4 text-center text-sm text-[var(--text-muted)]">
@@ -155,5 +105,9 @@ function LoginForm() {
 }
 
 export default function LoginPage() {
-  return <LoginForm />;
+  return (
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-[var(--bg)]"><span className="text-[var(--text-muted)]">Chargement...</span></div>}>
+      <LoginForm />
+    </Suspense>
+  );
 }

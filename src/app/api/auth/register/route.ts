@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+
+export const maxDuration = 60;
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 
@@ -13,9 +15,20 @@ const registerSchema = z.object({
     .regex(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/, "Doit contenir un caractère spécial"),
 });
 
+async function parseBody(req: Request): Promise<Record<string, string>> {
+  const contentType = req.headers.get("content-type") ?? "";
+  if (contentType.includes("application/json")) {
+    return req.json();
+  }
+  const formData = await req.formData();
+  return Object.fromEntries(
+    Array.from(formData.entries()).map(([k, v]) => [k, typeof v === "string" ? v : ""])
+  ) as Record<string, string>;
+}
+
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
+    const body = await parseBody(req);
     const { nom, entreprise, email, password } = registerSchema.parse(body);
 
     const existing = await prisma.user.findUnique({
@@ -23,15 +36,14 @@ export async function POST(req: Request) {
     });
 
     if (existing) {
-      return NextResponse.json(
-        { error: "Un compte existe déjà avec cet email" },
-        { status: 400 }
+      return NextResponse.redirect(
+        new URL(`/register?error=email_exists&email=${encodeURIComponent(email)}`, req.url)
       );
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    const user = await prisma.user.create({
+    await prisma.user.create({
       data: {
         nom,
         entreprise,
@@ -40,23 +52,19 @@ export async function POST(req: Request) {
       },
     });
 
-    return NextResponse.json({
-      id: user.id,
-      email: user.email,
-      nom: user.nom,
-      entreprise: user.entreprise,
-    });
+    return NextResponse.redirect(
+      new URL(`/login?registered=1&email=${encodeURIComponent(email)}`, req.url)
+    );
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: error.issues[0]?.message ?? "Données invalides" },
-        { status: 400 }
+      const msg = error.issues[0]?.message ?? "Données invalides";
+      return NextResponse.redirect(
+        new URL(`/register?error=${encodeURIComponent(msg)}`, req.url)
       );
     }
     console.error("Register error:", error);
-    return NextResponse.json(
-      { error: "Erreur lors de l'inscription" },
-      { status: 500 }
+    return NextResponse.redirect(
+      new URL("/register?error=Erreur+lors+de+l'inscription", req.url)
     );
   }
 }
