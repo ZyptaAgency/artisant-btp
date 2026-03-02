@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 
 interface DialogProps {
@@ -49,8 +50,8 @@ function DialogContent({
 
   if (!open) return null;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+  const content = (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       <div
         className="fixed inset-0 bg-black/50"
         onClick={() => onOpenChange(false)}
@@ -58,7 +59,7 @@ function DialogContent({
       />
       <div
         className={cn(
-          "relative z-50 w-full max-w-lg rounded-2xl border border-[var(--border)] p-6 shadow-2xl",
+          "relative z-[101] w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl border border-[var(--border)] p-6 shadow-2xl",
           className
         )}
         style={{ background: "var(--bg-elevated, var(--surface))" }}
@@ -69,6 +70,11 @@ function DialogContent({
       </div>
     </div>
   );
+
+  if (typeof document !== "undefined") {
+    return createPortal(content, document.body);
+  }
+  return content;
 }
 
 function DialogHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
