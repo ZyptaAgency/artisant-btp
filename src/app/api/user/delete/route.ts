@@ -12,7 +12,8 @@ export async function POST(req: Request) {
 
     const { confirmation } = await req.json();
 
-    if (confirmation !== "SUPPRIMER") {
+    const validConfirmations = ["SUPPRIMER", "DELETE"];
+    if (!validConfirmations.includes(String(confirmation).toUpperCase())) {
       return NextResponse.json(
         { error: "Confirmation invalide" },
         { status: 400 }

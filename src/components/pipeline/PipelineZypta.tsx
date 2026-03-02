@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   DragDropContext,
   Droppable,
@@ -45,12 +46,12 @@ import { cn } from "@/lib/utils";
 // ---------------------------------------------------------------------------
 
 const COLUMNS = [
-  { id: "PROSPECT", title: "Premier contact", accent: "blue" },
-  { id: "CONTACTE", title: "Visite programmée", accent: "violet" },
-  { id: "DEVIS_ENVOYE", title: "Devis envoyé", accent: "amber" },
-  { id: "NEGOCIATION", title: "Négociation", accent: "orange" },
-  { id: "SIGNE", title: "Signé", accent: "emerald" },
-  { id: "PERDU", title: "Perdu", accent: "red" },
+  { id: "PROSPECT", titleKey: "pipeline.firstContact", accent: "blue" },
+  { id: "CONTACTE", titleKey: "pipeline.scheduledVisit", accent: "violet" },
+  { id: "DEVIS_ENVOYE", titleKey: "pipeline.quoteSent", accent: "amber" },
+  { id: "NEGOCIATION", titleKey: "pipeline.negotiation", accent: "orange" },
+  { id: "SIGNE", titleKey: "pipeline.signed", accent: "emerald" },
+  { id: "PERDU", titleKey: "pipeline.lost", accent: "red" },
 ] as const;
 
 type ColumnAccent = (typeof COLUMNS)[number]["accent"];
@@ -64,10 +65,10 @@ const COLUMN_STYLES: Record<ColumnAccent, { bg: string; headerBg: string; dot: s
   red: { bg: "bg-red-500/[0.03]", headerBg: "bg-red-500/10", dot: "bg-red-400" },
 };
 
-const TYPE_BADGES: Record<string, { label: string; icon: string; color: string }> = {
-  renovation: { label: "Rénovation", icon: "🏠", color: "bg-blue-500/10 text-blue-400 border-blue-500/20" },
-  depannage: { label: "Dépannage", icon: "🔧", color: "bg-amber-500/10 text-amber-400 border-amber-500/20" },
-  construction: { label: "Construction", icon: "🏗️", color: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" },
+const TYPE_BADGES: Record<string, { labelKey: string; icon: string; color: string }> = {
+  renovation: { labelKey: "pipeline.typeRenovation", icon: "🏠", color: "bg-blue-500/10 text-blue-400 border-blue-500/20" },
+  depannage: { labelKey: "pipeline.typeDepannage", icon: "🔧", color: "bg-amber-500/10 text-amber-400 border-amber-500/20" },
+  construction: { labelKey: "pipeline.typeConstruction", icon: "🏗️", color: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" },
 };
 
 type ViewMode = "kanban" | "funnel" | "list";
@@ -154,6 +155,7 @@ function formatCompact(n: number): string {
 
 export function PipelineZypta() {
   const router = useRouter();
+  const { t } = useLanguage();
   const [clients, setClients] = useState<ClientWithDevis[]>([]);
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState<ViewMode>("kanban");
@@ -296,19 +298,19 @@ export function PipelineZypta() {
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[var(--foreground)]">Pipeline</h1>
+          <h1 className="text-2xl font-bold text-[var(--foreground)]">{t("pipeline.title")}</h1>
           <p className="text-sm text-[var(--text-muted)]">
-            {filtered.length} deal{filtered.length > 1 ? "s" : ""} en cours
+            {t("pipeline.dealsInProgress", { count: filtered.length })}
           </p>
         </div>
         <div className="flex gap-2">
           {(
             [
-              { key: "kanban", label: "Kanban", icon: LayoutGrid },
-              { key: "funnel", label: "Funnel", icon: BarChart3 },
-              { key: "list", label: "Liste", icon: List },
+              { key: "kanban", labelKey: "pipeline.kanban", icon: LayoutGrid },
+              { key: "funnel", labelKey: "pipeline.funnel", icon: BarChart3 },
+              { key: "list", labelKey: "pipeline.list", icon: List },
             ] as const
-          ).map(({ key, label, icon: Icon }) => (
+          ).map(({ key, labelKey, icon: Icon }) => (
             <Button
               key={key}
               variant={view === key ? "default" : "outline"}
@@ -316,7 +318,7 @@ export function PipelineZypta() {
               onClick={() => setView(key)}
             >
               <Icon className="mr-2 h-4 w-4" />
-              {label}
+              {t(labelKey as import("@/lib/i18n").TranslationKey)}
             </Button>
           ))}
         </div>
@@ -327,7 +329,7 @@ export function PipelineZypta() {
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]" />
           <Input
-            placeholder="Rechercher un client..."
+            placeholder={t("pipeline.searchClient")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
@@ -336,39 +338,39 @@ export function PipelineZypta() {
 
         <FilterSelect
           icon={<Filter className="h-3.5 w-3.5" />}
-          label="Type"
+          label={t("pipeline.type")}
           value={typeFilter}
           options={[
-            { value: "tous", label: "Tous" },
-            { value: "renovation", label: "🏠 Rénovation" },
-            { value: "depannage", label: "🔧 Dépannage" },
-            { value: "construction", label: "🏗️ Construction" },
+            { value: "tous", label: t("pipeline.typeAll") },
+            { value: "renovation", label: `🏠 ${t("pipeline.typeRenovation")}` },
+            { value: "depannage", label: `🔧 ${t("pipeline.typeDepannage")}` },
+            { value: "construction", label: `🏗️ ${t("pipeline.typeConstruction")}` },
           ]}
           onChange={(v) => setTypeFilter(v as TypeFilter)}
         />
 
         <FilterSelect
           icon={<DollarSign className="h-3.5 w-3.5" />}
-          label="Montant"
+          label={t("pipeline.amount")}
           value={amountRange}
           options={[
-            { value: "all", label: "Tous" },
-            { value: "<5k", label: "< 5 000 €" },
-            { value: "5k-20k", label: "5k – 20k €" },
-            { value: "20k-50k", label: "20k – 50k €" },
-            { value: ">50k", label: "> 50 000 €" },
+            { value: "all", label: t("pipeline.amountAll") },
+            { value: "<5k", label: t("pipeline.amountAll5k") },
+            { value: "5k-20k", label: t("pipeline.amount5k20k") },
+            { value: "20k-50k", label: t("pipeline.amount20k50k") },
+            { value: ">50k", label: t("pipeline.amount50k") },
           ]}
           onChange={(v) => setAmountRange(v as AmountRange)}
         />
 
         <FilterSelect
           icon={<ArrowUpDown className="h-3.5 w-3.5" />}
-          label="Tri"
+          label={t("pipeline.sort")}
           value={sortKey}
           options={[
-            { value: "date", label: "Date" },
-            { value: "amount", label: "Montant" },
-            { value: "probability", label: "Probabilité" },
+            { value: "date", label: t("pipeline.sortDate") },
+            { value: "amount", label: t("pipeline.sortAmount") },
+            { value: "probability", label: t("pipeline.sortProba") },
           ]}
           onChange={(v) => setSortKey(v as SortKey)}
         />
@@ -376,10 +378,10 @@ export function PipelineZypta() {
 
       {/* Stats row */}
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <StatCard icon={DollarSign} label="Pipeline total" value={formatCompact(stats.totalValue)} />
-        <StatCard icon={Target} label="Pipeline pondéré" value={formatCompact(stats.weighted)} />
-        <StatCard icon={Award} label="Taux de succès" value={`${stats.winRate.toFixed(0)}%`} />
-        <StatCard icon={TrendingDown} label="Deal moyen" value={formatCompact(stats.avgDeal)} />
+        <StatCard icon={DollarSign} label={t("pipeline.totalPipeline")} value={formatCompact(stats.totalValue)} />
+        <StatCard icon={Target} label={t("pipeline.weightedPipeline")} value={formatCompact(stats.weighted)} />
+        <StatCard icon={Award} label={t("pipeline.successRate")} value={`${stats.winRate.toFixed(0)}%`} />
+        <StatCard icon={TrendingDown} label={t("pipeline.avgDeal")} value={formatCompact(stats.avgDeal)} />
       </div>
 
       {/* Views */}
@@ -397,6 +399,7 @@ export function PipelineZypta() {
               montantsByColumn={montantsByColumn}
               onDragEnd={handleDragEnd}
               onCardClick={(id) => router.push(`/clients/${id}`)}
+              t={t}
             />
           </motion.div>
         )}
@@ -408,7 +411,7 @@ export function PipelineZypta() {
             exit={{ opacity: 0, y: -12 }}
             transition={{ duration: 0.2 }}
           >
-            <FunnelView clientsByColumn={clientsByColumn} montantsByColumn={montantsByColumn} />
+            <FunnelView clientsByColumn={clientsByColumn} montantsByColumn={montantsByColumn} t={t} />
           </motion.div>
         )}
         {view === "list" && (
@@ -424,6 +427,7 @@ export function PipelineZypta() {
               sortKey={sortKey}
               onSortChange={setSortKey}
               onCardClick={(id) => router.push(`/clients/${id}`)}
+              t={t}
             />
           </motion.div>
         )}
@@ -434,19 +438,18 @@ export function PipelineZypta() {
         <Dialog open={!!factureModal} onOpenChange={(open) => !open && setFactureModal(null)}>
           <DialogContent className="rounded-2xl">
             <DialogHeader>
-              <DialogTitle>Créer la facture</DialogTitle>
+              <DialogTitle>{t("pipeline.createInvoiceTitle")}</DialogTitle>
             </DialogHeader>
             <p className="text-[var(--text-muted)]">
-              Le deal avec <strong>{factureModal.nom}</strong> est signé.
-              Souhaitez-vous créer la facture correspondante ?
+              {t("pipeline.dealSigned", { name: factureModal.nom })}
             </p>
             <DialogFooter>
               <Button variant="outline" onClick={() => setFactureModal(null)}>
-                Plus tard
+                {t("pipeline.later")}
               </Button>
               <Button onClick={() => router.push(`/factures/nouvelle?clientId=${factureModal.clientId}`)}>
                 <Check className="mr-2 h-4 w-4" />
-                Créer la facture
+                {t("pipeline.createInvoice")}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -549,10 +552,12 @@ function DealCard({
   client,
   onClick,
   isDragging,
+  t,
 }: {
   client: ClientWithDevis;
   onClick: () => void;
   isDragging?: boolean;
+  t: (k: import("@/lib/i18n").TranslationKey, p?: Record<string, string | number>) => string;
 }) {
   const jours = getJoursSansActivite(client);
   const stagnant = jours >= 7;
@@ -576,7 +581,7 @@ function DealCard({
       {stagnant && (
         <div className="mb-2 flex items-center gap-1 text-xs font-medium text-orange-400">
           <AlertTriangle className="h-3 w-3" />
-          À relancer ({jours}j)
+          {t("pipeline.toRelance")} ({jours}j)
         </div>
       )}
 
@@ -593,7 +598,7 @@ function DealCard({
       {/* Type badge + days */}
       <div className="mt-2 flex items-center gap-2">
         <span className={cn("inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[11px] font-medium", type.color)}>
-          {type.icon} {type.label}
+          {type.icon} {t(type.labelKey as import("@/lib/i18n").TranslationKey)}
         </span>
         <span
           className={cn(
@@ -601,7 +606,7 @@ function DealCard({
             jours > 14 ? "text-red-400" : jours > 7 ? "text-orange-400" : "text-[var(--text-muted)]"
           )}
         >
-          {jours === 0 ? "Aujourd'hui" : `${jours}j`}
+          {jours === 0 ? t("clients.today") : `${jours}j`}
         </span>
       </div>
 
@@ -624,9 +629,9 @@ function DealCard({
 
       {/* Quick actions on hover */}
       <div className="mt-2 flex gap-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-        <QuickAction icon={Phone} label="Appeler" onClick={(e) => { e.stopPropagation(); if (client.telephone) window.open(`tel:${client.telephone}`); }} />
-        <QuickAction icon={Mail} label="Email" onClick={(e) => { e.stopPropagation(); if (client.email) window.open(`mailto:${client.email}`); }} />
-        <QuickAction icon={Eye} label="Voir" onClick={(e) => { e.stopPropagation(); onClick(); }} />
+        <QuickAction icon={Phone} label={t("pipeline.call")} onClick={(e) => { e.stopPropagation(); if (client.telephone) window.open(`tel:${client.telephone}`); }} />
+        <QuickAction icon={Mail} label={t("pipeline.email")} onClick={(e) => { e.stopPropagation(); if (client.email) window.open(`mailto:${client.email}`); }} />
+        <QuickAction icon={Eye} label={t("pipeline.view")} onClick={(e) => { e.stopPropagation(); onClick(); }} />
       </div>
     </div>
   );
@@ -661,11 +666,13 @@ function KanbanView({
   montantsByColumn,
   onDragEnd,
   onCardClick,
+  t,
 }: {
   clientsByColumn: Record<string, ClientWithDevis[]>;
   montantsByColumn: Record<string, number>;
   onDragEnd: (result: DropResult) => void;
   onCardClick: (id: string) => void;
+  t: (k: import("@/lib/i18n").TranslationKey, p?: Record<string, string | number>) => string;
 }) {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
@@ -691,7 +698,7 @@ function KanbanView({
                   <div className="mb-3 flex items-center justify-between rounded-xl px-2 py-2">
                     <div className="flex items-center gap-2">
                       <div className={cn("h-2.5 w-2.5 rounded-full", style.dot)} />
-                      <h3 className="text-sm font-semibold text-[var(--foreground)]">{col.title}</h3>
+                      <h3 className="text-sm font-semibold text-[var(--foreground)]">{t(col.titleKey as import("@/lib/i18n").TranslationKey)}</h3>
                       <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-white/10 px-1.5 text-[11px] font-medium text-[var(--text-muted)]">
                         {count}
                       </span>
@@ -715,6 +722,7 @@ function KanbanView({
                               client={client}
                               onClick={() => onCardClick(client.id)}
                               isDragging={snapshot.isDragging}
+                              t={t}
                             />
                           </div>
                         )}
@@ -726,7 +734,7 @@ function KanbanView({
                   {/* Column footer total */}
                   {count > 1 && (
                     <div className="mt-3 border-t border-[var(--border)] pt-2 text-center text-xs text-[var(--text-muted)]">
-                      Total: <span className="font-medium text-[var(--foreground)]">{formatCurrency(total)}</span>
+                      {t("pipeline.total")}: <span className="font-medium text-[var(--foreground)]">{formatCurrency(total)}</span>
                     </div>
                   )}
                 </div>
@@ -746,15 +754,17 @@ function KanbanView({
 function FunnelView({
   clientsByColumn,
   montantsByColumn,
+  t,
 }: {
   clientsByColumn: Record<string, ClientWithDevis[]>;
   montantsByColumn: Record<string, number>;
+  t: (k: import("@/lib/i18n").TranslationKey, p?: Record<string, string | number>) => string;
 }) {
   const firstCount = (clientsByColumn[COLUMNS[0].id] ?? []).length;
 
   return (
     <div className="glass-card space-y-5 rounded-2xl p-6">
-      <h3 className="font-semibold text-[var(--foreground)]">Conversion par étape</h3>
+      <h3 className="font-semibold text-[var(--foreground)]">{t("pipeline.conversionByStep")}</h3>
       <div className="space-y-2">
         {COLUMNS.map((col, i) => {
           const count = (clientsByColumn[col.id] ?? []).length;
@@ -772,7 +782,7 @@ function FunnelView({
                 <div className="flex items-center gap-2 py-1 pl-44">
                   <TrendingDown className="h-3 w-3 text-red-400/60" />
                   <span className="text-[11px] text-red-400/60">
-                    -{dropOff} deal{dropOff > 1 ? "s" : ""} perdus
+                    -{dropOff} {t("pipeline.dealsLost")}
                   </span>
                 </div>
               )}
@@ -781,7 +791,7 @@ function FunnelView({
                 <div className="w-40 shrink-0">
                   <div className="flex items-center gap-2">
                     <div className={cn("h-2 w-2 rounded-full", style.dot)} />
-                    <p className="text-sm font-medium text-[var(--foreground)]">{col.title}</p>
+                    <p className="text-sm font-medium text-[var(--foreground)]">{t(col.titleKey as import("@/lib/i18n").TranslationKey)}</p>
                   </div>
                   <p className="mt-0.5 pl-4 text-xs text-[var(--text-muted)]">
                     {count} deal{count > 1 ? "s" : ""} · {formatCurrency(montant)}
@@ -825,7 +835,7 @@ function FunnelView({
                     <span className="text-sm text-[var(--text-muted)]">—</span>
                   )}
                   {i > 0 && (
-                    <p className="text-[10px] text-[var(--text-muted)]">conversion</p>
+                    <p className="text-[10px] text-[var(--text-muted)]">{t("pipeline.conversion")}</p>
                   )}
                 </div>
               </div>
@@ -846,11 +856,13 @@ function ListView({
   sortKey,
   onSortChange,
   onCardClick,
+  t,
 }: {
   clients: ClientWithDevis[];
   sortKey: SortKey;
   onSortChange: (key: SortKey) => void;
   onCardClick: (id: string) => void;
+  t: (k: import("@/lib/i18n").TranslationKey, p?: Record<string, string | number>) => string;
 }) {
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
@@ -868,7 +880,10 @@ function ListView({
     else setSelected(new Set(clients.map((c) => c.id)));
   }
 
-  const columnTitle = (colId: string) => COLUMNS.find((c) => c.id === colId)?.title ?? colId;
+  const columnTitle = (colId: string) => {
+    const col = COLUMNS.find((c) => c.id === colId);
+    return col ? t(col.titleKey as import("@/lib/i18n").TranslationKey) : colId;
+  };
   const columnAccent = (colId: string) => {
     const col = COLUMNS.find((c) => c.id === colId);
     return col ? COLUMN_STYLES[col.accent].dot : "";
@@ -879,7 +894,7 @@ function ListView({
       {/* Bulk actions */}
       {selected.size > 0 && (
         <div className="flex items-center gap-3 border-b border-[var(--border)] bg-[var(--accent)]/5 px-4 py-2 text-sm">
-          <span className="font-medium text-[var(--accent)]">{selected.size} sélectionné{selected.size > 1 ? "s" : ""}</span>
+          <span className="font-medium text-[var(--accent)]">{selected.size} {t("pipeline.selected")}</span>
         </div>
       )}
 
@@ -895,13 +910,13 @@ function ListView({
                   className="h-4 w-4 rounded border-[var(--border)] accent-[var(--accent)]"
                 />
               </th>
-              <th className="px-4 py-3">Client</th>
-              <SortableHeader label="Montant" sortKey="amount" currentSort={sortKey} onChange={onSortChange} />
-              <th className="px-4 py-3">Étape</th>
-              <th className="px-4 py-3">Type</th>
-              <SortableHeader label="Dernière activité" sortKey="date" currentSort={sortKey} onChange={onSortChange} />
-              <SortableHeader label="Probabilité" sortKey="probability" currentSort={sortKey} onChange={onSortChange} />
-              <th className="px-4 py-3">Actions</th>
+              <th className="px-4 py-3">{t("pipeline.client")}</th>
+              <SortableHeader label={t("pipeline.amount")} sortKey="amount" currentSort={sortKey} onChange={onSortChange} />
+              <th className="px-4 py-3">{t("pipeline.step")}</th>
+              <th className="px-4 py-3">{t("pipeline.type")}</th>
+              <SortableHeader label={t("pipeline.lastActivity")} sortKey="date" currentSort={sortKey} onChange={onSortChange} />
+              <SortableHeader label={t("pipeline.probability")} sortKey="probability" currentSort={sortKey} onChange={onSortChange} />
+              <th className="px-4 py-3">{t("pipeline.actions")}</th>
             </tr>
           </thead>
           <tbody>
@@ -947,7 +962,7 @@ function ListView({
                   </td>
                   <td className="px-4 py-3">
                     <span className={cn("inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[11px] font-medium", type.color)}>
-                      {type.icon} {type.label}
+                      {type.icon} {t(type.labelKey as import("@/lib/i18n").TranslationKey)}
                     </span>
                   </td>
                   <td className="px-4 py-3">
@@ -957,7 +972,7 @@ function ListView({
                         jours > 14 ? "text-red-400" : jours > 7 ? "text-orange-400" : "text-[var(--text-muted)]"
                       )}
                     >
-                      {jours === 0 ? "Aujourd'hui" : `il y a ${jours}j`}
+                      {jours === 0 ? t("clients.today") : t("clients.daysAgo", { n: jours })}
                     </span>
                   </td>
                   <td className="px-4 py-3">
@@ -979,9 +994,9 @@ function ListView({
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex gap-1">
-                      <QuickAction icon={Phone} label="Appeler" onClick={(e) => { e.stopPropagation(); if (client.telephone) window.open(`tel:${client.telephone}`); }} />
-                      <QuickAction icon={Mail} label="Email" onClick={(e) => { e.stopPropagation(); if (client.email) window.open(`mailto:${client.email}`); }} />
-                      <QuickAction icon={Eye} label="Voir" onClick={(e) => { e.stopPropagation(); onCardClick(client.id); }} />
+                      <QuickAction icon={Phone} label={t("pipeline.call")} onClick={(e) => { e.stopPropagation(); if (client.telephone) window.open(`tel:${client.telephone}`); }} />
+                      <QuickAction icon={Mail} label={t("pipeline.email")} onClick={(e) => { e.stopPropagation(); if (client.email) window.open(`mailto:${client.email}`); }} />
+                      <QuickAction icon={Eye} label={t("pipeline.view")} onClick={(e) => { e.stopPropagation(); onCardClick(client.id); }} />
                     </div>
                   </td>
                 </tr>
@@ -991,7 +1006,7 @@ function ListView({
         </table>
         {clients.length === 0 && (
           <div className="py-12 text-center text-sm text-[var(--text-muted)]">
-            Aucun deal ne correspond à vos filtres.
+            {t("pipeline.noDealsMatch")}
           </div>
         )}
       </div>

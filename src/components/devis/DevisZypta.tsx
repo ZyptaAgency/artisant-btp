@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,19 +17,19 @@ const STATUT_STYLES: Record<string, string> = {
   EXPIRE: "bg-orange-100 text-orange-600",
 };
 
-const STATUT_LABELS: Record<string, string> = {
-  BROUILLON: "Brouillon",
-  ENVOYE: "Envoyé",
-  ACCEPTE: "Accepté",
-  REFUSE: "Refusé",
-  EXPIRE: "Expiré",
+const STATUT_KEYS: Record<string, string> = {
+  BROUILLON: "devis.brouillon",
+  ENVOYE: "devis.envoye",
+  ACCEPTE: "devis.accepte",
+  REFUSE: "devis.refuse",
+  EXPIRE: "devis.expire",
 };
 
 const TEMPLATES = [
-  { id: "sdb", label: "Rénovation salle de bain", emoji: "🚿" },
-  { id: "extension", label: "Extension maison", emoji: "🏠" },
-  { id: "ravalement", label: "Ravalement façade", emoji: "🏗️" },
-];
+  { id: "sdb", labelKey: "devis.templateBathroom", emoji: "🚿" },
+  { id: "extension", labelKey: "devis.templateExtension", emoji: "🏠" },
+  { id: "ravalement", labelKey: "devis.templateFacade", emoji: "🏗️" },
+] as const;
 
 type Devis = {
   id: string;
@@ -41,6 +42,7 @@ type Devis = {
 };
 
 export function DevisZypta() {
+  const { t } = useLanguage();
   const [devis, setDevis] = useState<Devis[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -65,27 +67,27 @@ export function DevisZypta() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[var(--foreground)]">Devis</h1>
-          <p className="text-[var(--text-muted)]">Créez des devis pro en 2 minutes</p>
+          <h1 className="text-2xl font-bold text-[var(--foreground)]">{t("devis.title")}</h1>
+          <p className="text-[var(--text-muted)]">{t("devis.subtitle")}</p>
         </div>
         <Button asChild>
           <Link href="/devis/nouveau">
             <Plus className="mr-2 h-4 w-4" />
-            Nouveau devis
+            {t("devis.newQuote")}
           </Link>
         </Button>
       </div>
 
       {/* Templates rapides */}
       <div className="flex flex-wrap gap-2">
-        {TEMPLATES.map((t) => (
-          <Button key={t.id} variant="outline" size="sm" asChild>
+        {TEMPLATES.map((tmpl) => (
+          <Button key={tmpl.id} variant="outline" size="sm" asChild>
             <Link
-              href={`/devis/nouveau?template=${t.id}`}
+              href={`/devis/nouveau?template=${tmpl.id}`}
               className="rounded-xl border-[var(--border)] transition-all hover:border-nova-mid/50 hover:bg-nova-mid/5"
             >
-              <span className="mr-2">{t.emoji}</span>
-              {t.label}
+              <span className="mr-2">{tmpl.emoji}</span>
+              {t(tmpl.labelKey as import("@/lib/i18n").TranslationKey)}
             </Link>
           </Button>
         ))}
@@ -96,7 +98,7 @@ export function DevisZypta() {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]" />
           <Input
-            placeholder="Rechercher par numéro, client..."
+            placeholder={t("devis.searchPlaceholder")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="rounded-xl pl-10"
@@ -133,11 +135,11 @@ export function DevisZypta() {
       ) : filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[var(--border)] bg-white/5 py-16">
           <FileText className="h-12 w-12 text-[var(--text-white)]" />
-          <p className="mt-4 text-[var(--text-muted)]">Aucun devis trouvé</p>
+          <p className="mt-4 text-[var(--text-muted)]">{t("devis.noQuoteFound")}</p>
           <Button className="mt-4" asChild>
             <Link href="/devis/nouveau">
               <Plus className="mr-2 h-4 w-4" />
-              Créer un devis
+              {t("devis.createQuote")}
             </Link>
           </Button>
         </div>
@@ -162,14 +164,14 @@ export function DevisZypta() {
                     STATUT_STYLES[d.statut] ?? "bg-white/5 text-[var(--text-muted)]"
                   )}
                 >
-                  {STATUT_LABELS[d.statut] ?? d.statut}
+                  {t((STATUT_KEYS[d.statut] ?? "devis.brouillon") as import("@/lib/i18n").TranslationKey)}
                 </span>
               </div>
               <p className="mt-3 text-lg font-bold text-[var(--foreground)]">
                 {formatCurrency(d.montantTTC)}
               </p>
               <p className="text-xs text-[var(--text-muted)]">
-                Validité : {d.dateValidite ? formatDate(d.dateValidite) : "—"}
+                {t("devis.validity")} : {d.dateValidite ? formatDate(d.dateValidite) : "—"}
               </p>
             </Link>
           ))}
@@ -179,12 +181,12 @@ export function DevisZypta() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-[var(--border)] bg-white/5 text-left text-sm text-[var(--text-muted)]">
-                <th className="px-4 py-3 font-medium">Numéro</th>
-                <th className="px-4 py-3 font-medium">Client</th>
-                <th className="px-4 py-3 font-medium">Montant TTC</th>
-                <th className="px-4 py-3 font-medium">Statut</th>
-                <th className="px-4 py-3 font-medium">Validité</th>
-                <th className="px-4 py-3 font-medium"></th>
+                <th className="px-4 py-3 font-medium">#</th>
+                <th className="px-4 py-3 font-medium">{t("pipeline.client")}</th>
+                <th className="px-4 py-3 font-medium">TTC</th>
+                <th className="px-4 py-3 font-medium">—</th>
+                <th className="px-4 py-3 font-medium">{t("devis.validity")}</th>
+                <th className="px-4 py-3 font-medium" />
               </tr>
             </thead>
             <tbody>
@@ -212,7 +214,7 @@ export function DevisZypta() {
                         STATUT_STYLES[d.statut] ?? "bg-white/5 text-[var(--text-muted)]"
                       )}
                     >
-                      {STATUT_LABELS[d.statut] ?? d.statut}
+                      {t((STATUT_KEYS[d.statut] ?? "devis.brouillon") as import("@/lib/i18n").TranslationKey)}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-[var(--text-muted)]">
@@ -220,7 +222,7 @@ export function DevisZypta() {
                   </td>
                   <td className="px-4 py-3">
                     <Button variant="ghost" size="sm" asChild>
-                      <Link href={`/devis/${d.id}`}>Voir</Link>
+                      <Link href={`/devis/${d.id}`}>{t("devis.view")}</Link>
                     </Button>
                   </td>
                 </tr>

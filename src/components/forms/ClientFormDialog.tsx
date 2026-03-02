@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { StatutPipeline } from "@prisma/client";
@@ -52,6 +53,7 @@ export function ClientFormDialog({
   client: Client | null;
   onSuccess: () => void;
 }) {
+  const { t } = useLanguage();
   const {
     register,
     handleSubmit,
@@ -100,14 +102,14 @@ export function ClientFormDialog({
 
       const result = await res.json();
       if (!res.ok) {
-        toast.error(result.error ?? "Erreur");
+        toast.error(result.error ?? t("errors.generic"));
         return;
       }
 
-      toast.success(client ? "Client modifié" : "Client créé");
+      toast.success(client ? t("clients.clientUpdated") : t("clients.clientCreated"));
       onSuccess();
     } catch {
-      toast.error("Erreur lors de l'enregistrement");
+      toast.error(t("errors.saveError"));
     }
   }
 
@@ -115,19 +117,19 @@ export function ClientFormDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{client ? "Modifier le client" : "Nouveau client"}</DialogTitle>
+          <DialogTitle>{client ? t("clients.editClient") : t("clients.newClient")}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="prenom">Prénom</Label>
+              <Label htmlFor="prenom">{t("clients.firstName")}</Label>
               <Input id="prenom" {...register("prenom")} />
               {errors.prenom && (
                 <p className="text-sm text-red-600">{errors.prenom.message}</p>
               )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="nom">Nom</Label>
+              <Label htmlFor="nom">{t("clients.lastName")}</Label>
               <Input id="nom" {...register("nom")} />
               {errors.nom && (
                 <p className="text-sm text-red-600">{errors.nom.message}</p>
@@ -135,43 +137,43 @@ export function ClientFormDialog({
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t("auth.email")}</Label>
             <Input id="email" type="email" {...register("email")} />
             {errors.email && (
               <p className="text-sm text-red-600">{errors.email.message}</p>
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="telephone">Téléphone</Label>
+            <Label htmlFor="telephone">{t("clients.phone")}</Label>
             <Input id="telephone" {...register("telephone")} />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="adresseChantier">Adresse d&apos;intervention</Label>
+            <Label htmlFor="adresseChantier">{t("clients.interventionAddress")}</Label>
             <Input id="adresseChantier" {...register("adresseChantier")} />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="statutPipeline">Statut pipeline</Label>
+            <Label htmlFor="statutPipeline">{t("clients.pipelineStatus")}</Label>
             <Select id="statutPipeline" {...register("statutPipeline")}>
-              <option value="PROSPECT">Prospect</option>
-              <option value="CONTACTE">Contacté</option>
-              <option value="DEVIS_ENVOYE">Devis envoyé</option>
-              <option value="NEGOCIATION">Négociation</option>
-              <option value="SIGNE">Signé</option>
-              <option value="EN_COURS">En cours</option>
-              <option value="TERMINE">Terminé</option>
-              <option value="PERDU">Perdu</option>
+              <option value="PROSPECT">{t("clients.statusProspect")}</option>
+              <option value="CONTACTE">{t("clients.statusContacte")}</option>
+              <option value="DEVIS_ENVOYE">{t("clients.statusDevisEnvoye")}</option>
+              <option value="NEGOCIATION">{t("clients.statusNegociation")}</option>
+              <option value="SIGNE">{t("clients.statusSigne")}</option>
+              <option value="EN_COURS">{t("clients.statusEnCours")}</option>
+              <option value="TERMINE">{t("clients.statusTermine")}</option>
+              <option value="PERDU">{t("clients.statusPerdu")}</option>
             </Select>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="notes">Notes</Label>
+            <Label htmlFor="notes">{t("clients.notes")}</Label>
             <Input id="notes" {...register("notes")} />
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Annuler
+              {t("common.cancel")}
             </Button>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Enregistrement..." : client ? "Modifier" : "Créer"}
+              {isSubmitting ? t("clients.modifying") : client ? t("common.update") : t("clients.create")}
             </Button>
           </DialogFooter>
         </form>

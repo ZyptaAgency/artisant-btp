@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,7 @@ const PASSWORD_REGEX = /^(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/;
 
 function ResetPasswordForm() {
   const searchParams = useSearchParams();
+  const { t } = useLanguage();
   const token = searchParams.get("token");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -25,12 +27,12 @@ function ResetPasswordForm() {
     e.preventDefault();
 
     if (!PASSWORD_REGEX.test(password)) {
-      toast.error("Le mot de passe doit contenir au moins 8 caractères et 1 caractère spécial");
+      toast.error(t("auth.passwordMinSpecial"));
       return;
     }
 
     if (password !== confirm) {
-      toast.error("Les mots de passe ne correspondent pas");
+      toast.error(t("auth.passwordMismatch"));
       return;
     }
 
@@ -45,13 +47,13 @@ function ResetPasswordForm() {
       const data = await res.json();
 
       if (!res.ok) {
-        toast.error(data.error || "Erreur serveur");
+        toast.error(data.error || t("errors.serverError"));
         return;
       }
 
       setSuccess(true);
     } catch {
-      toast.error("Erreur de connexion");
+      toast.error(t("errors.connectionError"));
     } finally {
       setLoading(false);
     }
@@ -67,10 +69,10 @@ function ResetPasswordForm() {
         <Card className="relative z-10 w-full max-w-md">
           <CardContent className="pt-6 text-center">
             <p className="text-sm text-[var(--text-muted)]">
-              Lien de réinitialisation invalide ou expiré.
+              {t("auth.invalidResetLink")}
             </p>
             <Link href="/forgot-password" className="mt-4 inline-block text-sm font-medium text-nova-mid hover:underline">
-              Demander un nouveau lien
+              {t("auth.requestNewLink")}
             </Link>
           </CardContent>
         </Card>
@@ -86,23 +88,23 @@ function ResetPasswordForm() {
       </div>
       <Card className="relative z-10 w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Nouveau mot de passe</CardTitle>
-          <CardDescription>Choisissez un nouveau mot de passe pour votre compte</CardDescription>
+          <CardTitle className="text-2xl">{t("auth.resetPasswordTitle")}</CardTitle>
+          <CardDescription>{t("auth.resetPasswordSubtitle")}</CardDescription>
         </CardHeader>
         <CardContent>
           {success ? (
             <div className="space-y-4 text-center">
               <p className="text-sm text-[var(--text-muted)]">
-                Votre mot de passe a été réinitialisé avec succès.
+                {t("auth.resetSuccess")}
               </p>
               <Link href="/login" className="inline-block text-sm font-medium text-nova-mid hover:underline">
-                Se connecter
+                {t("auth.login")}
               </Link>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="password">Nouveau mot de passe</Label>
+                <Label htmlFor="password">{t("auth.newPassword")}</Label>
                 <Input
                   id="password"
                   type="password"
@@ -111,11 +113,11 @@ function ResetPasswordForm() {
                   required
                 />
                 <p className="text-xs text-[var(--text-muted)]">
-                  Minimum 8 caractères avec au moins 1 caractère spécial
+                  {t("auth.passwordMinChars")}
                 </p>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="confirm">Confirmer le mot de passe</Label>
+                <Label htmlFor="confirm">{t("auth.confirmPassword")}</Label>
                 <Input
                   id="confirm"
                   type="password"
@@ -125,7 +127,7 @@ function ResetPasswordForm() {
                 />
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Réinitialisation..." : "Réinitialiser le mot de passe"}
+                {loading ? t("common.loading") : t("auth.resetPassword")}
               </Button>
             </form>
           )}
@@ -137,7 +139,7 @@ function ResetPasswordForm() {
 
 export default function ResetPasswordPage() {
   return (
-    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-[var(--bg)]">Chargement...</div>}>
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-[var(--bg)]"><span className="text-[var(--text-muted)]">Chargement...</span></div>}>
       <ResetPasswordForm />
     </Suspense>
   );

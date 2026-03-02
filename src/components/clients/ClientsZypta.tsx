@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   Search,
   Plus,
@@ -27,15 +28,15 @@ const AVATAR_COLORS = [
   "bg-rose-500/20 text-rose-600",
 ];
 
-const STATUT_LABELS: Record<string, string> = {
-  PROSPECT: "Prospect",
-  CONTACTE: "Contacté",
-  DEVIS_ENVOYE: "Devis envoyé",
-  NEGOCIATION: "Négociation",
-  SIGNE: "Signé",
-  EN_COURS: "En cours",
-  TERMINE: "Terminé",
-  PERDU: "Perdu",
+const STATUT_KEYS: Record<string, string> = {
+  PROSPECT: "clients.statusProspect",
+  CONTACTE: "clients.statusContacte",
+  DEVIS_ENVOYE: "clients.statusDevisEnvoye",
+  NEGOCIATION: "clients.statusNegociation",
+  SIGNE: "clients.statusSigne",
+  EN_COURS: "clients.statusEnCours",
+  TERMINE: "clients.statusTermine",
+  PERDU: "clients.statusPerdu",
 };
 
 type ClientWithStats = {
@@ -74,7 +75,10 @@ function getScoreChaleur(client: ClientWithStats): "hot" | "warm" | "cold" {
   return "cold";
 }
 
-function getDernierContact(client: ClientWithStats): string | null {
+function getDernierContact(
+  client: ClientWithStats,
+  t: (k: import("@/lib/i18n").TranslationKey, p?: Record<string, string | number>) => string
+): string | null {
   const dates: Date[] = [
     ...(client.factures ?? []).map((f) => new Date(f.updatedAt)),
     ...(client.devis ?? []).map((d) => new Date(d.updatedAt)),
@@ -82,10 +86,10 @@ function getDernierContact(client: ClientWithStats): string | null {
   if (dates.length === 0) return null;
   const last = new Date(Math.max(...dates.map((d) => d.getTime())));
   const days = Math.floor((Date.now() - last.getTime()) / (1000 * 60 * 60 * 24));
-  if (days === 0) return "Aujourd'hui";
-  if (days === 1) return "Hier";
-  if (days < 7) return `Il y a ${days} jours`;
-  if (days < 30) return `Il y a ${Math.floor(days / 7)} sem.`;
+  if (days === 0) return t("clients.today");
+  if (days === 1) return t("clients.yesterday");
+  if (days < 7) return t("clients.daysAgo", { n: days });
+  if (days < 30) return t("clients.weeksAgo", { n: Math.floor(days / 7) });
   return formatDate(last.toISOString());
 }
 
@@ -95,6 +99,7 @@ function getMontantTotal(client: ClientWithStats): number {
 
 export function ClientsZypta() {
   const router = useRouter();
+  const { t } = useLanguage();
   const [clients, setClients] = useState<ClientWithStats[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -128,7 +133,7 @@ export function ClientsZypta() {
     if (filter === "actif") return ["SIGNE", "EN_COURS", "TERMINE"].includes(c.statutPipeline);
     if (filter === "vip") return getMontantTotal(c) >= 5000;
     if (filter === "dormant") {
-      const dernier = getDernierContact(c);
+      const dernier = getDernierContact(c, t);
       if (!dernier) return true;
       const dates = [
         ...(c.factures ?? []).map((f) => new Date(f.updatedAt)),
@@ -141,24 +146,24 @@ export function ClientsZypta() {
   });
 
   const chips = [
-    { id: "prospect", label: "Prospect" },
-    { id: "actif", label: "Client actif" },
-    { id: "vip", label: "VIP" },
-    { id: "dormant", label: "Dormant 6 mois" },
+    { id: "prospect", label: t("clients.prospect") },
+    { id: "actif", label: t("clients.active") },
+    { id: "vip", label: t("clients.vip") },
+    { id: "dormant", label: t("clients.dormant") },
   ];
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-[var(--foreground)]">Clients</h1>
-        <p className="text-[var(--text-muted)]">Votre portefeuille clients en un coup d&apos;œil</p>
+        <h1 className="text-2xl font-bold text-[var(--foreground)]">{t("clients.title")}</h1>
+        <p className="text-[var(--text-muted)]">{t("clients.subtitle")}</p>
       </div>
 
       {/* Barre de recherche XL */}
       <div className="relative">
         <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[var(--text-muted)]" />
         <Input
-          placeholder="Rechercher par nom, adresse, téléphone, tag..."
+          placeholder={t("clients.searchPlaceholder")}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="h-12 rounded-2xl border-[var(--border)] pl-12 text-base shadow-sm transition-all duration-300 focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--ring)]"
@@ -192,10 +197,10 @@ export function ClientsZypta() {
         </div>
       ) : filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[var(--border)] bg-white/5 py-16">
-          <p className="text-[var(--text-muted)]">Aucun client trouvé</p>
+          <p className="text-[var(--text-muted)]">{t("clients.noClientFound")}</p>
           <Button className="mt-4" onClick={() => setAddModalOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />
-            Ajouter un client
+            {t("clients.addClient")}
           </Button>
         </div>
       ) : (
@@ -203,7 +208,7 @@ export function ClientsZypta() {
           {filtered.map((client) => {
             const score = getScoreChaleur(client);
             const montant = getMontantTotal(client);
-            const dernier = getDernierContact(client);
+            const dernier = getDernierContact(client, t);
             return (
               <div
                 key={client.id}
@@ -225,19 +230,19 @@ export function ClientsZypta() {
                         {client.prenom} {client.nom}
                       </p>
                       <p className="text-xs text-[var(--text-muted)]">
-                        {dernier ?? "Jamais contacté"} • {STATUT_LABELS[client.statutPipeline] ?? client.statutPipeline}
+                        {dernier ?? t("clients.neverContacted")} • {t((STATUT_KEYS[client.statutPipeline] ?? "clients.prospect") as import("@/lib/i18n").TranslationKey)}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
-                    {score === "hot" && <span className="h-2.5 w-2.5 rounded-full bg-red-500 shadow-[0_0_6px_rgba(239,68,68,0.5)]" title="Chaud" />}
-                    {score === "warm" && <span className="h-2.5 w-2.5 rounded-full bg-amber-400" title="Tiède" />}
-                    {score === "cold" && <span className="h-2.5 w-2.5 rounded-full bg-blue-400" title="Froid" />}
+                    {score === "hot" && <span className="h-2.5 w-2.5 rounded-full bg-red-500 shadow-[0_0_6px_rgba(239,68,68,0.5)]" title={t("clients.hot")} />}
+                    {score === "warm" && <span className="h-2.5 w-2.5 rounded-full bg-amber-400" title={t("clients.warm")} />}
+                    {score === "cold" && <span className="h-2.5 w-2.5 rounded-full bg-blue-400" title={t("clients.cold")} />}
                   </div>
                 </div>
 
                 <p className="mt-3 text-sm font-medium text-[var(--text-muted)]">
-                  Total facturé : {formatCurrency(montant)}
+                  {t("clients.totalInvoiced")} : {formatCurrency(montant)}
                 </p>
 
                 {/* Quick actions au survol */}
@@ -247,7 +252,7 @@ export function ClientsZypta() {
                       href={`tel:${client.telephone}`}
                       onClick={(e) => e.stopPropagation()}
                       className="flex h-9 w-9 items-center justify-center rounded-lg bg-nova-mid/10 text-nova-mid transition-colors hover:bg-nova-mid/20"
-                      title="Appeler"
+                      title={t("clients.call")}
                     >
                       <Phone className="h-4 w-4" />
                     </a>
@@ -258,7 +263,7 @@ export function ClientsZypta() {
                       router.push(`/devis/nouveau?clientId=${client.id}`);
                     }}
                     className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 text-[var(--text-muted)] transition-colors hover:bg-nova-mid/10 hover:text-nova-mid"
-                    title="Envoyer un devis"
+                    title={t("clients.sendQuote")}
                   >
                     <FileText className="h-4 w-4" />
                   </button>
@@ -268,7 +273,7 @@ export function ClientsZypta() {
                       router.push(`/factures/nouvelle?clientId=${client.id}`);
                     }}
                     className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 text-[var(--text-muted)] transition-colors hover:bg-nova-mid/10 hover:text-nova-mid"
-                    title="Créer une facture"
+                    title={t("clients.createInvoice")}
                   >
                     <Receipt className="h-4 w-4" />
                   </button>
@@ -278,7 +283,7 @@ export function ClientsZypta() {
                       router.push(`/clients/${client.id}`);
                     }}
                     className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 text-[var(--text-muted)] transition-colors hover:bg-nova-mid/10 hover:text-nova-mid"
-                    title="Voir fiche"
+                    title={t("clients.viewProfile")}
                   >
                     <Calendar className="h-4 w-4" />
                   </button>
@@ -297,12 +302,12 @@ export function ClientsZypta() {
         className="fixed bottom-8 right-8 flex items-center gap-2 rounded-2xl bg-gradient-to-r from-[var(--accent)] to-[var(--accent-secondary)] px-5 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[var(--ring)] transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-[var(--ring)]"
       >
         <Plus className="h-5 w-5" />
-        Ajouter un client
+        {t("clients.addClient")}
       </button>
 
       {/* Slide panel fiche client */}
       {panelClient && (
-        <ClientSlidePanel client={panelClient} onClose={() => setPanelClient(null)} />
+        <ClientSlidePanel client={panelClient} onClose={() => setPanelClient(null)} t={t} />
       )}
 
       <ClientFormQuickAdd
@@ -320,13 +325,15 @@ export function ClientsZypta() {
 function ClientSlidePanel({
   client,
   onClose,
+  t,
 }: {
   client: ClientWithStats;
   onClose: () => void;
+  t: (k: import("@/lib/i18n").TranslationKey, p?: Record<string, string | number>) => string;
 }) {
   const router = useRouter();
   const montant = getMontantTotal(client);
-  const dernier = getDernierContact(client);
+  const dernier = getDernierContact(client, t);
   const score = getScoreChaleur(client);
   const joursDepuisContact = (() => {
     const dates = [
@@ -348,7 +355,7 @@ function ClientSlidePanel({
       <div className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm" onClick={onClose} aria-hidden="true" />
       <div className="fixed right-0 top-0 z-50 flex h-full w-full max-w-lg flex-col overflow-hidden bg-[var(--bg-card)] shadow-2xl">
         <div className="flex items-center justify-between border-b border-[var(--border)] p-4">
-          <h2 className="text-lg font-bold text-[var(--foreground)]">Fiche client</h2>
+          <h2 className="text-lg font-bold text-[var(--foreground)]">{t("clients.clientSheet")}</h2>
           <button
             onClick={onClose}
             className="rounded-lg p-2 text-[var(--text-muted)] transition-colors hover:bg-white/5 hover:text-[var(--text-muted)]"
@@ -372,12 +379,12 @@ function ClientSlidePanel({
               </h3>
               <p className="text-[var(--text-muted)]">{client.email}</p>
               <p className="text-sm text-[var(--text-muted)]">
-                {dernier ?? "Jamais contacté"} • {formatCurrency(montant)} facturé
+                {dernier ?? t("clients.neverContacted")} • {formatCurrency(montant)} {t("clients.invoiced")}
               </p>
               <div className="mt-1 flex items-center gap-2 text-sm">
-                {score === "hot" && <><span className="h-2.5 w-2.5 rounded-full bg-red-500" /> <span className="text-red-400">Chaud</span></>}
-                {score === "warm" && <><span className="h-2.5 w-2.5 rounded-full bg-amber-400" /> <span className="text-amber-400">Tiède</span></>}
-                {score === "cold" && <><span className="h-2.5 w-2.5 rounded-full bg-blue-400" /> <span className="text-blue-400">Froid</span></>}
+                {score === "hot" && <><span className="h-2.5 w-2.5 rounded-full bg-red-500" /> <span className="text-red-400">{t("clients.hot")}</span></>}
+                {score === "warm" && <><span className="h-2.5 w-2.5 rounded-full bg-amber-400" /> <span className="text-amber-400">{t("clients.warm")}</span></>}
+                {score === "cold" && <><span className="h-2.5 w-2.5 rounded-full bg-blue-400" /> <span className="text-blue-400">{t("clients.cold")}</span></>}
               </div>
             </div>
           </div>
@@ -389,7 +396,7 @@ function ClientSlidePanel({
                 className="inline-flex items-center gap-2 rounded-xl bg-nova-mid/10 px-4 py-2 text-nova-mid transition-colors hover:bg-nova-mid/20"
               >
                 <Phone className="h-4 w-4" />
-                Appeler
+                {t("clients.call")}
               </a>
             )}
             <Button
@@ -398,7 +405,7 @@ function ClientSlidePanel({
               onClick={() => router.push(`/devis/nouveau?clientId=${client.id}`)}
             >
               <FileText className="mr-2 h-4 w-4" />
-              Devis
+              {t("clients.quote")}
             </Button>
             <Button
               size="sm"
@@ -406,17 +413,17 @@ function ClientSlidePanel({
               onClick={() => router.push(`/factures/nouvelle?clientId=${client.id}`)}
             >
               <Receipt className="mr-2 h-4 w-4" />
-              Facture
+              {t("clients.invoice")}
             </Button>
             <Button size="sm" variant="outline" onClick={() => router.push(`/clients/${client.id}`)}>
               <ChevronRight className="mr-2 h-4 w-4" />
-              Fiche complète
+              {t("clients.fullProfile")}
             </Button>
           </div>
 
           {client.adresseChantier && (
             <div className="mt-6">
-              <h4 className="text-sm font-semibold text-[var(--text-muted)]">Adresse d&apos;intervention</h4>
+              <h4 className="text-sm font-semibold text-[var(--text-muted)]">{t("clients.interventionAddress")}</h4>
               <p className="text-[var(--text-muted)]">{client.adresseChantier}</p>
             </div>
           )}
@@ -425,7 +432,7 @@ function ClientSlidePanel({
             <div className="mt-6 rounded-2xl border border-nova-mid/20 bg-nova-mid/5 p-4">
               <div className="flex items-center gap-2 text-nova-mid">
                 <Sparkles className="h-5 w-5" />
-                <span className="font-semibold">Suggestion Zypta</span>
+                <span className="font-semibold">{t("clients.suggestionZypta")}</span>
               </div>
               <p className="mt-2 text-sm text-[var(--text-muted)]">{suggestion}</p>
             </div>

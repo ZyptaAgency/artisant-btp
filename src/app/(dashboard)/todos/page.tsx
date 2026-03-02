@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef, useCallback } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import {
@@ -36,22 +37,25 @@ const PRIORITY_ORDER: Record<TodoPriority, number> = {
   BASSE: 1,
 };
 
+const PRIORITY_LABEL_KEYS: Record<TodoPriority, string> = {
+  HAUTE: "todos.priorityHigh",
+  MOYENNE: "todos.priorityMedium",
+  BASSE: "todos.priorityLow",
+};
+
 const PRIORITY_CONFIG: Record<
   TodoPriority,
-  { label: string; color: string; bg: string }
+  { color: string; bg: string }
 > = {
   HAUTE: {
-    label: "Haute",
     color: "rgb(239, 68, 68)",
     bg: "rgba(239, 68, 68, 0.15)",
   },
   MOYENNE: {
-    label: "Moyenne",
     color: "rgb(234, 179, 8)",
     bg: "rgba(234, 179, 8, 0.15)",
   },
   BASSE: {
-    label: "Basse",
     color: "rgb(34, 197, 94)",
     bg: "rgba(34, 197, 94, 0.15)",
   },
@@ -65,6 +69,7 @@ function sortTodos(todos: Todo[]): Todo[] {
 }
 
 export default function TodosPage() {
+  const { t } = useLanguage();
   const [todos, setTodos] = useState<Todo[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<FilterTab>("all");
@@ -124,10 +129,10 @@ export default function TodosPage() {
       setNewPriority("MOYENNE");
       setNewDueDate("");
       setShowAddOptions(false);
-      toast.success("Tâche ajoutée");
+      toast.success(t("todos.taskAdded"));
       inputRef.current?.focus();
     } catch {
-      toast.error("Erreur lors de l\u2019ajout");
+      toast.error(t("todos.errorAdd"));
     }
   };
 
@@ -145,7 +150,7 @@ export default function TodosPage() {
         sortTodos(prev.map((t) => (t.id === updated.id ? updated : t)))
       );
     } catch {
-      toast.error("Erreur lors de la mise à jour");
+      toast.error(t("todos.errorUpdate"));
     }
   };
 
@@ -154,9 +159,9 @@ export default function TodosPage() {
       const res = await fetch(`/api/todos/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error();
       setTodos((prev) => prev.filter((t) => t.id !== id));
-      toast.success("Tâche supprimée");
+      toast.success(t("todos.taskDeleted"));
     } catch {
-      toast.error("Erreur lors de la suppression");
+      toast.error(t("todos.errorDelete"));
     }
   };
 
@@ -189,9 +194,9 @@ export default function TodosPage() {
         sortTodos(prev.map((t) => (t.id === updated.id ? updated : t)))
       );
       setEditingId(null);
-      toast.success("Tâche modifiée");
+      toast.success(t("todos.taskUpdated"));
     } catch {
-      toast.error("Erreur lors de la modification");
+      toast.error(t("todos.errorUpdate"));
     }
   };
 
@@ -206,9 +211,9 @@ export default function TodosPage() {
   });
 
   const tabs: { key: FilterTab; label: string }[] = [
-    { key: "all", label: "Toutes" },
-    { key: "pending", label: "À faire" },
-    { key: "completed", label: "Terminées" },
+    { key: "all", label: t("todos.all") },
+    { key: "pending", label: t("todos.todo") },
+    { key: "completed", label: t("todos.done") },
   ];
 
   return (
@@ -225,7 +230,7 @@ export default function TodosPage() {
           className="text-2xl font-bold"
           style={{ color: "var(--foreground)" }}
         >
-          Tâches
+          {t("todos.title")}
         </h1>
       </div>
 
@@ -235,7 +240,7 @@ export default function TodosPage() {
           <input
             ref={inputRef}
             type="text"
-            placeholder="Ajouter une tâche..."
+            placeholder={t("todos.addTask")}
             value={newTitle}
             onChange={(e) => setNewTitle(e.target.value)}
             onFocus={() => setShowAddOptions(true)}
@@ -260,7 +265,7 @@ export default function TodosPage() {
             style={{ background: "var(--accent)" }}
           >
             <Plus className="h-4 w-4" />
-            Ajouter
+            {t("common.add")}
           </button>
         </div>
 
@@ -279,6 +284,7 @@ export default function TodosPage() {
                   <PrioritySelector
                     value={newPriority}
                     onChange={setNewPriority}
+                    t={t}
                   />
                 </div>
                 <div className="flex items-center gap-2">
@@ -365,7 +371,7 @@ export default function TodosPage() {
                 className="text-sm font-medium"
                 style={{ color: "var(--text-muted)" }}
               >
-                Aucune tâche pour le moment
+                {t("todos.empty")}
               </p>
             </motion.div>
           ) : (
@@ -401,6 +407,7 @@ export default function TodosPage() {
                       <PrioritySelector
                         value={editPriority}
                         onChange={setEditPriority}
+                        t={t}
                       />
                       <input
                         type="date"
@@ -477,14 +484,14 @@ export default function TodosPage() {
                       )}
                     </div>
 
-                    <PriorityBadge priority={todo.priority} />
+                    <PriorityBadge priority={todo.priority} t={t} />
 
                     <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
                       <button
                         onClick={() => startEditing(todo)}
                         className="rounded-lg p-1.5 transition-colors"
                         style={{ color: "var(--text-muted)" }}
-                        title="Modifier"
+                        title={t("common.edit")}
                       >
                         <Pencil className="h-4 w-4" />
                       </button>
@@ -492,7 +499,7 @@ export default function TodosPage() {
                         onClick={() => deleteTodo(todo.id)}
                         className="rounded-lg p-1.5 transition-colors hover:text-red-500"
                         style={{ color: "var(--text-muted)" }}
-                        title="Supprimer"
+                        title={t("common.delete")}
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
@@ -508,14 +515,14 @@ export default function TodosPage() {
   );
 }
 
-function PriorityBadge({ priority }: { priority: TodoPriority }) {
+function PriorityBadge({ priority, t }: { priority: TodoPriority; t: (k: import("@/lib/i18n").TranslationKey) => string }) {
   const config = PRIORITY_CONFIG[priority];
   return (
     <span
       className="flex-shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium"
       style={{ background: config.bg, color: config.color }}
     >
-      {config.label}
+      {t(PRIORITY_LABEL_KEYS[priority] as import("@/lib/i18n").TranslationKey)}
     </span>
   );
 }
@@ -523,9 +530,11 @@ function PriorityBadge({ priority }: { priority: TodoPriority }) {
 function PrioritySelector({
   value,
   onChange,
+  t,
 }: {
   value: TodoPriority;
   onChange: (v: TodoPriority) => void;
+  t: (k: import("@/lib/i18n").TranslationKey) => string;
 }) {
   const priorities: TodoPriority[] = ["BASSE", "MOYENNE", "HAUTE"];
 
@@ -545,7 +554,7 @@ function PrioritySelector({
               border: `1px solid ${isActive ? config.color + "40" : "var(--border)"}`,
             }}
           >
-            {config.label}
+            {t(PRIORITY_LABEL_KEYS[p] as import("@/lib/i18n").TranslationKey)}
           </button>
         );
       })}

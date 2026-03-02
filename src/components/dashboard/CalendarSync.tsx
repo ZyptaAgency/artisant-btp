@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Calendar, ExternalLink, Check, Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -82,6 +83,7 @@ export function CalendarSyncDialog({
   provider: SyncProvider;
   onClose: () => void;
 }) {
+  const { t } = useLanguage();
   const [icalUrl, setIcalUrl] = React.useState("");
   const [saving, setSaving] = React.useState(false);
   const [googleConnected, setGoogleConnected] = React.useState(false);
@@ -106,21 +108,21 @@ export function CalendarSyncDialog({
       if (popup?.closed) {
         clearInterval(interval);
         setGoogleConnected(true);
-        toast.success("Google Calendar connecté avec succès");
+        toast.success(t("calendar.googleConnected"));
       }
     }, 500);
   };
 
   const handleIcalSave = async () => {
     if (!icalUrl.trim()) {
-      toast.error("Veuillez entrer une URL iCal");
+      toast.error(t("calendar.enterIcalUrl"));
       return;
     }
 
     try {
       new URL(icalUrl);
     } catch {
-      toast.error("URL invalide");
+      toast.error(t("calendar.invalidUrl"));
       return;
     }
 
@@ -134,13 +136,13 @@ export function CalendarSyncDialog({
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Erreur lors de la sauvegarde");
+        throw new Error(data.error || t("errors.saveError"));
       }
 
       setIcalSaved(true);
-      toast.success("Calendrier iCal synchronisé avec succès");
+      toast.success(t("calendar.icalSaved"));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Erreur lors de la sauvegarde");
+      toast.error(err instanceof Error ? err.message : t("errors.saveError"));
     } finally {
       setSaving(false);
     }
@@ -154,12 +156,12 @@ export function CalendarSyncDialog({
             {provider === "google" ? (
               <>
                 <GoogleIcon className="h-5 w-5" />
-                Synchroniser Google Calendar
+                {t("calendar.syncGoogle")}
               </>
             ) : (
               <>
                 <AppleIcon className="h-5 w-5" />
-                Synchroniser Apple iCal
+                {t("calendar.syncIcal")}
               </>
             )}
           </DialogTitle>
@@ -186,13 +188,12 @@ export function CalendarSyncDialog({
                       : "bg-white/5 text-[var(--text-muted)]"
                   }`}
                 >
-                  {googleConnected ? "Connecté" : "Non connecté"}
+                  {googleConnected ? t("calendar.connected") : t("calendar.notConnected")}
                 </span>
               </div>
 
               <p className="text-sm text-[var(--text-muted)]">
-                Connectez votre Google Calendar pour voir vos rendez-vous directement sur le
-                tableau de bord.
+                {t("calendar.connectDescription")}
               </p>
 
               <Button
@@ -203,12 +204,12 @@ export function CalendarSyncDialog({
                 {googleConnected ? (
                   <>
                     <Check className="h-4 w-4" />
-                    Reconnexion
+                    {t("calendar.reconnect")}
                   </>
                 ) : (
                   <>
                     <ExternalLink className="h-4 w-4" />
-                    Connecter Google Calendar
+                    {t("calendar.connectGoogle")}
                   </>
                 )}
               </Button>
@@ -235,19 +236,19 @@ export function CalendarSyncDialog({
                       : "bg-white/5 text-[var(--text-muted)]"
                   }`}
                 >
-                  {icalSaved ? "Connecté" : "Non connecté"}
+                  {icalSaved ? t("calendar.connected") : t("calendar.notConnected")}
                 </span>
               </div>
 
               <div className="rounded-lg border border-[var(--border)] bg-white/5 p-3">
                 <p className="text-xs text-[var(--text-muted)] leading-relaxed">
-                  <strong className="text-[var(--text-white)]">Comment obtenir votre URL iCal :</strong>
+                  <strong className="text-[var(--text-white)]">{t("calendar.icalInstructions")}</strong>
                   <br />
-                  1. Ouvrez <strong>Apple Calendar</strong> (Calendrier)
+                  1. {t("calendar.icalStep1")}
                   <br />
-                  2. Clic droit sur votre calendrier &rarr; <strong>Réglages du calendrier</strong>
+                  2. {t("calendar.icalStep2")}
                   <br />
-                  3. Cochez &ldquo;Calendrier public&rdquo; et copiez l&apos;URL
+                  3. {t("calendar.icalStep3")}
                 </p>
               </div>
 
@@ -266,15 +267,15 @@ export function CalendarSyncDialog({
                   {saving ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      Sauvegarde...
+                      {t("calendar.saving")}
                     </>
                   ) : icalSaved ? (
                     <>
                       <Check className="h-4 w-4" />
-                      Mettre à jour
+                      {t("calendar.update")}
                     </>
                   ) : (
-                    "Sauvegarder"
+                    t("calendar.save")
                   )}
                 </Button>
               </div>

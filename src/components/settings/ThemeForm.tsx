@@ -1,22 +1,24 @@
 "use client";
 
 import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Sun, Moon, Monitor, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 const THEMES = [
-  { id: "supernova", label: "Supernova", icon: Sparkles, desc: "Violet, rose et bleu (défaut)" },
-  { id: "noir", label: "Noir", icon: Moon, desc: "Mode sombre, accents dorés" },
-  { id: "blanc", label: "Blanc", icon: Sun, desc: "Mode clair, accents dorés" },
-  { id: "systeme", label: "Système", icon: Monitor, desc: "Suivre jour/nuit" },
+  { id: "supernova", labelKey: "theme.supernova", descKey: "theme.supernovaDesc", icon: Sparkles },
+  { id: "noir", labelKey: "theme.noir", descKey: "theme.noirDesc", icon: Moon },
+  { id: "blanc", labelKey: "theme.blanc", descKey: "theme.blancDesc", icon: Sun },
+  { id: "systeme", labelKey: "theme.systeme", descKey: "theme.systemeDesc", icon: Monitor },
 ] as const;
 
 type ThemeId = (typeof THEMES)[number]["id"];
 
 export function ThemeForm({ current }: { current: string }) {
   const router = useRouter();
+  const { t } = useLanguage();
   const [selected, setSelected] = useState<ThemeId>((current as ThemeId) || "supernova");
   const [loading, setLoading] = useState(false);
 
@@ -29,11 +31,11 @@ export function ThemeForm({ current }: { current: string }) {
         body: JSON.stringify({ theme: selected }),
       });
       if (!res.ok) throw new Error("Erreur");
-      toast.success("Thème enregistré");
+      toast.success(t("theme.themeSaved"));
       router.refresh();
       window.dispatchEvent(new Event("theme-changed"));
     } catch {
-      toast.error("Erreur lors de l'enregistrement");
+      toast.error(t("errors.saveError"));
     } finally {
       setLoading(false);
     }
@@ -41,35 +43,35 @@ export function ThemeForm({ current }: { current: string }) {
 
   return (
     <div className="transition-opacity duration-300">
-      <h2 className="mb-4 text-lg font-semibold text-[var(--foreground)]">Apparence</h2>
+      <h2 className="mb-4 text-lg font-semibold text-[var(--foreground)]">{t("theme.title")}</h2>
       <p className="mb-6 text-sm text-[var(--text-muted)]">
-        Choisissez le thème de l&apos;interface.
+        {t("theme.desc")}
       </p>
       <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-        {THEMES.map((t) => {
-          const Icon = t.icon;
+        {THEMES.map((tmpl) => {
+          const Icon = tmpl.icon;
           return (
             <button
-              key={t.id}
-              type="button"
-              onClick={() => setSelected(t.id)}
-              className={`flex items-center gap-3 rounded-xl border-2 p-4 text-left transition-all sm:min-w-[160px] ${
-                selected === t.id
+            key={tmpl.id}
+            type="button"
+            onClick={() => setSelected(tmpl.id)}
+            className={`flex items-center gap-3 rounded-xl border-2 p-4 text-left transition-all sm:min-w-[160px] ${
+              selected === tmpl.id
                   ? "border-nova-mid bg-nova-mid/5"
                   : "border-[var(--border)] hover:border-[var(--border)]"
               }`}
             >
               <Icon className="h-5 w-5 shrink-0 text-[var(--text-muted)]" />
               <div>
-                <span className="font-medium text-[var(--foreground)]">{t.label}</span>
-                <span className="mt-0.5 block text-xs text-[var(--text-muted)]">{t.desc}</span>
+                <span className="font-medium text-[var(--foreground)]">{t(tmpl.labelKey as import("@/lib/i18n").TranslationKey)}</span>
+                <span className="mt-0.5 block text-xs text-[var(--text-muted)]">{t(tmpl.descKey as import("@/lib/i18n").TranslationKey)}</span>
               </div>
             </button>
           );
         })}
       </div>
       <Button className="mt-4" onClick={handleSave} disabled={loading}>
-        {loading ? "Enregistrement..." : "Enregistrer"}
+        {loading ? t("clients.modifying") : t("common.save")}
       </Button>
     </div>
   );

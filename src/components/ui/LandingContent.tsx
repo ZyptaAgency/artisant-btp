@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
 import { LandingLogo } from "./LandingLogo";
 import { ArrowRight, Sparkles } from "lucide-react";
 
 export function LandingContent() {
+  const { t } = useLanguage();
   return (
     <div className="relative z-10 flex flex-col items-center text-center">
       <motion.div
@@ -24,7 +26,7 @@ export function LandingContent() {
         transition={{ delay: 0.4, duration: 0.6 }}
         className="mt-6 text-lg md:text-xl text-[rgba(240,238,255,0.6)] tracking-wide"
       >
-        Le cockpit des artisans
+        {t("landing.tagline")}
       </motion.p>
 
       <motion.div
@@ -38,7 +40,7 @@ export function LandingContent() {
           className="group relative inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#c84bff] to-[#ff2d8f] px-8 py-3.5 text-sm font-semibold text-white shadow-[0_0_30px_rgba(200,75,255,0.35)] transition-all duration-300 hover:shadow-[0_0_50px_rgba(200,75,255,0.5)] hover:scale-105"
         >
           <Sparkles className="h-4 w-4" />
-          Se connecter
+          {t("landing.login")}
           <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
         </Link>
 
@@ -46,7 +48,7 @@ export function LandingContent() {
           href="/register"
           className="inline-flex items-center gap-2 rounded-xl border border-[rgba(255,255,255,0.15)] bg-[rgba(255,255,255,0.05)] px-8 py-3.5 text-sm font-semibold text-[rgba(240,238,255,0.85)] backdrop-blur-sm transition-all duration-300 hover:border-[rgba(200,75,255,0.4)] hover:bg-[rgba(200,75,255,0.08)] hover:text-white hover:scale-105"
         >
-          S&apos;inscrire
+          {t("landing.register")}
         </Link>
       </motion.div>
 
@@ -56,13 +58,13 @@ export function LandingContent() {
         transition={{ delay: 1.2, duration: 1 }}
         className="mt-16 flex items-center gap-6 text-xs text-[rgba(240,238,255,0.3)]"
       >
-        <span>Devis</span>
+        <span>{t("landing.devis")}</span>
         <span className="h-1 w-1 rounded-full bg-[rgba(200,75,255,0.4)]" />
-        <span>Factures</span>
+        <span>{t("landing.factures")}</span>
         <span className="h-1 w-1 rounded-full bg-[rgba(200,75,255,0.4)]" />
-        <span>Pipeline</span>
+        <span>{t("landing.pipeline")}</span>
         <span className="h-1 w-1 rounded-full bg-[rgba(200,75,255,0.4)]" />
-        <span>Clients</span>
+        <span>{t("landing.clients")}</span>
       </motion.div>
     </div>
   );

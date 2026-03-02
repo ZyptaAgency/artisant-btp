@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -69,6 +70,7 @@ const MAX_LOGO_SIZE = 500 * 1024; // 500 KB
 
 export function ProfileForm({ defaultValues }: { defaultValues: FormData }) {
   const router = useRouter();
+  const { t } = useLanguage();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -81,7 +83,7 @@ export function ProfileForm({ defaultValues }: { defaultValues: FormData }) {
     const file = e.target.files?.[0];
     if (!file) return;
     if (!file.type.startsWith("image/")) {
-      toast.error("Format accepté : PNG, JPG, WebP");
+      toast.error("PNG, JPG, WebP");
       return;
     }
     if (file.size > MAX_LOGO_SIZE) {
@@ -104,32 +106,32 @@ export function ProfileForm({ defaultValues }: { defaultValues: FormData }) {
         body: JSON.stringify(data),
       });
       if (!res.ok) throw new Error("Erreur");
-      toast.success("Profil mis à jour");
+      toast.success(t("profile.profileUpdated"));
       router.refresh();
     } catch {
-      toast.error("Erreur lors de la mise à jour");
+      toast.error(t("errors.saveError"));
     }
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 max-w-md">
       <div className="space-y-2">
-        <Label>Nom</Label>
+        <Label>{t("profile.nom")}</Label>
         <Input {...register("nom")} />
         {errors.nom && <p className="text-sm text-red-600">{errors.nom.message}</p>}
       </div>
       <div className="space-y-2">
-        <Label>Entreprise</Label>
+        <Label>{t("profile.entreprise")}</Label>
         <Input {...register("entreprise")} />
         {errors.entreprise && <p className="text-sm text-red-600">{errors.entreprise.message}</p>}
       </div>
       <div className="space-y-2">
-        <Label>Activité / Métier</Label>
+        <Label>{t("profile.activite")}</Label>
         <select
           {...register("activite")}
           className="flex h-10 w-full rounded-md border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--ring)] [&>option]:bg-[var(--bg-card)] [&>option]:text-[var(--foreground)]"
         >
-          <option value="">— Sélectionner —</option>
+          <option value="">{t("profile.selectActivity")}</option>
           {ACTIVITES_BTP.map((a) => (
             <option key={a} value={a}>{a}</option>
           ))}
@@ -141,15 +143,15 @@ export function ProfileForm({ defaultValues }: { defaultValues: FormData }) {
           <div className="flex gap-3">
             <label className="flex items-center gap-2 cursor-pointer">
               <input type="radio" value="SIRET" {...register("identifiantType")} className="rounded" />
-              <span className="text-sm">SIRET (France)</span>
+              <span className="text-sm">{t("profile.siretFrance")}</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
               <input type="radio" value="BCE" {...register("identifiantType")} className="rounded" />
-              <span className="text-sm">BCE (Belgique)</span>
+              <span className="text-sm">{t("profile.bceBelgium")}</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
               <input type="radio" value="IDE" {...register("identifiantType")} className="rounded" />
-              <span className="text-sm">IDE (Suisse)</span>
+              <span className="text-sm">{t("profile.ideSwitzerland")}</span>
             </label>
           </div>
           <Input
@@ -167,20 +169,20 @@ export function ProfileForm({ defaultValues }: { defaultValues: FormData }) {
         </div>
       </div>
       <div className="space-y-2">
-        <Label>Email</Label>
+        <Label>{t("profile.email")}</Label>
         <Input type="email" {...register("email")} />
         {errors.email && <p className="text-sm text-red-600">{errors.email.message}</p>}
       </div>
       <div className="space-y-2">
-        <Label>Téléphone</Label>
+        <Label>{t("profile.phone")}</Label>
         <Input {...register("telephone")} />
       </div>
       <div className="space-y-2">
-        <Label>Adresse</Label>
+        <Label>{t("profile.address")}</Label>
         <Input {...register("adresse")} />
       </div>
       <div className="space-y-2">
-        <Label>Taux de TVA par défaut</Label>
+        <Label>{t("profile.defaultTva")}</Label>
         <select
           {...register("tauxTVA", { valueAsNumber: true })}
           className="flex h-10 w-full rounded-md border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--ring)]"
@@ -189,16 +191,16 @@ export function ProfileForm({ defaultValues }: { defaultValues: FormData }) {
             <option key={opt.value} value={opt.value}>{opt.label}</option>
           ))}
         </select>
-        <p className="text-xs text-[var(--text-muted)]">Taux appliqué par défaut sur les nouvelles lignes de devis et factures.</p>
+        <p className="text-xs text-[var(--text-muted)]">{t("profile.tvaDefault")}</p>
       </div>
       <div className="space-y-2">
-        <Label>Ville (météo)</Label>
+        <Label>{t("profile.weatherCity")}</Label>
         <Input {...register("villeMeteo")} placeholder="Paris" />
-        <p className="text-xs text-[var(--text-muted)]">Ville affichée pour la météo sur le tableau de bord.</p>
+        <p className="text-xs text-[var(--text-muted)]">{t("profile.weatherCityDesc")}</p>
       </div>
       <div className="space-y-2">
-        <Label>Logo entreprise (PDF)</Label>
-        <p className="text-xs text-[var(--text-muted)]">Affiché sur les devis et factures. Max 500 Ko, PNG/JPG/WebP.</p>
+        <Label>Logo</Label>
+        <p className="text-xs text-[var(--text-muted)]">{t("profile.logoDesc")}</p>
         <div className="flex gap-3 items-center">
           <input
             ref={fileInputRef}
@@ -208,20 +210,20 @@ export function ProfileForm({ defaultValues }: { defaultValues: FormData }) {
             className="hidden"
           />
           <Button type="button" variant="outline" size="sm" onClick={() => fileInputRef.current?.click()}>
-            {logoValue ? "Changer le logo" : "Téléverser un logo"}
+            {logoValue ? t("profile.changeLogo") : t("profile.uploadLogo")}
           </Button>
           {logoValue && (
             <div className="flex items-center gap-2">
               <img src={logoValue} alt="Logo" className="h-12 w-auto max-w-[120px] object-contain border rounded" />
               <button type="button" onClick={() => setValue("logo", "")} className="text-sm text-red-600 hover:underline">
-                Supprimer
+                {t("common.delete")}
               </button>
             </div>
           )}
         </div>
       </div>
       <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? "Enregistrement..." : "Enregistrer"}
+        {isSubmitting ? t("clients.modifying") : t("common.save")}
       </Button>
     </form>
   );

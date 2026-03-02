@@ -12,13 +12,13 @@ import { Locale, t as translate, TranslationKey } from "@/lib/i18n";
 interface LanguageContextType {
   locale: Locale;
   setLocale: (locale: Locale) => void;
-  t: (key: TranslationKey) => string;
+  t: (key: TranslationKey, params?: Record<string, string | number>) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType>({
   locale: "fr",
   setLocale: () => {},
-  t: (key) => translate(key, "fr"),
+  t: (key, params) => translate(key, "fr", params),
 });
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
@@ -36,8 +36,8 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("zypta-locale", l);
   }
 
-  function tFn(key: TranslationKey) {
-    return translate(key, locale);
+  function tFn(key: TranslationKey, params?: Record<string, string | number>) {
+    return translate(key, locale, params);
   }
 
   return (

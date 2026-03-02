@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState, useCallback } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
 import { formatCurrency } from "@/lib/utils";
 import {
@@ -35,23 +36,24 @@ type StatsData = {
   tauxConversion: ConvPoint[];
 };
 
-const PERIODS = [
-  { label: "7 jours", days: 7 },
-  { label: "30 jours", days: 30 },
-  { label: "3 mois", days: 90 },
-  { label: "6 mois", days: 180 },
-  { label: "1 an", days: 365 },
+const PERIOD_KEYS = [
+  "dashboard.period.7d",
+  "dashboard.period.30d",
+  "dashboard.period.3m",
+  "dashboard.period.6m",
+  "dashboard.period.1y",
 ] as const;
+const PERIOD_DAYS = [7, 30, 90, 180, 365] as const;
 
-const STATUT_LABELS: Record<string, string> = {
-  PROSPECT: "Prospect",
-  CONTACTE: "Contacté",
-  DEVIS_ENVOYE: "Devis envoyé",
-  NEGOCIATION: "Négociation",
-  SIGNE: "Signé",
-  EN_COURS: "En cours",
-  TERMINE: "Terminé",
-  PERDU: "Perdu",
+const STATUT_KEYS: Record<string, string> = {
+  PROSPECT: "clients.statusProspect",
+  CONTACTE: "clients.statusContacte",
+  DEVIS_ENVOYE: "clients.statusDevisEnvoye",
+  NEGOCIATION: "clients.statusNegociation",
+  SIGNE: "clients.statusSigne",
+  EN_COURS: "clients.statusEnCours",
+  TERMINE: "clients.statusTermine",
+  PERDU: "clients.statusPerdu",
 };
 
 const PIE_COLORS = [
@@ -142,10 +144,13 @@ function renderCenterLabel(data: StatutPoint[]) {
 // ─── Main Component ──────────────────────────────────────────────────────────
 
 export function DashboardCharts() {
+  const { t } = useLanguage();
   const [data, setData] = useState<StatsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [activePeriod, setActivePeriod] = useState(180);
   const palette = useThemePalette();
+
+  const PERIODS = PERIOD_KEYS.map((key, i) => ({ label: t(key as import("@/lib/i18n").TranslationKey), days: PERIOD_DAYS[i] }));
 
   const fetchStats = useCallback(async (days: number) => {
     setLoading(true);
@@ -164,8 +169,8 @@ export function DashboardCharts() {
   const handlePeriod = (days: number) => setActivePeriod(days);
 
   const pieData = useMemo(
-    () => (data?.repartitionStatuts ?? []).map((d) => ({ ...d, name: STATUT_LABELS[d.statut] ?? d.statut })),
-    [data?.repartitionStatuts]
+    () => (data?.repartitionStatuts ?? []).map((d) => ({ ...d, name: t((STATUT_KEYS[d.statut] ?? "clients.prospect") as import("@/lib/i18n").TranslationKey) })),
+    [data?.repartitionStatuts, t]
   );
 
   const item = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.4 } } };
@@ -207,7 +212,7 @@ export function DashboardCharts() {
         ))}
         {loading && (
           <span className="ml-2 self-center text-xs text-[var(--text-muted)] animate-pulse">
-            Chargement...
+            {t("common.loading")}
           </span>
         )}
       </div>
@@ -216,8 +221,8 @@ export function DashboardCharts() {
       <div className="grid gap-6 lg:grid-cols-2">
         {/* 1. CA Évolution – Line Chart */}
         <motion.div variants={item} initial="hidden" animate="show" className="glass-card p-6">
-          <h3 className="text-base font-bold gradient-text">CA Évolution</h3>
-          <p className="mb-4 text-xs text-[var(--text-muted)]">Chiffre d&apos;affaires encaissé</p>
+          <h3 className="text-base font-bold gradient-text">{t("dashboard.charts.caEvolution")}</h3>
+          <p className="mb-4 text-xs text-[var(--text-muted)]">{t("dashboard.caCollected")}</p>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={data?.caEvolution}>
@@ -249,8 +254,8 @@ export function DashboardCharts() {
 
         {/* 2. Devis vs Factures – Bar Chart */}
         <motion.div variants={item} initial="hidden" animate="show" className="glass-card p-6">
-          <h3 className="text-base font-bold gradient-text">Devis vs Factures</h3>
-          <p className="mb-4 text-xs text-[var(--text-muted)]">Nombre créé par mois</p>
+          <h3 className="text-base font-bold gradient-text">{t("dashboard.charts.quotesVsInvoices")}</h3>
+          <p className="mb-4 text-xs text-[var(--text-muted)]">{t("dashboard.createdPerMonth")}</p>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={data?.devisVsFactures}>
@@ -261,8 +266,8 @@ export function DashboardCharts() {
                 <Legend
                   wrapperStyle={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}
                 />
-                <Bar dataKey="devis" name="Devis" fill={palette.accent} radius={[4, 4, 0, 0]} />
-                <Bar dataKey="factures" name="Factures" fill={palette.secondary} radius={[4, 4, 0, 0]} />
+                <Bar dataKey="devis" name={t("dashboard.devis")} fill={palette.accent} radius={[4, 4, 0, 0]} />
+                <Bar dataKey="factures" name={t("dashboard.factures")} fill={palette.secondary} radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -270,8 +275,8 @@ export function DashboardCharts() {
 
         {/* 3. Répartition des statuts – Donut Chart */}
         <motion.div variants={item} initial="hidden" animate="show" className="glass-card p-6">
-          <h3 className="text-base font-bold gradient-text">Répartition des statuts</h3>
-          <p className="mb-4 text-xs text-[var(--text-muted)]">Pipeline clients par statut</p>
+          <h3 className="text-base font-bold gradient-text">{t("dashboard.charts.statusBreakdown")}</h3>
+          <p className="mb-4 text-xs text-[var(--text-muted)]">{t("dashboard.pipelineByStatus")}</p>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -303,8 +308,8 @@ export function DashboardCharts() {
 
         {/* 4. Taux de conversion – Area Chart */}
         <motion.div variants={item} initial="hidden" animate="show" className="glass-card p-6">
-          <h3 className="text-base font-bold gradient-text">Taux de conversion</h3>
-          <p className="mb-4 text-xs text-[var(--text-muted)]">Devis acceptés / envoyés (%)</p>
+          <h3 className="text-base font-bold gradient-text">{t("dashboard.charts.conversionRate")}</h3>
+          <p className="mb-4 text-xs text-[var(--text-muted)]">{t("dashboard.acceptedVsSent")}</p>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={data?.tauxConversion}>

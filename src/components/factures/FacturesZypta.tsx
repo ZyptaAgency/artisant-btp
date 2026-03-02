@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { formatCurrency, formatDate } from "@/lib/utils";
@@ -14,11 +15,11 @@ const STATUT_STYLES: Record<string, string> = {
   EN_RETARD: "bg-orange-100 text-orange-600",
 };
 
-const STATUT_LABELS: Record<string, string> = {
-  BROUILLON: "Brouillon",
-  ENVOYEE: "Envoyée",
-  PAYEE: "Payée ✅",
-  EN_RETARD: "En retard",
+const STATUT_KEYS: Record<string, string> = {
+  BROUILLON: "factures.brouillon",
+  ENVOYEE: "factures.envoyee",
+  PAYEE: "factures.payee",
+  EN_RETARD: "factures.enRetard",
 };
 
 type Facture = {
@@ -32,7 +33,10 @@ type Facture = {
   client: { prenom: string; nom: string };
 };
 
-function getCountdown(dateEcheance: string | null): { label: string; className: string } | null {
+function getCountdown(
+  dateEcheance: string | null,
+  t: (k: import("@/lib/i18n").TranslationKey, p?: Record<string, string | number>) => string
+): { label: string; className: string } | null {
   if (!dateEcheance) return null;
   const echeance = new Date(dateEcheance);
   const now = new Date();
@@ -40,14 +44,15 @@ function getCountdown(dateEcheance: string | null): { label: string; className: 
   const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
 
   if (diffDays < 0) {
-    return { label: `Retard +${Math.abs(diffDays)}j`, className: "text-red-600 font-semibold" };
+    return { label: t("factures.overdueDays", { n: Math.abs(diffDays) }), className: "text-red-600 font-semibold" };
   }
-  if (diffDays === 0) return { label: "Aujourd'hui", className: "text-orange-600 font-medium" };
+  if (diffDays === 0) return { label: t("clients.today"), className: "text-orange-600 font-medium" };
   if (diffDays <= 3) return { label: `J-${diffDays}`, className: "text-orange-600 font-medium" };
   return { label: `J-${diffDays}`, className: "text-[var(--text-muted)]" };
 }
 
 export function FacturesZypta() {
+  const { t } = useLanguage();
   const [factures, setFactures] = useState<Facture[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -85,13 +90,13 @@ export function FacturesZypta() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[var(--foreground)]">Factures</h1>
-          <p className="text-[var(--text-muted)]">Zéro prise de tête, zéro impayé</p>
+          <h1 className="text-2xl font-bold text-[var(--foreground)]">{t("factures.title")}</h1>
+          <p className="text-[var(--text-muted)]">{t("factures.subtitle")}</p>
         </div>
         <Button asChild>
           <Link href="/factures/nouvelle">
             <Plus className="mr-2 h-4 w-4" />
-            Nouvelle facture
+            {t("factures.newInvoice")}
           </Link>
         </Button>
       </div>
@@ -99,13 +104,13 @@ export function FacturesZypta() {
       {/* Bandeau KPIs */}
       <div className="grid gap-4 sm:grid-cols-3">
         <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-4 shadow-sm">
-          <p className="text-sm font-medium text-[var(--text-muted)]">À encaisser</p>
+          <p className="text-sm font-medium text-[var(--text-muted)]">{t("factures.toCollect")}</p>
           <p className="mt-1 text-2xl font-bold text-[var(--foreground)]">
             {formatCurrency(aEncaisser)}
           </p>
         </div>
         <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-4 shadow-sm">
-          <p className="text-sm font-medium text-[var(--text-muted)]">Encaissé ce mois</p>
+          <p className="text-sm font-medium text-[var(--text-muted)]">{t("factures.collectedThisMonth")}</p>
           <p className="mt-1 text-2xl font-bold text-emerald-600">
             {formatCurrency(encaisseCeMois)}
           </p>
@@ -119,7 +124,7 @@ export function FacturesZypta() {
           )}
         >
           <p className="text-sm font-medium text-[var(--text-muted)]">
-            En retard {enRetard > 0 && "🔴"}
+            {t("factures.overdue")} {enRetard > 0 && "🔴"}
           </p>
           <p
             className={cn(
@@ -142,18 +147,18 @@ export function FacturesZypta() {
       ) : factures.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[var(--border)] bg-white/5 py-16">
           <Receipt className="h-12 w-12 text-[var(--text-white)]" />
-          <p className="mt-4 text-[var(--text-muted)]">Aucune facture</p>
+          <p className="mt-4 text-[var(--text-muted)]">{t("factures.noInvoice")}</p>
           <Button className="mt-4" asChild>
             <Link href="/factures/nouvelle">
               <Plus className="mr-2 h-4 w-4" />
-              Créer une facture
+              {t("factures.createInvoice")}
             </Link>
           </Button>
         </div>
       ) : (
         <div className="space-y-3">
           {factures.map((f) => {
-            const countdown = getCountdown(f.dateEcheance);
+            const countdown = getCountdown(f.dateEcheance, t);
             return (
               <Link
                 key={f.id}
@@ -186,7 +191,7 @@ export function FacturesZypta() {
                   <div className="text-right">
                     <p className="font-bold text-[var(--foreground)]">{formatCurrency(f.montantTTC)}</p>
                     <p className="text-xs text-[var(--text-muted)]">
-                      Échéance : {f.dateEcheance ? formatDate(f.dateEcheance) : "—"}
+                      {t("factures.dueDate")} : {f.dateEcheance ? formatDate(f.dateEcheance) : "—"}
                     </p>
                     {countdown && (
                       <p className={cn("text-xs", countdown.className)}>{countdown.label}</p>
@@ -198,7 +203,7 @@ export function FacturesZypta() {
                       STATUT_STYLES[f.statut] ?? "bg-white/5 text-[var(--text-muted)]"
                     )}
                   >
-                    {STATUT_LABELS[f.statut] ?? f.statut}
+                    {t((STATUT_KEYS[f.statut] ?? "factures.brouillon") as import("@/lib/i18n").TranslationKey)}
                   </span>
                 </div>
               </Link>

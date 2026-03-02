@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import {
@@ -35,6 +36,7 @@ export function ClientFormQuickAdd({
   onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
 }) {
+  const { t } = useLanguage();
   const {
     register,
     handleSubmit,
@@ -67,14 +69,14 @@ export function ClientFormQuickAdd({
 
       const result = await res.json();
       if (!res.ok) {
-        toast.error(result.error ?? "Erreur");
+        toast.error(result.error ?? t("errors.generic"));
         return;
       }
 
-      toast.success("Client créé");
+      toast.success(t("clients.clientCreated"));
       onSuccess();
     } catch {
-      toast.error("Erreur lors de l'enregistrement");
+      toast.error(t("errors.saveError"));
     }
   }
 
@@ -82,19 +84,19 @@ export function ClientFormQuickAdd({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Ajouter un client</DialogTitle>
+          <DialogTitle>{t("clients.addClientTitle")}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="prenom">Prénom</Label>
+              <Label htmlFor="prenom">{t("clients.firstName")}</Label>
               <Input id="prenom" {...register("prenom")} className="rounded-xl" />
               {errors.prenom && (
                 <p className="text-sm text-red-600">{errors.prenom.message}</p>
               )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="nom">Nom</Label>
+              <Label htmlFor="nom">{t("clients.lastName")}</Label>
               <Input id="nom" {...register("nom")} className="rounded-xl" />
               {errors.nom && (
                 <p className="text-sm text-red-600">{errors.nom.message}</p>
@@ -102,31 +104,31 @@ export function ClientFormQuickAdd({
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t("auth.email")}</Label>
             <Input id="email" type="email" {...register("email")} className="rounded-xl" />
             {errors.email && (
               <p className="text-sm text-red-600">{errors.email.message}</p>
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="telephone">Téléphone</Label>
+            <Label htmlFor="telephone">{t("clients.phone")}</Label>
             <Input id="telephone" {...register("telephone")} className="rounded-xl" />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="typeProjet">Type de projet</Label>
+            <Label htmlFor="typeProjet">{t("clients.typeProject")}</Label>
             <Input
               id="typeProjet"
-              placeholder="Ex: Rénovation cuisine, Extension..."
+              placeholder={t("clients.typeProjectPlaceholder")}
               {...register("typeProjet")}
               className="rounded-xl"
             />
           </div>
           <DialogFooter className="gap-2 sm:gap-0">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Annuler
+              {t("common.cancel")}
             </Button>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Création..." : "Créer"}
+              {isSubmitting ? t("clients.creating") : t("clients.create")}
             </Button>
           </DialogFooter>
         </form>

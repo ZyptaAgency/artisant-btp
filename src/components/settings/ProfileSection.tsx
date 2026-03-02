@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,7 @@ import { Mail, Lock, Loader2, AlertTriangle } from "lucide-react";
 
 export function ProfileSection({ email }: { email: string }) {
   const router = useRouter();
+  const { t } = useLanguage();
   const [newEmail, setNewEmail] = useState("");
   const [emailPassword, setEmailPassword] = useState("");
   const [emailLoading, setEmailLoading] = useState(false);
@@ -43,15 +45,15 @@ export function ProfileSection({ email }: { email: string }) {
       const data = await res.json();
 
       if (!res.ok) {
-        toast.error(data.error || "Erreur lors de la suppression");
+        toast.error(data.error || t("errors.saveError"));
         return;
       }
 
-      toast.success("Compte supprimé avec succès");
+      toast.success(t("settings.accountDeleted"));
       await signOut({ redirect: false });
       router.push("/login");
     } catch {
-      toast.error("Erreur réseau");
+      toast.error(t("errors.networkError"));
     } finally {
       setDeleteLoading(false);
     }
@@ -60,7 +62,7 @@ export function ProfileSection({ email }: { email: string }) {
   async function handleEmailChange(e: React.FormEvent) {
     e.preventDefault();
     if (!newEmail || !emailPassword) {
-      toast.error("Veuillez remplir tous les champs");
+      toast.error(t("profileSection.fillAllFields"));
       return;
     }
 
@@ -74,7 +76,7 @@ export function ProfileSection({ email }: { email: string }) {
       const data = await res.json();
 
       if (!res.ok) {
-        toast.error(data.error || "Erreur lors du changement d'email");
+        toast.error(data.error || t("errors.saveError"));
         return;
       }
 
@@ -82,7 +84,7 @@ export function ProfileSection({ email }: { email: string }) {
       setNewEmail("");
       setEmailPassword("");
     } catch {
-      toast.error("Erreur réseau");
+      toast.error(t("errors.networkError"));
     } finally {
       setEmailLoading(false);
     }
@@ -91,23 +93,23 @@ export function ProfileSection({ email }: { email: string }) {
   async function handlePasswordChange(e: React.FormEvent) {
     e.preventDefault();
     if (!currentPassword || !newPassword || !confirmPassword) {
-      toast.error("Veuillez remplir tous les champs");
+      toast.error(t("profileSection.fillAllFields"));
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      toast.error("Les mots de passe ne correspondent pas");
+      toast.error(t("profileSection.passwordMismatch"));
       return;
     }
 
     if (newPassword.length < 8) {
-      toast.error("Le mot de passe doit contenir au moins 8 caractères");
+      toast.error(t("profileSection.passwordMinChars"));
       return;
     }
 
     const specialCharRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
     if (!specialCharRegex.test(newPassword)) {
-      toast.error("Le mot de passe doit contenir un caractère spécial");
+      toast.error(t("profileSection.passwordSpecial"));
       return;
     }
 
@@ -121,16 +123,16 @@ export function ProfileSection({ email }: { email: string }) {
       const data = await res.json();
 
       if (!res.ok) {
-        toast.error(data.error || "Erreur lors du changement de mot de passe");
+        toast.error(data.error || t("errors.saveError"));
         return;
       }
 
-      toast.success("Mot de passe mis à jour avec succès");
+      toast.success(t("profileSection.passwordUpdated"));
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
     } catch {
-      toast.error("Erreur réseau");
+      toast.error(t("errors.networkError"));
     } finally {
       setPasswordLoading(false);
     }
@@ -145,16 +147,16 @@ export function ProfileSection({ email }: { email: string }) {
             <Mail className="h-4 w-4 text-[var(--accent)]" />
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-[var(--foreground)]">Modifier l&apos;email</h3>
+            <h3 className="text-sm font-semibold text-[var(--foreground)]">{t("profileSection.editEmail")}</h3>
             <p className="text-xs text-[var(--text-muted)]">
-              Email actuel : <span className="text-[var(--foreground)]">{email}</span>
+              {t("profileSection.currentEmail")} : <span className="text-[var(--foreground)]">{email}</span>
             </p>
           </div>
         </div>
 
         <form onSubmit={handleEmailChange} className="space-y-4">
           <div className="space-y-2">
-            <Label className="text-[var(--text-muted)]">Nouvel email</Label>
+            <Label className="text-[var(--text-muted)]">{t("profileSection.newEmail")}</Label>
             <Input
               type="email"
               placeholder="nouveau@email.com"
@@ -164,10 +166,10 @@ export function ProfileSection({ email }: { email: string }) {
             />
           </div>
           <div className="space-y-2">
-            <Label className="text-[var(--text-muted)]">Mot de passe actuel</Label>
+            <Label className="text-[var(--text-muted)]">{t("profileSection.currentPassword")}</Label>
             <Input
               type="password"
-              placeholder="Confirmez votre identité"
+              placeholder={t("profileSection.confirmIdentity")}
               value={emailPassword}
               onChange={(e) => setEmailPassword(e.target.value)}
               required
@@ -177,10 +179,10 @@ export function ProfileSection({ email }: { email: string }) {
             {emailLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Envoi en cours…
+                {t("profileSection.sending")}
               </>
             ) : (
-              "Envoyer le lien de confirmation"
+              t("profileSection.sendConfirmationLink")
             )}
           </Button>
         </form>
@@ -192,12 +194,12 @@ export function ProfileSection({ email }: { email: string }) {
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--accent)]/15">
             <Lock className="h-4 w-4 text-[var(--accent)]" />
           </div>
-          <h3 className="text-sm font-semibold text-[var(--foreground)]">Modifier le mot de passe</h3>
+          <h3 className="text-sm font-semibold text-[var(--foreground)]">{t("profileSection.editPassword")}</h3>
         </div>
 
         <form onSubmit={handlePasswordChange} className="space-y-4">
           <div className="space-y-2">
-            <Label className="text-[var(--text-muted)]">Mot de passe actuel</Label>
+            <Label className="text-[var(--text-muted)]">{t("profileSection.currentPassword")}</Label>
             <Input
               type="password"
               placeholder="••••••••"
@@ -207,10 +209,10 @@ export function ProfileSection({ email }: { email: string }) {
             />
           </div>
           <div className="space-y-2">
-            <Label className="text-[var(--text-muted)]">Nouveau mot de passe</Label>
+            <Label className="text-[var(--text-muted)]">{t("profileSection.newPassword")}</Label>
             <Input
               type="password"
-              placeholder="Min. 8 caractères, 1 spécial"
+              placeholder={t("auth.passwordPlaceholder")}
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               required
@@ -218,7 +220,7 @@ export function ProfileSection({ email }: { email: string }) {
             />
           </div>
           <div className="space-y-2">
-            <Label className="text-[var(--text-muted)]">Confirmer le nouveau mot de passe</Label>
+            <Label className="text-[var(--text-muted)]">{t("profileSection.confirmNewPassword")}</Label>
             <Input
               type="password"
               placeholder="••••••••"
@@ -232,10 +234,10 @@ export function ProfileSection({ email }: { email: string }) {
             {passwordLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Mise à jour…
+                {t("profileSection.updating")}
               </>
             ) : (
-              "Mettre à jour le mot de passe"
+              t("profileSection.updatePassword")
             )}
           </Button>
         </form>
@@ -248,9 +250,9 @@ export function ProfileSection({ email }: { email: string }) {
             <AlertTriangle className="h-4 w-4 text-red-500" />
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-red-500">Supprimer mon compte</h3>
+            <h3 className="text-sm font-semibold text-red-500">{t("settings.deleteAccount")}</h3>
             <p className="text-xs text-[var(--text-muted)]">
-              Cette action est irréversible. Toutes vos données seront supprimées.
+              {t("settings.deleteWarning")}
             </p>
           </div>
         </div>
@@ -260,7 +262,7 @@ export function ProfileSection({ email }: { email: string }) {
           className="border-red-500/50 text-red-500 hover:bg-red-500/10 hover:text-red-400"
           onClick={() => setDeleteOpen(true)}
         >
-          Supprimer mon compte
+          {t("settings.deleteAccount")}
         </Button>
       </div>
 
@@ -272,16 +274,15 @@ export function ProfileSection({ email }: { email: string }) {
       }}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-red-500">Supprimer mon compte</DialogTitle>
+            <DialogTitle className="text-red-500">{t("settings.deleteAccount")}</DialogTitle>
             <DialogDescription>
-              Cette action est irréversible. Toutes vos données (devis, factures, clients) seront définitivement supprimées.
-              Tapez <span className="font-bold text-[var(--foreground)]">SUPPRIMER</span> pour confirmer.
+              {t("settings.confirmDelete")}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-2 py-2">
-            <Label className="text-[var(--text-muted)]">Confirmation</Label>
+            <Label className="text-[var(--text-muted)]">{t("profileSection.confirmation")}</Label>
             <Input
-              placeholder="Tapez SUPPRIMER"
+              placeholder={t("settings.deleteConfirmPlaceholder")}
               value={deleteConfirmation}
               onChange={(e) => setDeleteConfirmation(e.target.value)}
               autoComplete="off"
@@ -289,20 +290,20 @@ export function ProfileSection({ email }: { email: string }) {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteOpen(false)}>
-              Annuler
+              {t("common.cancel")}
             </Button>
             <Button
               variant="destructive"
-              disabled={deleteConfirmation !== "SUPPRIMER" || deleteLoading}
+              disabled={deleteConfirmation !== t("settings.deleteConfirmWord") || deleteLoading}
               onClick={handleDeleteAccount}
             >
               {deleteLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Suppression…
+                  {t("settings.deleting")}
                 </>
               ) : (
-                "Confirmer la suppression"
+                t("settings.confirmDeleteBtn")
               )}
             </Button>
           </DialogFooter>

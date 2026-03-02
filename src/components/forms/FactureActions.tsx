@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -57,6 +58,7 @@ export function FactureActions({
   documentStyle?: DocumentStyle;
 }) {
   const router = useRouter();
+  const { t } = useLanguage();
   const [pdfOpen, setPdfOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -68,11 +70,11 @@ export function FactureActions({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ statut }),
       });
-      if (!res.ok) throw new Error("Erreur");
-      toast.success("Statut mis à jour");
+      if (!res.ok) throw new Error(t("errors.generic"));
+      toast.success(t("factures.statusUpdated"));
       router.refresh();
     } catch {
-      toast.error("Erreur");
+      toast.error(t("errors.generic"));
     } finally {
       setLoading(false);
     }
@@ -87,21 +89,21 @@ export function FactureActions({
     <>
       <div className="flex gap-2">
         <Button variant="outline" onClick={() => setPdfOpen(true)}>
-          Voir PDF
+          {t("factures.seePdf")}
         </Button>
         {facture.statut === "BROUILLON" && (
           <>
             <Button variant="outline" onClick={() => router.push(`/factures/${facture.id}/modifier`)}>
-              Modifier
+              {t("factures.edit")}
             </Button>
             <Button onClick={() => updateStatut("ENVOYEE")} disabled={loading}>
-              Marquer envoyée
+              {t("factures.markSent")}
             </Button>
           </>
         )}
         {(facture.statut === "ENVOYEE" || facture.statut === "EN_RETARD") && (
           <Button onClick={() => updateStatut("PAYEE")} disabled={loading}>
-            Marquer payée
+            {t("factures.markPaid")}
           </Button>
         )}
       </div>
@@ -109,7 +111,7 @@ export function FactureActions({
       <Dialog open={pdfOpen} onOpenChange={setPdfOpen}>
         <DialogContent className="max-w-4xl h-[80vh]">
           <DialogHeader className="flex-row items-center justify-between space-y-0">
-            <DialogTitle>Prévisualisation - {facture.numero}</DialogTitle>
+            <DialogTitle>{t("factures.preview")} - {facture.numero}</DialogTitle>
             <PDFDownloadLink
               document={
                 <FacturePDF
@@ -129,7 +131,7 @@ export function FactureActions({
               fileName={`facture-${facture.numero}.pdf`}
               className="ml-auto inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-nova-mid to-nova-outer px-4 py-2 text-sm font-medium text-white hover:opacity-90 transition-opacity"
             >
-              {({ loading }) => (loading ? "Génération…" : "Télécharger PDF")}
+              {({ loading }) => (loading ? t("factures.generating") : t("factures.downloadPdf"))}
             </PDFDownloadLink>
           </DialogHeader>
           <div className="h-96 overflow-auto">

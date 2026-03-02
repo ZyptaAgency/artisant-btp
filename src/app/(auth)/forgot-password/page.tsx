@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +12,7 @@ import { Logo } from "@/components/ui/Logo";
 import { StarField } from "@/components/ui/StarField";
 
 export default function ForgotPasswordPage() {
+  const { t } = useLanguage();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
@@ -27,13 +29,13 @@ export default function ForgotPasswordPage() {
 
       if (!res.ok) {
         const data = await res.json();
-        toast.error(data.error || "Erreur serveur");
+        toast.error(data.error || t("errors.serverError"));
         return;
       }
 
       setSent(true);
     } catch {
-      toast.error("Erreur de connexion");
+      toast.error(t("errors.connectionError"));
     } finally {
       setLoading(false);
     }
@@ -47,25 +49,25 @@ export default function ForgotPasswordPage() {
       </div>
       <Card className="relative z-10 w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Mot de passe oublié</CardTitle>
+          <CardTitle className="text-2xl">{t("auth.forgotPasswordTitle")}</CardTitle>
           <CardDescription>
-            Entrez votre adresse email pour recevoir un lien de réinitialisation
+            {t("auth.forgotPasswordSubtitle")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           {sent ? (
             <div className="space-y-4 text-center">
               <p className="text-sm text-[var(--text-muted)]">
-                Un email de réinitialisation a été envoyé si un compte existe avec cette adresse.
+                {t("auth.resetEmailSent")}
               </p>
               <Link href="/login" className="text-sm font-medium text-nova-mid hover:underline">
-                Retour à la connexion
+                {t("auth.backToLogin")}
               </Link>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t("auth.email")}</Label>
                 <Input
                   id="email"
                   type="email"
@@ -76,11 +78,11 @@ export default function ForgotPasswordPage() {
                 />
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Envoi..." : "Envoyer le lien"}
+                {loading ? t("common.loading") : t("auth.sendResetLink")}
               </Button>
               <p className="text-center text-sm text-[var(--text-muted)]">
                 <Link href="/login" className="font-medium text-nova-mid hover:underline">
-                  Retour à la connexion
+                  {t("auth.backToLogin")}
                 </Link>
               </p>
             </form>

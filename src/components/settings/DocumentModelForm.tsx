@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -9,8 +10,8 @@ import { cn } from "@/lib/utils";
 const STYLES = [
   {
     id: "MODERNE",
-    label: "Moderne",
-    desc: "Design épuré, couleurs vives",
+    labelKey: "documentModel.modern",
+    descKey: "documentModel.modernDesc",
     preview: {
       accentColor: "#2563EB",
       headerBg: "#f0f7ff",
@@ -19,8 +20,8 @@ const STYLES = [
   },
   {
     id: "CLASSIQUE",
-    label: "Classique",
-    desc: "Style traditionnel, sobre",
+    labelKey: "documentModel.classic",
+    descKey: "documentModel.classicDesc",
     preview: {
       accentColor: "#374151",
       headerBg: "#f3f4f6",
@@ -29,8 +30,8 @@ const STYLES = [
   },
   {
     id: "EPURE",
-    label: "Épuré",
-    desc: "Minimaliste, noir et blanc",
+    labelKey: "documentModel.minimal",
+    descKey: "documentModel.minimalDesc",
     preview: {
       accentColor: "#000000",
       headerBg: "#ffffff",
@@ -145,6 +146,7 @@ function DocumentPreview({ style }: { style: (typeof STYLES)[number] }) {
 
 export function DocumentModelForm({ current }: { current: string }) {
   const router = useRouter();
+  const { t } = useLanguage();
   const [selected, setSelected] = useState<StyleId>((current as StyleId) || "MODERNE");
   const [loading, setLoading] = useState(false);
 
@@ -157,10 +159,10 @@ export function DocumentModelForm({ current }: { current: string }) {
         body: JSON.stringify({ documentStyle: selected }),
       });
       if (!res.ok) throw new Error("Erreur");
-      toast.success("Style enregistré");
+      toast.success(t("documentModel.styleSaved"));
       router.refresh();
     } catch {
-      toast.error("Erreur lors de l'enregistrement");
+      toast.error(t("errors.saveError"));
     } finally {
       setLoading(false);
     }
@@ -168,9 +170,9 @@ export function DocumentModelForm({ current }: { current: string }) {
 
   return (
     <div className="transition-opacity duration-300">
-      <h2 className="mb-4 text-lg font-semibold text-[var(--foreground)]">Modèles de documents</h2>
+      <h2 className="mb-4 text-lg font-semibold text-[var(--foreground)]">{t("documentModel.title")}</h2>
       <p className="mb-6 text-sm text-[var(--text-muted)]">
-        Choisissez le style de vos devis et factures.
+        {t("documentModel.desc")}
       </p>
       <div className="grid gap-4 sm:grid-cols-3">
         {STYLES.map((s) => (
@@ -185,14 +187,14 @@ export function DocumentModelForm({ current }: { current: string }) {
                 : "border-[var(--border)] hover:border-[var(--accent)]/30"
             )}
           >
-            <span className="font-medium text-[var(--foreground)]">{s.label}</span>
-            <span className="mt-1 text-xs text-[var(--text-muted)]">{s.desc}</span>
+            <span className="font-medium text-[var(--foreground)]">{t(s.labelKey as import("@/lib/i18n").TranslationKey)}</span>
+            <span className="mt-1 text-xs text-[var(--text-muted)]">{t(s.descKey as import("@/lib/i18n").TranslationKey)}</span>
             <DocumentPreview style={s} />
           </button>
         ))}
       </div>
       <Button className="mt-6" onClick={handleSave} disabled={loading}>
-        {loading ? "Enregistrement..." : "Enregistrer"}
+        {loading ? t("clients.modifying") : t("common.save")}
       </Button>
     </div>
   );

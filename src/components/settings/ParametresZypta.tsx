@@ -20,15 +20,15 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Locale, localeNames } from "@/lib/i18n";
 
 const SECTIONS = [
-  { id: "entreprise", label: "Mon entreprise", icon: Building2 },
-  { id: "profil", label: "Mon profil", icon: User },
-  { id: "apparence", label: "Apparence", icon: Palette },
-  { id: "mentions", label: "Mentions légales", icon: FileText },
-  { id: "prestations", label: "Bibliothèque de prestations", icon: Library },
-  { id: "modeles", label: "Modèles de documents", icon: Layout },
-  { id: "numerotation", label: "Numérotation", icon: Hash },
-  { id: "langue", label: "Langue", icon: Globe },
-];
+  { id: "entreprise", labelKey: "settings.sectionCompany", icon: Building2 },
+  { id: "profil", labelKey: "settings.sectionProfile", icon: User },
+  { id: "apparence", labelKey: "settings.sectionAppearance", icon: Palette },
+  { id: "mentions", labelKey: "settings.sectionLegal", icon: FileText },
+  { id: "prestations", labelKey: "settings.sectionPrestations", icon: Library },
+  { id: "modeles", labelKey: "settings.sectionModels", icon: Layout },
+  { id: "numerotation", labelKey: "settings.sectionNumerotation", icon: Hash },
+  { id: "langue", labelKey: "settings.sectionLanguage", icon: Globe },
+] as const;
 
 type UserData = {
   nom: string;
@@ -55,9 +55,7 @@ function LanguageForm() {
         {t("settings.language")}
       </h2>
       <p className="mb-6 text-sm text-[var(--text-muted)]">
-        {locale === "fr"
-          ? "Choisissez la langue de l'interface."
-          : "Choose the interface language."}
+        {t("settings.chooseLanguage")}
       </p>
       <div className="flex gap-3">
         {(Object.entries(localeNames) as [Locale, string][]).map(
@@ -82,6 +80,7 @@ function LanguageForm() {
 }
 
 export function ParametresZypta({ user }: { user: UserData }) {
+  const { t } = useLanguage();
   const [active, setActive] = useState("entreprise");
 
   return (
@@ -102,7 +101,7 @@ export function ParametresZypta({ user }: { user: UserData }) {
                 )}
               >
                 <Icon className="h-5 w-5 shrink-0" />
-                {s.label}
+                {t(s.labelKey as import("@/lib/i18n").TranslationKey)}
               </button>
             );
           })}
@@ -113,9 +112,9 @@ export function ParametresZypta({ user }: { user: UserData }) {
         <div className="glass-card p-6">
           {active === "entreprise" && (
             <div className="transition-opacity duration-300">
-              <h2 className="mb-4 text-lg font-semibold text-[var(--text-white)]">Mon entreprise</h2>
+              <h2 className="mb-4 text-lg font-semibold text-[var(--text-white)]">{t("settings.sectionCompany")}</h2>
               <p className="mb-6 text-sm text-[var(--text-muted)]">
-                Informations affichées sur les devis et factures
+                {t("settings.companyInfo")}
               </p>
               <ProfileForm
                 defaultValues={{
@@ -137,9 +136,9 @@ export function ParametresZypta({ user }: { user: UserData }) {
 
           {active === "profil" && (
             <div className="transition-opacity duration-300">
-              <h2 className="mb-4 text-lg font-semibold text-[var(--text-white)]">Mon profil</h2>
+              <h2 className="mb-4 text-lg font-semibold text-[var(--text-white)]">{t("settings.sectionProfile")}</h2>
               <p className="text-sm text-[var(--text-muted)]">
-                Gestion du compte et des préférences personnelles.
+                {t("settings.profileManagement")}
               </p>
               <ProfileSection email={user.email} />
             </div>
@@ -147,21 +146,21 @@ export function ParametresZypta({ user }: { user: UserData }) {
 
           {active === "mentions" && (
             <div className="transition-opacity duration-300">
-              <h2 className="mb-4 text-lg font-semibold text-[var(--text-white)]">Mentions légales</h2>
+              <h2 className="mb-4 text-lg font-semibold text-[var(--text-white)]">{t("settings.sectionLegal")}</h2>
               <p className="text-sm text-[var(--text-muted)]">
-                Personnalisez les mentions légales par défaut sur vos documents.
+                {t("settings.legalCustomize")}
               </p>
             </div>
           )}
 
           {active === "prestations" && (
             <div className="transition-opacity duration-300">
-              <h2 className="mb-4 text-lg font-semibold text-[var(--text-white)]">Bibliothèque de prestations</h2>
+              <h2 className="mb-4 text-lg font-semibold text-[var(--text-white)]">{t("settings.sectionPrestations")}</h2>
               <p className="mb-4 text-sm text-[var(--text-muted)]">
-                Gérez vos postes récurrents (nom, unité, prix unitaire HT).
+                {t("settings.prestationsManage")}
               </p>
               <p className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4 text-sm text-[var(--text-muted)]">
-                Bientôt disponible — import Excel et génération IA.
+                {t("settings.prestationsComingSoon")}
               </p>
             </div>
           )}
@@ -176,9 +175,9 @@ export function ParametresZypta({ user }: { user: UserData }) {
 
           {active === "numerotation" && (
             <div className="transition-opacity duration-300">
-              <h2 className="mb-4 text-lg font-semibold text-[var(--text-white)]">Numérotation</h2>
+              <h2 className="mb-4 text-lg font-semibold text-[var(--text-white)]">{t("settings.sectionNumerotation")}</h2>
               <p className="text-sm text-[var(--text-muted)]">
-                Préfixes et séquences pour devis et factures.
+                {t("settings.numerotationDesc")}
               </p>
             </div>
           )}

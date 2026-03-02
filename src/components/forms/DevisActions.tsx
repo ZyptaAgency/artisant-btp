@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -57,6 +58,7 @@ export function DevisActions({
   documentStyle?: DocumentStyle;
 }) {
   const router = useRouter();
+  const { t } = useLanguage();
   const [pdfOpen, setPdfOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [converting, setConverting] = useState(false);
@@ -69,11 +71,11 @@ export function DevisActions({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ statut }),
       });
-      if (!res.ok) throw new Error("Erreur");
-      toast.success("Statut mis à jour");
+      if (!res.ok) throw new Error(t("errors.generic"));
+      toast.success(t("devis.statusUpdated"));
       router.refresh();
     } catch {
-      toast.error("Erreur");
+      toast.error(t("errors.generic"));
     } finally {
       setLoading(false);
     }
@@ -87,13 +89,13 @@ export function DevisActions({
       });
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error ?? "Erreur lors de la conversion");
+        throw new Error(data.error ?? t("errors.saveError"));
       }
       const facture = await res.json();
-      toast.success("Facture créée avec succès");
+      toast.success(t("devis.invoiceCreated"));
       router.push(`/factures/${facture.id}`);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Erreur lors de la conversion");
+      toast.error(err instanceof Error ? err.message : t("errors.saveError"));
     } finally {
       setConverting(false);
     }
@@ -108,34 +110,34 @@ export function DevisActions({
     <>
       <div className="flex gap-2">
         <Button variant="outline" onClick={() => setPdfOpen(true)}>
-          Voir PDF
+          {t("devis.seePdf")}
         </Button>
         {devis.statut === "BROUILLON" && (
           <>
             <Button variant="outline" onClick={() => router.push(`/devis/${devis.id}/modifier`)}>
-              Modifier
+              {t("devis.edit")}
             </Button>
             <Button onClick={() => updateStatut("ENVOYE")} disabled={loading}>
-              Marquer envoyé
+              {t("devis.markSent")}
             </Button>
           </>
         )}
         {devis.statut === "ENVOYE" && (
           <>
             <Button onClick={() => updateStatut("ACCEPTE")} disabled={loading}>
-              Accepter
+              {t("devis.accept")}
             </Button>
             <Button variant="outline" onClick={() => updateStatut("REFUSE")} disabled={loading}>
-              Refuser
+              {t("devis.reject")}
             </Button>
             <Button onClick={convertirEnFacture} disabled={converting}>
-              {converting ? "Création…" : "Créer la facture"}
+              {converting ? t("devis.creating") : t("devis.createInvoice")}
             </Button>
           </>
         )}
         {devis.statut === "ACCEPTE" && (
           <Button asChild>
-            <Link href={`/factures/nouvelle?devisId=${devis.id}`}>Convertir en facture</Link>
+            <Link href={`/factures/nouvelle?devisId=${devis.id}`}>{t("devis.convertToInvoice")}</Link>
           </Button>
         )}
       </div>
@@ -143,7 +145,7 @@ export function DevisActions({
       <Dialog open={pdfOpen} onOpenChange={setPdfOpen}>
         <DialogContent className="max-w-4xl h-[80vh]">
           <DialogHeader className="flex-row items-center justify-between space-y-0">
-            <DialogTitle>Prévisualisation - {devis.numero}</DialogTitle>
+            <DialogTitle>{t("devis.preview")} - {devis.numero}</DialogTitle>
             <PDFDownloadLink
               document={
                 <DevisPDF
@@ -162,7 +164,7 @@ export function DevisActions({
               fileName={`devis-${devis.numero}.pdf`}
               className="ml-auto inline-flex items-center justify-center rounded-lg bg-zypta-blue px-4 py-2 text-sm font-medium text-white hover:bg-zypta-blue/90"
             >
-              {({ loading }) => (loading ? "Génération…" : "Télécharger PDF")}
+              {({ loading }) => (loading ? t("devis.generating") : t("devis.downloadPdf"))}
             </PDFDownloadLink>
           </DialogHeader>
           <div className="h-96 overflow-auto">

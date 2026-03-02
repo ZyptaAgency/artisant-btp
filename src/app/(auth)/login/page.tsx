@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -14,6 +15,7 @@ import { StarField } from "@/components/ui/StarField";
 
 function LoginForm() {
   const router = useRouter();
+  const { t } = useLanguage();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/dashboard";
   const [email, setEmail] = useState("");
@@ -38,7 +40,7 @@ function LoginForm() {
       router.push(callbackUrl);
       router.refresh();
     } catch {
-      toast.error("Erreur de connexion");
+      toast.error(t("errors.connectionError"));
     } finally {
       setLoading(false);
     }
@@ -52,13 +54,13 @@ function LoginForm() {
       </div>
       <Card className="relative z-10 w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Connexion</CardTitle>
-          <CardDescription>Accédez à votre espace artisan</CardDescription>
+          <CardTitle className="text-2xl">{t("auth.loginTitle")}</CardTitle>
+          <CardDescription>{t("auth.loginSubtitle")}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t("auth.email")}</Label>
               <Input
                 id="email"
                 type="email"
@@ -69,7 +71,7 @@ function LoginForm() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Mot de passe</Label>
+              <Label htmlFor="password">{t("auth.password")}</Label>
               <Input
                 id="password"
                 type="password"
@@ -80,17 +82,17 @@ function LoginForm() {
             </div>
             <div className="text-right">
               <Link href="/forgot-password" className="text-sm text-nova-mid hover:underline">
-                Mot de passe oublié ?
+                {t("auth.forgotPassword")}
               </Link>
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Connexion..." : "Se connecter"}
+              {loading ? t("auth.loggingIn") : t("auth.login")}
             </Button>
           </form>
           <p className="mt-4 text-center text-sm text-[var(--text-muted)]">
-            Pas encore de compte ?{" "}
+            {t("auth.noAccount")}{" "}
             <Link href="/register" className="font-medium text-nova-mid hover:underline">
-              S&apos;inscrire
+              {t("auth.register")}
             </Link>
           </p>
         </CardContent>
@@ -101,7 +103,7 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-[var(--bg)]">Chargement...</div>}>
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-[var(--bg)]"><span className="text-[var(--text-muted)]">Chargement...</span></div>}>
       <LoginForm />
     </Suspense>
   );
