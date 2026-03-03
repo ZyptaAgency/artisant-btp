@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3000",
+    "dev:local": "docker compose up -d && sleep 3 && npm run db:push && npm run dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

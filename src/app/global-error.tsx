@@ -1,5 +1,7 @@
 "use client";
 
+import "./globals.css";
+
 export default function GlobalError({
   error,
   reset,
@@ -42,6 +44,7 @@ export default function GlobalError({
           <div className="text-left bg-white/5 rounded-xl p-4 text-sm text-[var(--text-muted)] mb-6">
             <p className="font-medium mb-2">Causes fréquentes :</p>
             <ul className="list-disc list-inside space-y-1">
+              <li>PostgreSQL non démarré en local (<code className="bg-white/5 px-1 rounded">docker compose up -d</code>)</li>
               <li><strong>DATABASE_URL</strong> manquant ou invalide</li>
               <li>Tables non créées (exécuter <code className="bg-white/5 px-1 rounded">prisma db push</code>)</li>
               <li>Connexion pool requise (Neon : ajouter <code className="bg-white/5 px-1 rounded">?pgbouncer=true</code>)</li>

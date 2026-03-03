@@ -20,27 +20,23 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Mot de passe", type: "password" },
       },
       async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("Email et mot de passe requis");
+        }
+
+        const email = credentials.email.trim().toLowerCase();
+        const password = (credentials.password ?? "").trim();
+
         try {
-          if (!credentials?.email || !credentials?.password) {
-            throw new Error("Email et mot de passe requis");
-          }
-
-          const email = credentials.email.trim().toLowerCase();
-          console.log("[AUTH] Tentative login:", email);
-
           const user = await prisma.user.findFirst({
             where: { email: { equals: email, mode: "insensitive" } },
           });
-
-          console.log("[AUTH] User trouvé:", !!user);
 
           if (!user || !user.password) {
             throw new Error("Identifiants incorrects");
           }
 
-          const isValid = await bcrypt.compare(credentials.password.trim(), user.password);
-          console.log("[AUTH] Password valide:", isValid);
-
+          const isValid = await bcrypt.compare(password, user.password);
           if (!isValid) {
             throw new Error("Identifiants incorrects");
           }
@@ -52,8 +48,11 @@ export const authOptions: NextAuthOptions = {
             image: user.logo,
           };
         } catch (err) {
-          console.error("[AUTH] Erreur authorize:", err);
-          throw err;
+          if (err instanceof Error && err.message === "Identifiants incorrects") {
+            throw err;
+          }
+          console.error("[AUTH] Erreur:", err);
+          throw new Error("Erreur de connexion à la base de données. Vérifiez que PostgreSQL est démarré (docker compose up -d).");
         }
       },
     }),
