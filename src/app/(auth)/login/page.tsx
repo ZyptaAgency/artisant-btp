@@ -48,22 +48,13 @@ function LoginForm() {
     if (!email.trim() || !password) return;
     setIsSubmitting(true);
     try {
-      const res = await signIn("credentials", {
+      await signIn("credentials", {
         email: email.trim().toLowerCase(),
         password: password.trim(),
         callbackUrl,
-        redirect: false,
+        redirect: true,
       });
-      if (res?.error) {
-        toast.error(t("auth.wrongPassword"));
-        return;
-      }
-      if (res?.ok) {
-        router.push(callbackUrl);
-        router.refresh();
-      }
-    } catch (err) {
-      console.error("[LOGIN] Exception:", err);
+    } catch {
       toast.error(t("errors.connectionError"));
     } finally {
       setIsSubmitting(false);
