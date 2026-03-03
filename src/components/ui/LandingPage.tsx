@@ -8,7 +8,7 @@ import { Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function LandingPage() {
-  const { t, locale, setLocale } = useLanguage();
+  const { locale, setLocale } = useLanguage();
 
   return (
     <div className="relative flex min-h-screen flex-col bg-[var(--bg)] overflow-hidden">
@@ -44,18 +44,6 @@ export function LandingPage() {
               EN
             </button>
           </div>
-          <Link
-            href="/login"
-            className="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--foreground)] transition-colors"
-          >
-            {t("landing.login")}
-          </Link>
-          <Link
-            href="/register"
-            className="rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-medium text-white shadow-[0_0_15px_var(--ring)] transition-all hover:shadow-[0_0_25px_var(--ring)]"
-          >
-            {t("landing.register")}
-          </Link>
         </nav>
       </header>
       <main className="relative flex flex-1 flex-col items-center justify-center p-4">
