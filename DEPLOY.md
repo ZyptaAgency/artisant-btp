@@ -64,3 +64,8 @@ DATABASE_URL="postgresql://..." npx prisma db seed
 ```
 
 **Si erreur "Application error"** : 1) Vérifier DATABASE_URL dans Vercel 2) Neon : ajouter `?pgbouncer=true` 3) Exécuter `prisma db push` 4) Vérifier NEXTAUTH_SECRET et NEXTAUTH_URL
+
+**Si ERR_HTTP2_PROTOCOL_ERROR ou 401 au login** :
+- Retirer `channel_binding=require` de l’URL Neon si présent
+- Ajouter `connect_timeout=30` : `?sslmode=require&pgbouncer=true&connect_timeout=30`
+- Réinitialiser le mot de passe démo : `https://ton-app.vercel.app/api/auth/reset-demo?secret=RESET_DEMO_SECRET` (définir `RESET_DEMO_SECRET` dans Vercel)
