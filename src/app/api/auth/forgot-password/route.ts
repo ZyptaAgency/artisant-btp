@@ -27,7 +27,7 @@ export async function POST(req: Request) {
 
       const resetUrl = `${process.env.NEXTAUTH_URL}/reset-password?token=${token}`;
 
-      await sendEmail({
+      const result = await sendEmail({
         to: email,
         subject: "Réinitialisation de votre mot de passe — Zypta BTP",
         html: `
@@ -64,6 +64,10 @@ export async function POST(req: Request) {
 </body>
 </html>`,
       });
+
+      if (result?.error) {
+        console.error("[forgot-password] sendEmail:", result.error.message);
+      }
     }
 
     return NextResponse.json({

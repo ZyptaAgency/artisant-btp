@@ -125,7 +125,7 @@ function ResetPasswordForm() {
       <Card className="relative z-10 w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">{t("auth.resetPasswordTitle")}</CardTitle>
-          <CardDescription>{t("auth.resetPasswordSubtitle")}</CardDescription>
+          {!success && <CardDescription>{t("auth.resetPasswordSubtitle")}</CardDescription>}
         </CardHeader>
         <CardContent>
           {success ? (
