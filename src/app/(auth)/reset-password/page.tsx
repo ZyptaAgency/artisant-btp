@@ -14,7 +14,7 @@ import { StarField } from "@/components/ui/StarField";
 import { Eye, EyeOff, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const PASSWORD_REGEX = /^(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/;
+const PASSWORD_MIN_LENGTH = 8;
 
 function ResetPasswordForm() {
   const searchParams = useSearchParams();
@@ -30,8 +30,8 @@ function ResetPasswordForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    if (!PASSWORD_REGEX.test(password)) {
-      toast.error(t("auth.passwordMinSpecial"));
+    if (password.length < PASSWORD_MIN_LENGTH) {
+      toast.error(t("auth.passwordMinChars"));
       return;
     }
 

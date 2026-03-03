@@ -10,10 +10,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Token et mot de passe requis" }, { status: 400 });
     }
 
-    const specialCharRegex = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/;
-    if (password.length < 8 || !specialCharRegex.test(password)) {
+    if (password.length < 8) {
       return NextResponse.json(
-        { error: "Le mot de passe doit contenir au moins 8 caractères et 1 caractère spécial" },
+        { error: "Le mot de passe doit contenir au moins 8 caractères" },
         { status: 400 }
       );
     }

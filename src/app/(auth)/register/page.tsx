@@ -14,8 +14,6 @@ import { StarField } from "@/components/ui/StarField";
 import { Eye, EyeOff, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const PASSWORD_SPECIAL = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/;
-
 function RegisterForm() {
   const { t, locale, setLocale } = useLanguage();
   const searchParams = useSearchParams();
@@ -41,11 +39,6 @@ function RegisterForm() {
     if (form.password.length < 8) {
       e.preventDefault();
       toast.error("Minimum 8 caractères");
-      return;
-    }
-    if (!PASSWORD_SPECIAL.test(form.password)) {
-      e.preventDefault();
-      toast.error("Doit contenir un caractère spécial (!@#$%^&*...)");
       return;
     }
   }

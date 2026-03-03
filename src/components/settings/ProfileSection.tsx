@@ -112,12 +112,6 @@ export function ProfileSection({ email }: { email: string }) {
       return;
     }
 
-    const specialCharRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
-    if (!specialCharRegex.test(newPassword)) {
-      toast.error(t("profileSection.passwordSpecial"));
-      return;
-    }
-
     setPasswordLoading(true);
     try {
       const res = await fetch("/api/user/password", {

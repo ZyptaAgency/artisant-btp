@@ -9,10 +9,7 @@ const registerSchema = z.object({
   nom: z.string().min(2, "Nom requis"),
   entreprise: z.string().min(2, "Entreprise requise"),
   email: z.string().email("Email invalide"),
-  password: z
-    .string()
-    .min(8, "Minimum 8 caractères")
-    .regex(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/, "Doit contenir un caractère spécial"),
+  password: z.string().min(8, "Minimum 8 caractères"),
 });
 
 async function parseBody(req: Request): Promise<Record<string, string>> {
