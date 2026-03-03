@@ -38,7 +38,7 @@ export const authOptions: NextAuthOptions = {
             throw new Error("Identifiants incorrects");
           }
 
-          const isValid = await bcrypt.compare(credentials.password, user.password);
+          const isValid = await bcrypt.compare(credentials.password.trim(), user.password);
           console.log("[AUTH] Password valide:", isValid);
 
           if (!isValid) {

@@ -33,27 +33,28 @@ function LoginForm() {
     if (params.get("registered") === "1") {
       toast.success(t("auth.signupSuccess"));
     }
-  }, [searchParams, locale, t]);
+    const error = params.get("error");
+    if (error === "CredentialsSignin" || error === "Credentials") {
+      toast.error(t("auth.wrongPassword"));
+      const q = new URLSearchParams();
+      if (emailParam) q.set("email", emailParam);
+      const cb = params.get("callbackUrl");
+      if (cb) q.set("callbackUrl", cb);
+      router.replace("/login" + (q.toString() ? `?${q.toString()}` : ""), { scroll: false });
+    }
+  }, [searchParams, locale, t, router]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!email.trim() || !password) return;
     setIsSubmitting(true);
     try {
-      const res = await signIn("credentials", {
+      await signIn("credentials", {
         email: email.trim().toLowerCase(),
-        password,
+        password: password.trim(),
         callbackUrl,
-        redirect: false,
+        redirect: true,
       });
-      if (res?.error) {
-        toast.error(t("auth.wrongPassword"));
-        return;
-      }
-      if (res?.ok) {
-        router.push(callbackUrl);
-        router.refresh();
-      }
     } catch {
       toast.error(t("errors.connectionError"));
     } finally {
