@@ -20,16 +20,24 @@ export async function GET(req: Request) {
 
   try {
     const hashedPassword = await bcrypt.hash("demo1234", 12);
-    const result = await prisma.user.updateMany({
+    const user = await prisma.user.upsert({
       where: { email: "demo@artisan-btp.fr" },
-      data: { password: hashedPassword },
+      update: { password: hashedPassword },
+      create: {
+        nom: "Jean Dupont",
+        entreprise: "Dupont BTP",
+        siret: "12345678901234",
+        email: "demo@artisan-btp.fr",
+        telephone: "06 12 34 56 78",
+        adresse: "12 rue des Artisans, 75001 Paris",
+        password: hashedPassword,
+      },
     });
 
-    if (result.count === 0) {
-      return NextResponse.json({ error: "Utilisateur démo introuvable. Lancez le seed." }, { status: 404 });
-    }
-
-    return NextResponse.json({ ok: true, message: "Mot de passe réinitialisé : demo@artisan-btp.fr / demo1234" });
+    return NextResponse.json({
+      ok: true,
+      message: user ? "Compte démo créé/réinitialisé : demo@artisan-btp.fr / demo1234" : "Mot de passe réinitialisé : demo@artisan-btp.fr / demo1234",
+    });
   } catch (err) {
     console.error("[RESET-DEMO]", err);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
