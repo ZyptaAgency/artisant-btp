@@ -20,30 +20,41 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Mot de passe", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          throw new Error("Email et mot de passe requis");
+        try {
+          if (!credentials?.email || !credentials?.password) {
+            throw new Error("Email et mot de passe requis");
+          }
+
+          const email = credentials.email.trim().toLowerCase();
+          console.log("[AUTH] Tentative login:", email);
+
+          const user = await prisma.user.findFirst({
+            where: { email: { equals: email, mode: "insensitive" } },
+          });
+
+          console.log("[AUTH] User trouvé:", !!user);
+
+          if (!user || !user.password) {
+            throw new Error("Identifiants incorrects");
+          }
+
+          const isValid = await bcrypt.compare(credentials.password, user.password);
+          console.log("[AUTH] Password valide:", isValid);
+
+          if (!isValid) {
+            throw new Error("Identifiants incorrects");
+          }
+
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.nom,
+            image: user.logo,
+          };
+        } catch (err) {
+          console.error("[AUTH] Erreur authorize:", err);
+          throw err;
         }
-
-        const email = credentials.email.trim().toLowerCase();
-        const user = await prisma.user.findFirst({
-          where: { email: { equals: email, mode: "insensitive" } },
-        });
-
-        if (!user || !user.password) {
-          throw new Error("Identifiants incorrects");
-        }
-
-        const isValid = await bcrypt.compare(credentials.password, user.password);
-        if (!isValid) {
-          throw new Error("Identifiants incorrects");
-        }
-
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.nom,
-          image: user.logo,
-        };
       },
     }),
   ],
