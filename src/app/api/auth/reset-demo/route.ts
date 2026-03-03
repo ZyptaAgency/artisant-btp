@@ -14,8 +14,15 @@ export async function GET(req: Request) {
   }
 
   const url = new URL(req.url);
-  if (url.searchParams.get("secret") !== secret) {
-    return NextResponse.json({ error: "Secret invalide" }, { status: 403 });
+  const fromUrl = url.searchParams.get("secret")?.trim() ?? "";
+  const fromHeader = req.headers.get("authorization")?.replace(/^Bearer\s+/i, "").trim() ?? "";
+  const provided = (fromUrl || fromHeader).trim();
+  const expected = secret.trim();
+  if (provided !== expected) {
+    return NextResponse.json({
+      error: "Secret invalide",
+      hint: "Utilisez ?secret=XXX dans l'URL ou Authorization: Bearer XXX",
+    }, { status: 403 });
   }
 
   try {
