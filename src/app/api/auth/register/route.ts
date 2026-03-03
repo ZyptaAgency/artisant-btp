@@ -29,10 +29,12 @@ async function parseBody(req: Request): Promise<Record<string, string>> {
 export async function POST(req: Request) {
   try {
     const body = await parseBody(req);
-    const { nom, entreprise, email, password } = registerSchema.parse(body);
+    const parsed = registerSchema.parse(body);
+    const email = parsed.email.trim().toLowerCase();
+    const { nom, entreprise, password } = parsed;
 
-    const existing = await prisma.user.findUnique({
-      where: { email },
+    const existing = await prisma.user.findFirst({
+      where: { email: { equals: email, mode: "insensitive" } },
     });
 
     const baseUrl = process.env.NEXTAUTH_URL || new URL(req.url).origin;

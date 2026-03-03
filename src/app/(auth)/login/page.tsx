@@ -41,7 +41,7 @@ function LoginForm() {
     setIsSubmitting(true);
     try {
       const res = await signIn("credentials", {
-        email: email.trim(),
+        email: email.trim().toLowerCase(),
         password,
         callbackUrl,
         redirect: false,
