@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { StarField } from "@/components/ui/StarField";
+import { Logo } from "@/components/ui/Logo";
 import { Eye, EyeOff, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -101,7 +102,7 @@ function LoginForm() {
       <StarField />
       <div className="relative z-10 flex w-full max-w-md flex-col items-center">
         <div className="mb-8">
-          <img src="/logo.png" alt="Zypta BTP" className="h-24 w-auto" />
+          <Logo src="/logo.png" variant="gradient" width={180} height={72} />
         </div>
         <div className="w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] p-8 shadow-[0_0_60px_rgba(200,75,255,0.12)] backdrop-blur-xl">
           <div className="mb-6 text-center">
