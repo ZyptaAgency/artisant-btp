@@ -48,13 +48,22 @@ function LoginForm() {
     if (!email.trim() || !password) return;
     setIsSubmitting(true);
     try {
-      await signIn("credentials", {
+      const res = await signIn("credentials", {
         email: email.trim().toLowerCase(),
         password: password.trim(),
         callbackUrl,
-        redirect: true,
+        redirect: false,
       });
-    } catch {
+      if (res?.error) {
+        toast.error(t("auth.wrongPassword"));
+        return;
+      }
+      if (res?.ok && res?.url) {
+        window.location.href = res.url;
+        return;
+      }
+    } catch (err) {
+      console.error("[LOGIN]", err);
       toast.error(t("errors.connectionError"));
     } finally {
       setIsSubmitting(false);
@@ -153,6 +162,18 @@ function LoginForm() {
             <Link href="/register" className="font-medium text-[var(--accent)] hover:underline">
               {t("auth.register")}
             </Link>
+          </p>
+          <p className="mt-3 text-center text-xs text-[var(--text-muted)]">
+            <a
+              href="/api/auth/debug"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:underline"
+            >
+              Diagnostic connexion
+            </a>
+            {" · "}
+            Compte démo : demo@artisan-btp.fr / demo1234
           </p>
         </div>
       </div>

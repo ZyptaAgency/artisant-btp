@@ -21,11 +21,13 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
+          console.error("[AUTH] authorize: email ou password manquant");
           throw new Error("Email et mot de passe requis");
         }
 
         const email = credentials.email.trim().toLowerCase();
         const password = (credentials.password ?? "").trim();
+        console.log("[AUTH] authorize appelé pour:", email);
 
         try {
           const user = await prisma.user.findFirst({
@@ -33,14 +35,17 @@ export const authOptions: NextAuthOptions = {
           });
 
           if (!user || !user.password) {
+            console.error("[AUTH] Utilisateur non trouvé ou sans password:", email);
             throw new Error("Identifiants incorrects");
           }
 
           const isValid = await bcrypt.compare(password, user.password);
           if (!isValid) {
+            console.error("[AUTH] Mot de passe invalide pour:", email);
             throw new Error("Identifiants incorrects");
           }
 
+          console.log("[AUTH] Connexion OK:", email);
           return {
             id: user.id,
             email: user.email,
