@@ -36,7 +36,7 @@ export default function GlobalError({
             <button
               type="button"
               onClick={handleCopy}
-              className="absolute top-2 right-2 px-3 py-1 bg-[var(--bg-elevated)] hover:bg-[var(--bg-elevated)] text-white text-xs rounded-lg"
+              className="absolute top-2 right-2 px-3 py-1 bg-[var(--bg-elevated)] hover:bg-[var(--bg-elevated)] text-[var(--foreground)] text-xs rounded-lg"
             >
               Copier
             </button>
