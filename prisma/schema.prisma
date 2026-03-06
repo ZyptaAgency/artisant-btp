@@ -29,6 +29,10 @@ model User {
   tauxTVA         Float?   @default(20)
   villeMeteo      String?  @default("Paris")
   objectifMensuel Float?   @default(10000)
+  trialEndsAt     DateTime?
+  planStatus      String?  @default("trial") // "trial" | "paid" | "expired"
+  stripeCustomerId String?
+  stripePaymentId  String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 

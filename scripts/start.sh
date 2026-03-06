@@ -29,6 +29,5 @@ echo "✅ Base de données OK"
 echo ""
 echo "🚀 Démarrage de l'application..."
 echo "   → Ouvrez http://localhost:3000 dans votre navigateur"
-echo "   → Compte démo: demo@artisan-btp.fr / demo1234"
 echo ""
 npm run dev

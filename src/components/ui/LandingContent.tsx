@@ -56,8 +56,15 @@ export function LandingContent() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.2, duration: 1 }}
-        className="mt-16 flex items-center gap-6 text-xs text-[rgba(240,238,255,0.3)]"
+        className="mt-16 flex flex-wrap items-center justify-center gap-4 text-xs text-[rgba(240,238,255,0.3)]"
       >
+        <Link
+          href="/plan"
+          className="font-medium text-[var(--accent)] hover:underline"
+        >
+          {t("landing.contact")}
+        </Link>
+        <span className="h-1 w-1 rounded-full bg-[rgba(200,75,255,0.4)]" />
         <span>{t("landing.devis")}</span>
         <span className="h-1 w-1 rounded-full bg-[rgba(200,75,255,0.4)]" />
         <span>{t("landing.factures")}</span>

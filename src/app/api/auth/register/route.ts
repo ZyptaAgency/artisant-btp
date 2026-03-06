@@ -49,12 +49,18 @@ export async function POST(req: Request) {
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
+    const ADMIN_EMAIL = "business@zypta.be";
+    const trialEndsAt = email === ADMIN_EMAIL ? null : new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
+    const planStatus = email === ADMIN_EMAIL ? "paid" : "trial";
+
     await prisma.user.create({
       data: {
         nom,
         entreprise,
         email,
         password: hashedPassword,
+        trialEndsAt,
+        planStatus,
       },
     });
 

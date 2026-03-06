@@ -163,18 +163,6 @@ function LoginForm() {
               {t("auth.register")}
             </Link>
           </p>
-          <p className="mt-3 text-center text-xs text-[var(--text-muted)]">
-            <a
-              href="/api/auth/debug"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:underline"
-            >
-              Diagnostic connexion
-            </a>
-            {" · "}
-            Compte démo : demo@artisan-btp.fr / demo1234
-          </p>
         </div>
       </div>
     </div>

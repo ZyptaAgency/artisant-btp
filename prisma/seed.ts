@@ -17,7 +17,7 @@ async function main() {
 
   const user = await prisma.user.upsert({
     where: { email: "demo@artisan-btp.fr" },
-    update: { password: hashedPassword },
+    update: { password: hashedPassword, planStatus: "paid" },
     create: {
       nom: "Jean Dupont",
       entreprise: "Dupont BTP",
@@ -26,6 +26,7 @@ async function main() {
       telephone: "06 12 34 56 78",
       adresse: "12 rue des Artisans, 75001 Paris",
       password: hashedPassword,
+      planStatus: "paid",
     },
   });
 

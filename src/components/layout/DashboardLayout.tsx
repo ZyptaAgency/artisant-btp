@@ -4,9 +4,11 @@ import { motion } from "framer-motion";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
 import { MobileNav } from "./MobileNav";
+import { TrialGuard } from "./TrialGuard";
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
+    <TrialGuard>
     <div className="min-h-screen bg-[var(--bg)]">
       <Sidebar />
       <div className="md:pl-64">
@@ -22,5 +24,6 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       </div>
       <MobileNav />
     </div>
+    </TrialGuard>
   );
 }

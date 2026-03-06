@@ -50,7 +50,7 @@ SaaS pour artisans et entreprises du bâtiment — cockpit de gestion : clients,
 3. Configurer les variables d'environnement dans Vercel
 4. Déployer
 
-## Compte démo
+## Accès
 
-- **Email** : `demo@artisan-btp.fr`
-- **Mot de passe** : `demo1234`
+- **Essai** : 2 semaines pour les nouveaux comptes
+- **Achat** : contacter business@zypta.be pour débloquer l'accès
